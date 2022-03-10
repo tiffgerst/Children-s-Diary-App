@@ -42,8 +42,8 @@ export default function CalendarScreen({ navigation }) {
       <Calendar 
         style={styles.calendar}
         theme={{
-          backgroundColor: theme.colors.secondary,
-          calendarBackground: theme.colors.secondary,
+          backgroundColor: theme.colors.tint,
+          calendarBackground: theme.colors.tint,
           textSectionTitleColor: '#b6c1cd',
           textSectionTitleDisabledColor: '#d9e1e8',
           selectedDayBackgroundColor: '#00adf5',
