@@ -9,6 +9,7 @@ import {
   HowAreYouFeelingScreen,
   Home,
   Calendar,
+  NewEntry,
 } from './screens'
 
 const Stack = createStackNavigator()
@@ -32,6 +33,7 @@ export default function App() {
           />
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Calendar" component={Calendar} />
+          <Stack.Screen name="NewEntry" component={NewEntry} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
