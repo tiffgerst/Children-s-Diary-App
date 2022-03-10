@@ -1,36 +1,43 @@
 import React, { useState } from 'react'
 import { StyleSheet, View, Text, FlatList } from 'react-native'
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars'
+import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { theme } from '../src/core/theme'
 import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
-import { getStatusBarHeight } from 'react-native-status-bar-height'
 import JournalFeed from '../components/JournalFeed'
 
 const postData = [
-  { postId: 1,
+  {
+    postId: 1,
     journalDate: '30 Aug 2021',
-    journalTitle: '3 Good things for today', 
-    journalText: 'It could be anything from hanging out with friends...' ,
-    journalTag: 'Sports'},
-  { postId: 2,
+    journalTitle: '3 Good things for today',
+    journalText: 'It could be anything from hanging out with friends...',
+    journalTag: 'Sports',
+  },
+  {
+    postId: 2,
     journalDate: '31 Mar 2021',
-    journalTitle: 'My feelings', 
-    journalText: 'I feel excited and calm.' ,
-    journalTag: ''},
-  { postId: 3,
+    journalTitle: 'My feelings',
+    journalText: 'I feel excited and calm.',
+    journalTag: '',
+  },
+  {
+    postId: 3,
     journalDate: '26 Mar 2021',
-    journalTitle: 'Vacation', 
-    journalText: 'Summer is the warmest of the four seasons. Spring' ,
-    journalTag: 'Friends'},
-  { postId: 4,
+    journalTitle: 'Vacation',
+    journalText: 'Summer is the warmest of the four seasons. Spring',
+    journalTag: 'Friends',
+  },
+  {
+    postId: 4,
     journalDate: '20 Mar 2021',
-    journalTitle: 'My lovely dogge', 
-    journalText: 'Had this dog around growing up' ,
-    journalImage: require('../assets/journal_image_example.png'),     
-    journalTag: 'Family'},
-  ]
-
+    journalTitle: 'My lovely dogge',
+    journalText: 'Had this dog around growing up',
+    journalImage: require('../assets/journal_image_example.png'),
+    journalTag: 'Family',
+  },
+]
 
 export default function CalendarScreen({ navigation }) {
   return (
@@ -39,7 +46,7 @@ export default function CalendarScreen({ navigation }) {
       <View>
         <Text style={styles.title}>Calendar</Text>
       </View>
-      <Calendar 
+      <Calendar
         style={styles.calendar}
         theme={{
           backgroundColor: theme.colors.tint,
@@ -62,77 +69,72 @@ export default function CalendarScreen({ navigation }) {
           textDayHeaderFontWeight: '300',
           textDayFontSize: 16,
           textMonthFontSize: 20,
-          textDayHeaderFontSize: 16
+          textDayHeaderFontSize: 16,
         }}
         // // onDayPress={}
         //   markingType={'custom'}
         //   markedDates
-
       />
       <Text style={styles.entry}>Entries</Text>
       <View style={styles.scroll}>
-        <FlatList 
+        <FlatList
           contentContainerStyle={styles.grid}
           data={postData}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => <JournalFeed journalTitle={item} />}
-
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-        />  
+        />
       </View>
-
-      
     </Background3>
   )
 }
 
-
 const styles = StyleSheet.create({
-    background: {
-      // flex: 1,
-      width: '90%',
-      height: '90%',
-      // backgroundColor: theme.colors.tint,
-      alignSelf: 'center',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: theme.colors.secondary,
-      top: getStatusBarHeight(),
-    }, 
-    calendar: {
-      backgroundColor: theme.colors.tint,
-      width: 320,
-      height: 430,
-      top: 40 + getStatusBarHeight(),
-    },
-    entry: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      position: 'absolute',
-      top: 450 + getStatusBarHeight(),
-      left: 12,
-      color: theme.colors.secondary,
-    },     
-    scroll: {
-      flex: 1,
-      width: '120%',
-      backgroundColor: theme.colors.tint,
-      alignSelf: 'center',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-      top: getStatusBarHeight(),
-    }, 
-    grid: {
-      alignSelf: 'center',
-      justifyContent: 'center',
-      width: '90%',
-      maxWidth: '95%',
-      paddingBottom: 100,
-      // overflow: 'hidden',
-    },
-  })
+  background: {
+    // flex: 1,
+    width: '90%',
+    height: '90%',
+    // backgroundColor: theme.colors.tint,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: theme.colors.secondary,
+    top: getStatusBarHeight(),
+  },
+  calendar: {
+    backgroundColor: theme.colors.tint,
+    width: 320,
+    height: 430,
+    top: 40 + getStatusBarHeight(),
+  },
+  entry: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    position: 'absolute',
+    top: 450 + getStatusBarHeight(),
+    left: 12,
+    color: theme.colors.secondary,
+  },
+  scroll: {
+    flex: 1,
+    width: '120%',
+    backgroundColor: theme.colors.tint,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    top: getStatusBarHeight(),
+  },
+  grid: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    width: '90%',
+    maxWidth: '95%',
+    paddingBottom: 100,
+    // overflow: 'hidden',
+  },
+})
