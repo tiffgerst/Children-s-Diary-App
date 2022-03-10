@@ -15,6 +15,7 @@ import ProfileButton from '../components/ProfileButton'
 import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import JournalFeed from '../components/JournalFeed'
+import AddButton from '../components/AddButton'
 
 const postData = [
   {
@@ -84,6 +85,12 @@ export default function Home({ navigation }) {
           setClicked={setClicked}
         />
       </View>
+      <AddButton style={styles.bottom_left}
+        mode="contained"
+        onPress={() => navigation.navigate('NewEntry')}
+      >
+        +
+      </AddButton>
     </Background3>
   )
 }
