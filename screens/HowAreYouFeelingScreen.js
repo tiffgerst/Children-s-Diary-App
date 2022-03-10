@@ -42,16 +42,10 @@ export default function HowAreYouFeelingScreen({ navigation }) {
         onChangeText={(text) => setFeelings({ value: text, error: '' })}
         label="I feel like this because..."
       />
-      <Button
-        mode="contained"
-        onPress={() => navigation.navigate('JournalFeed')}
-      >
+      <Button mode="contained" onPress={() => navigation.navigate('Home')}>
         Post
       </Button>
-      <SkipButton
-        mode="contained"
-        onPress={() => navigation.navigate('Home')}
-      >
+      <SkipButton mode="contained" onPress={() => navigation.navigate('Home')}>
         Skip
       </SkipButton>
     </Background2>
