@@ -8,6 +8,9 @@ import {
   ResetPasswordScreen,
   HowAreYouFeelingScreen,
   JournalFeed,
+  Home,
+  Calendar,
+  ProfileFeed,
 } from './screens'
 
 const Stack = createStackNavigator()
@@ -30,6 +33,10 @@ export default function App() {
             component={HowAreYouFeelingScreen}
           />
           <Stack.Screen name="JournalFeed" component={JournalFeed} />
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Calendar" component={Calendar} />
+          {/* <Stack.Screen name="ProfileFeed" component={ProfileFeed} /> */}
+
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

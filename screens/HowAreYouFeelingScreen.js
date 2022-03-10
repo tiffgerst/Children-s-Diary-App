@@ -50,7 +50,7 @@ export default function HowAreYouFeelingScreen({ navigation }) {
       </Button>
       <SkipButton
         mode="contained"
-        onPress={() => navigation.navigate('JournalFeed')}
+        onPress={() => navigation.navigate('Home')}
       >
         Skip
       </SkipButton>
