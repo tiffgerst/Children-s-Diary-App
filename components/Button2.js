@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#5A6174',
-    fontWeight: 'normal',
     fontSize: 15,
     lineHeight: 26,
   },

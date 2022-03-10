@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Image, View, Text, FlatList, TouchableOpacity } from 'react-native' 
+import { StyleSheet, Image, View, Switch, Text, FlatList, TouchableOpacity } from 'react-native' 
 import theme from '../src/core/theme'
 import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
 import Button2 from '../components/Button2'
-
+import Button from '../components/Button'
+import {
+    Ionicons,
+    MaterialCommunityIcons,
+    MaterialIcons,
+    FontAwesome,
+  } from '@expo/vector-icons'
 
 
 export default function Profile({ navigation }) {
+
+    const [isEnabled, setIsEnabled] = useState(true);
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
     return (
       <Background3 style={styles.background}>
         <BackButton goBack={navigation.goBack} />
@@ -16,7 +26,20 @@ export default function Profile({ navigation }) {
         <Text style={styles.title}>Sam</Text>
         </View>
         <Image source={require('../assets/stars.png')} style={styles.small_image} />
-        <Image source={require('../assets/achievements.png')} style={styles.image} />
+
+        <Text style={styles.text2}>Achievements</Text>
+
+        <View style={styles.container}>
+        <Switch
+        trackColor={{ false: "#FFFFFF", true: "#7AC9A1" }}
+        thumbColor={isEnabled ? "#FFFFFF" : "#FFFFFF"}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={toggleSwitch}
+        value={isEnabled}
+        />
+        </View>
+
+        <Image source={require('../assets/achievements.png')} style={styles.image2} />
 
         <Button2
             style={styles.button} mode="contained"
@@ -59,28 +82,35 @@ const styles = StyleSheet.create({
       justifyContent: 'flex-start',
     },
     image: {
-        marginTop: 15,
-        width: '90%',
-        overflow: 'visible',
-        marginBottom: 15,
-    },
-    small_image:{
-        marginTop: 15,
-        width: '30%',
+        marginTop: 80,
+        width: '80%',
         overflow: 'visible',
         marginBottom: 10,
+    },
+    image2: {
+        marginTop: 10,
+        width: '80%',
+        overflow: 'visible',
+        marginBottom: 10,
+    },
+    small_image:{
+        marginTop: 10,
+        width: '25%',
+        overflow: 'visible',
+        marginBottom: 25,
     },
     button: {
         backgroundColor: '#EEEEEE',
         width: '100%',
-        marginVertical: 0,
+        marginTop: 5,
         paddingVertical: 2,
         borderRadius: 10,
     },
     button_logout: {
         backgroundColor: '#FF7884',
         width: '100%',
-        marginVertical: 20,
+        marginTop: 20,
+        marginBottom:70,
         paddingVertical: 2,
         borderRadius: 10,
     },
@@ -92,4 +122,16 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontWeight: 'bold',
     }, 
+    text2: {
+        color: '#5A6174',
+        fontSize: 18,
+        fontWeight: 'bold',
+        left:-100,
+        marginBottom: -10,
+    }, 
+    container: {
+        flex: 1,
+        right: -130,
+        marginVertical: -15,
+    },
 })
