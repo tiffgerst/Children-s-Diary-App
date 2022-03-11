@@ -66,7 +66,7 @@ export default function Home({ navigation }) {
         <Text style={styles.title}>Journal</Text>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('ProfileFeed')}
+        onPress={() => navigation.navigate('Profile')}
         style={styles.profile}
       >
         <Image source={require('../assets/profile_button.png')} />

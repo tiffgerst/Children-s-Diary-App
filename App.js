@@ -11,6 +11,8 @@ import {
   Calendar,
   NewEntry,
   TextEntry,
+  Customisation,
+  Profile,
 } from './screens'
 
 const Stack = createStackNavigator()
@@ -36,6 +38,8 @@ export default function App() {
           <Stack.Screen name="Calendar" component={Calendar} />
           <Stack.Screen name="NewEntry" component={NewEntry} />
           <Stack.Screen name="TextEntry" component={TextEntry} />
+          <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="Customisation" component={Customisation} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
