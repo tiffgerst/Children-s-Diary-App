@@ -4,10 +4,11 @@ import theme from '../src/core/theme'
 import Background3 from '../components/Background3'
 import TextBox from '../components/TextBox'
 import BackButton from '../components/BackButton'
-import Button2 from '../components/Button2'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 
-function Modal(props){
+
+
+export default function Customisation({ navigation }) {
     const [animation, setAnimation]=useState(new Animated.Value(0));
     const {height} = Dimensions.get('window');
 
@@ -62,13 +63,12 @@ function Modal(props){
     const background = {
         backgroundColor:color
     }
-}
 
 
-export default function Customisation({ navigation }) {
     return (
       <Background3 style={styles.background}>
         <BackButton goBack={navigation.goBack} />
+        
         <View>
           <Text style={styles.title}>Customisation</Text>
         </View>
@@ -76,26 +76,53 @@ export default function Customisation({ navigation }) {
         <TextBox label="Sam" />
         <Image source={require('../assets/line.png')} style={styles.line} />
         <Text style={styles.text2}>Avatar</Text>
+        <Image source={require('../assets/squared_sam.png')} style={styles.image} />
         <View>
-        <TouchableOpacity style={[styles.button, styles.center]} onPress={()=>console.log('react')}>
+        <TouchableOpacity style={[styles.button, styles.position2]} onPress={()=>console.log('react')}>
             <Text style={styles.text3}>
                 Change
             </Text>
         </TouchableOpacity>
         </View>
-        <Image source={require('../assets/squared_sam.png')} style={styles.image} />
+
         <Image source={require('../assets/line.png')} style={styles.line} />
 
         <Text style={styles.text2}>Mood Icons</Text>
+        <Image source={require('../assets/moods.png')} style={styles.image2} />
+    
         <View>
-        <TouchableOpacity style={[styles.button, styles.center]} onPress={()=>console.log('react')}>
+        <View>
+        <TouchableOpacity style={[styles.button, styles.position1]} onPress={modalTrigger}>
             <Text style={styles.text3}>
                 Change
             </Text>
         </TouchableOpacity>
         </View>
-        <Image source={require('../assets/moods.png')} style={styles.image2} />
-        
+
+        <Animated.View style={[styles.background2, background]}>
+        <Animated.View style={[open]}>
+
+        <View style={[styles.wrap, styles.center]}>
+            <Text style={styles.text}>Customise Your Emojis</Text>
+            <Image source={require('../assets/9emoji.png')} style={styles.image3} />
+            <View style={{flexDirection:'row'}}>
+                <TouchableOpacity style={[styles.button2, styles.position3]} onPress={close}>
+                    <Text style={styles.text3}>
+                        Cancel
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button2, styles.position3]} onPress={save}>
+                    <Text style={styles.text3}>
+                        Save
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+        </Animated.View> 
+        </Animated.View> 
+
+
+        </View>
       </Background3>
     )
 }
@@ -134,12 +161,12 @@ const styles = StyleSheet.create({
     image: {
         width: 150,
         height: 120,
-        marginTop: -25,
+        marginTop: 10,
         left: -80,
         marginBottom: 10,
     },
     image2: {
-        marginTop: -30,
+        marginTop: 10,
         left: -60,
         marginBottom: 10,
     },
@@ -148,6 +175,14 @@ const styles = StyleSheet.create({
         zIndex: 10,
         width: 80,
         height: 35,
+        right:-100,
+        marginTop: 0,
+        borderRadius: 50,
+    },
+    button2: {
+        backgroundColor: '#55B7DE',
+        width: 120,
+        height: 52,
         right:-100,
         marginTop: 0,
         borderRadius: 50,
@@ -163,9 +198,75 @@ const styles = StyleSheet.create({
     }, 
     position1:{
         position: 'absolute',
-        left: 100,
+        left: 57,
+        right: 0,
+        top: -47,
+        bottom: 0,
+        justifyContent:'center',
+        alignItems: 'center'
+    },
+    position2:{
+        position: 'absolute',
+        left: 57,
+        right: 0,
+        top: -130,
+        bottom: 0,
+        justifyContent:'center',
+        alignItems: 'center'
+    },
+    position3:{
+        left: 0,
+        right: 0,
+        top: 150,
+        bottom: 0,
+        justifyContent:'center',
+        alignItems: 'center'
+    },
+    background2:{
+        position: 'absolute',
+        left: 0,
         right: 0,
         top: 0,
-        bottom: 5,
+        bottom: 0,
+        justifyContent:'center',
+        alignItems: 'center'
+    },
+    wrap:{
+        width: 300,
+        height: 400,
+        margin: 0,
+        borderRadius: 8,
+        backgroundColor: '#E5E5E5',
+        elevation: 10,
+        position: 'absolute',
+        left: -150,
+        right: 0,
+        top: -420,
+        bottom: 0,
+        justifyContent:'center',
+        alignItems: 'center'
+    },
+    image3: {
+        width: 250,
+        height: 250,
+        marginTop: 70,
+        marginLeft: 25,
+        marginBottom: 10,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        justifyContent:'center',
+        alignItems: 'center'
+    },
+    text:{
+        fontSize: 18,
+        fontWeight: 'bold',
+        top: -150,
+    },
+    container:{
+        flex: 1,
+        backgroundColor: "white",
     },
 })
