@@ -1,0 +1,4 @@
+user: mirra
+password: Diaryapp0067
+database: Children's Diary App
+server: diaryapp.database.windows.net

@@ -1,15 +1,13 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import BackButton from '../components/BackButton'
+import Button from '../components/Button'
 import {
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
   FontAwesome,
 } from '@expo/vector-icons'
-import Background2 from '../components/Background2'
-import BackButton from '../components/BackButton'
-import { theme } from '../src/core/theme'
-import Button from '../components/Button'
 
 export default function NewEntry({ navigation }) {
   return (
@@ -23,7 +21,7 @@ export default function NewEntry({ navigation }) {
           <Button
             style={styles.button}
             mode="contained"
-            onPress={() => console.log('Pressed')}
+            onPress={() => navigation.navigate('TextEntry')}
           >
             <View>
               <MaterialCommunityIcons
@@ -81,6 +79,14 @@ export default function NewEntry({ navigation }) {
           />
           <Text style={styles.textsugg}> Smart Suggestions</Text>
         </View>
+        <View>
+          <Button style={styles.buttonlong}></Button>
+          <Button style={styles.buttonlong}></Button>
+          <Button style={styles.buttonlong}>
+            <Text>Random {'\u2728'}</Text>
+          </Button>
+          <Button style={{ marginStart: -15 }}>View more ideas</Button>
+        </View>
       </View>
     </View>
   )
@@ -119,6 +125,17 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginStart: 10,
     marginBottom: -5,
+    color: 'black',
+  },
+  buttonlong: {
+    backgroundColor: '#f2f2f2',
+    width: 343,
+    height: 55.31,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: -5,
+    marginStart: -30,
     color: 'black',
   },
   text: {
