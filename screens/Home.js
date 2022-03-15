@@ -30,7 +30,7 @@ const postData = [
     journalDate: '31 Mar 2021',
     journalTitle: 'My feelings',
     journalText: 'I feel excited and calm.',
-    journalTag: '',
+    journalTag: 'Sports',
   },
   {
     postId: 3,
@@ -85,7 +85,8 @@ export default function Home({ navigation }) {
           setClicked={setClicked}
         />
       </View>
-      <AddButton style={styles.bottom_left}
+      <AddButton
+        style={styles.bottom_left}
         mode="contained"
         onPress={() => navigation.navigate('NewEntry')}
       >

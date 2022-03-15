@@ -1,16 +1,16 @@
-import express from "express";
+import express from 'express'
 import {
   singleUser,
   updateUser,
   createUser,
   deleteUser,
-} from "../controllers/appUser.js";
+} from '../controllers/appUser.js'
 
-const router = express.Router();
+const router = express.Router()
 
-router.get("/:id", singleUser);
-router.patch("/:id", updateUser);
-router.post("/", createUser);
-router.delete("/:id", deleteUser);
+router.get('/:id', singleUser)
+router.patch('/:id', updateUser)
+router.post('/', createUser)
+router.delete('/:id', deleteUser)
 
-export default router;
+export default router

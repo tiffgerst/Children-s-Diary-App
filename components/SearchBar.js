@@ -1,96 +1,108 @@
 import React from 'react'
-import { StyleSheet, TextInput, View, Keyboard, Text, TouchableOpacity } from 'react-native'
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Keyboard,
+  Text,
+  TouchableOpacity,
+} from 'react-native'
 import { Feather, Entypo } from '@expo/vector-icons'
-import { theme } from '../src/core/theme'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
+import { theme } from '../src/core/theme'
 
-const SearchBar = ({clicked, searchPhrase, setSearchPhrase, setClicked}) => {
-    return (
-      <View style={styles.container}>
-        <View
-          style={
-            clicked
-              ? styles.searchBar__clicked
-              : styles.searchBar__unclicked
-          }
-        >
-          {/* search Icon */}
-          <Feather
-            name="search"
+function SearchBar({ clicked, searchPhrase, setSearchPhrase, setClicked }) {
+  return (
+    <View style={styles.container}>
+      <View
+        style={
+          clicked ? styles.searchBar__clicked : styles.searchBar__unclicked
+        }
+      >
+        {/* search Icon */}
+        <Feather
+          name="search"
+          size={20}
+          color="#5A6174"
+          style={{ marginLeft: 1 }}
+        />
+        {/* Input field */}
+        <TextInput
+          style={styles.input}
+          placeholder="Search"
+          value={searchPhrase}
+          onChangeText={setSearchPhrase}
+          onFocus={() => {
+            setClicked(true)
+          }}
+        />
+        {/* cross Icon, depending on whether the search bar is clicked or not */}
+        {clicked && (
+          <Entypo
+            name="cross"
             size={20}
             color="#5A6174"
-            style={{ marginLeft: 1 }}
-          />
-          {/* Input field */}
-          <TextInput
-            style={styles.input}
-            placeholder="Search"
-            value={searchPhrase}
-            onChangeText={setSearchPhrase}
-            onFocus={() => {
-              setClicked(true);
+            style={{ padding: 1 }}
+            onPress={() => {
+              setSearchPhrase('')
             }}
           />
-          {/* cross Icon, depending on whether the search bar is clicked or not */}
-          {clicked && (
-            <Entypo name="cross" size={20} color="#5A6174" style={{ padding: 1 }} onPress={() => {
-                setSearchPhrase("")
-            }}/>
-          )}
-        </View> 
-        <View>
-          {/* cancel button, depending on whether the search bar is clicked or not */}
-          {clicked && (
-            <TouchableOpacity onPress={() => {
-              Keyboard.dismiss();
-              setClicked(false);
-              }}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        )}
       </View>
-    );
-  };
-  export default SearchBar;
+      <View>
+        {/* cancel button, depending on whether the search bar is clicked or not */}
+        {clicked && (
+          <TouchableOpacity
+            onPress={() => {
+              Keyboard.dismiss()
+              setClicked(false)
+            }}
+          >
+            <Text style={styles.cancelText}>Cancel</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  )
+}
+export default SearchBar
 
-
-  const styles = StyleSheet.create({
-    container: {
-      margin: 15,
-      justifyContent: "flex-start",
-      alignItems: "center",
-      flexDirection: 'row',
-      width: "120%",
-      top: 60 + getStatusBarHeight(),
-    },
-    searchBar__unclicked: {
-      padding: 10,
-      flexDirection: "row",
-      width: "95%",
-      backgroundColor: "#d9dbda",
-      borderRadius: 15,
-      alignItems: "center",
-    },
-    searchBar__clicked: {
-      padding: 10,
-      flexDirection: "row",
-      width: "80%",
-      backgroundColor: "#d9dbda",
-      borderRadius: 15,
-      alignItems: "center",
-      justifyContent: "space-evenly",
-    },
-    input: {
-      fontSize: 16,
-      color: theme.colors.secondary,
-      marginLeft: 10,
-      width: "90%",
-      height: 24,
-    },
-    cancelText: {
-      fontSize: 15,
-      color: theme.colors.secondary,
-      marginLeft: 6,
-    },     
-  });
+const styles = StyleSheet.create({
+  container: {
+    margin: 15,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width: '110%',
+    top: 60 + getStatusBarHeight(),
+  },
+  searchBar__unclicked: {
+    padding: 10,
+    flexDirection: 'row',
+    width: '100%',
+    backgroundColor: '#d9dbda',
+    borderRadius: 15,
+    alignItems: 'center',
+  },
+  searchBar__clicked: {
+    padding: 10,
+    flexDirection: 'row',
+    width: '80%',
+    backgroundColor: '#d9dbda',
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  input: {
+    fontSize: 16,
+    color: theme.colors.secondary,
+    marginLeft: 10,
+    width: '90%',
+    height: 24,
+  },
+  cancelText: {
+    fontSize: 15,
+    color: theme.colors.secondary,
+    marginLeft: 6,
+  },
+})
