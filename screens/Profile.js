@@ -86,6 +86,14 @@ const styles = StyleSheet.create({
         width: '80%',
         overflow: 'visible',
         marginBottom: 10,
+        shadowColor: '#4048BF',
+        shadowOffset:{
+            width:5.4,
+            height:5.4
+        },
+        shadowOpacity: 0.74,
+        shadowRadius: 20,
+        elevation: 10,
     },
     image2: {
         marginTop: 10,

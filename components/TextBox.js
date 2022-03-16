@@ -22,9 +22,7 @@ export default function TextInput({ errorText, description, ...props }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: '102%',
- 
-    marginVertical: 10,
+    width: '100%',
   },
   input: {
     backgroundColor: '#F2F2F2',
@@ -32,7 +30,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 13,
     color: theme.colors.secondary,
-    paddingTop: 8,
+    paddingTop: 6,
   },
   box:{
       color: '#767680',
