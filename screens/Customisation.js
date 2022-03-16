@@ -69,30 +69,16 @@ export default function Customisation({ navigation }) {
       <Background3 style={styles.background}>
         <BackButton goBack={navigation.goBack} />
         
-        <View>
-          <Text style={styles.title}>Customisation</Text>
-        </View>
+        <Text style={styles.title}>Customisation</Text>
         <Text style={styles.text2}>Display Name</Text>
-        <TextBox label="Sam" />
+        <TextBox style={styles.textbox} label="Sam" />
         <Image source={require('../assets/line.png')} style={styles.line} />
-        <Text style={styles.text2}>Avatar</Text>
+        <Text style={styles.text4}>Avatar</Text>
         <Image source={require('../assets/squared_sam.png')} style={styles.image} />
-        <View>
-        <TouchableOpacity style={[styles.button, styles.position2]} onPress={()=>console.log('react')}>
-            <Text style={styles.text3}>
-                Change
-            </Text>
-        </TouchableOpacity>
-        </View>
 
-        <Image source={require('../assets/line.png')} style={styles.line} />
-
-        <Text style={styles.text2}>Mood Icons</Text>
-        <Image source={require('../assets/moods.png')} style={styles.image2} />
-    
         <View>
         <View>
-        <TouchableOpacity style={[styles.button, styles.position1]} onPress={modalTrigger}>
+        <TouchableOpacity style={[styles.button, styles.position2]} onPress={modalTrigger}>
             <Text style={styles.text3}>
                 Change
             </Text>
@@ -102,25 +88,21 @@ export default function Customisation({ navigation }) {
         <Animated.View style={[styles.background2, background]}>
         <Animated.View style={[open]}>
 
+        <Image source={require('../assets/grey1.png')} style={styles.grey1} />
         <View style={[styles.wrap, styles.center]}>
-            <Text style={styles.text}>Customise Your Emojis</Text>
-            <Image source={require('../assets/9emoji.png')} style={styles.image3} />
-            <View style={{flexDirection:'row'}}>
-                <TouchableOpacity style={[styles.button2, styles.position3]} onPress={close}>
-                    <Text style={styles.text3}>
-                        Cancel
-                    </Text>
+            <Text style={styles.text5}>Choose Your Avatar</Text>
+        </View>
+        <View style={[styles.wrap2, styles.center]}>
+            <Text style={styles.text6}>Custom Avatars</Text>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatar_sam.png')} style={styles.avatar_sam} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.button2, styles.position3]} onPress={save}>
-                    <Text style={styles.text3}>
-                        Save
-                    </Text>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatar_add.png')} style={styles.avatar_add} />
                 </TouchableOpacity>
-            </View>
         </View>
         </Animated.View> 
         </Animated.View> 
-
 
         </View>
       </Background3>
@@ -139,36 +121,124 @@ const styles = StyleSheet.create({
       justifyContent: 'flex-start',
     },
     title: {
+        position: 'absolute',
         fontSize: 30,
         fontWeight: 'bold',
         color: '#5A6174',
-        marginBottom: -50,
-        marginTop: -120,
-        alignSelf: 'center',
-        paddingBottom: 10,
+        left: 75,
+        right: 0,
+        top: 50,
+        bottom: 0,
+        justifyContent:'center',
+        alignItems: 'center',
     },
     text2: {
+        position: 'absolute',
+        color: '#5A6174',
+        fontSize: 20,
+        fontWeight: 'bold',
+        alignSelf: 'flex-start',
+        left: 20,
+        right: 0,
+        top: 130,
+        bottom: 0,
+    }, 
+    textbox:{
+        left: 0,
+        right: 0,
+        top: -240,
+        bottom: 0,
+        height: 40,
+    },
+    line:{
+        width: 350,
+        left: 0,
+        right: 0,
+        top: -210,
+        bottom: 0,
+    },
+    text4: {
+        position: 'absolute',
+        color: '#5A6174',
+        fontSize: 20,
+        fontWeight: 'bold',
+        alignSelf: 'flex-start',
+        left: 20,
+        right: 0,
+        top: 270,
+        bottom: 0,
+    }, 
+    image: {
+        position: 'absolute',
+        width: 150,
+        height: 120,
+        left: 20,
+        top: 310,
+    },
+    grey1:{
+        position: 'absolute',
+        width: 343,
+        height: 500,
+        left: -172,
+        right: 0,
+        top: -128,
+        bottom: 0,
+        flex: 1, 
+        zIndex: -100,
+    },
+    text5: {
+        position: 'absolute',
         color: '#5A6174',
         fontSize: 18,
         fontWeight: 'bold',
         alignSelf: 'flex-start',
-        marginTop:10,
-        marginBottom: 5,
+        left: 5,
+        right: 0,
+        top: -30,
+        bottom: 0,
+        zIndex: 100,
+        flex:1,
     }, 
-    line:{
-        marginVertical:20,
+    text6: {
+        position: 'absolute',
+        color: '#5A6174',
+        fontSize: 18,
+        fontWeight: 'bold',
+        alignSelf: 'flex-start',
+        left: 5,
+        right: 0,
+        top: -30,
+        bottom: 0,
+        zIndex: 100,
+        flex:1,
     },
-    image: {
-        width: 150,
-        height: 120,
-        marginTop: 10,
-        left: -80,
-        marginBottom: 10,
+    avatar_sam:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 20,
+        right: 0,
+        top: -135,
+        bottom: 0,
+    }, 
+    avatar_add:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 85,
+        right: 0,
+        top: -135,
+        bottom: 0,
+    }, 
+    close_button:{
+        position: 'absolute',
+        top: getStatusBarHeight()+105,
+        left: 0,
+        zIndex: 200,
     },
     image2: {
-        marginTop: 10,
+        position: 'absolute',
         left: -60,
-        marginBottom: 10,
     },
     button: {
         backgroundColor: '#55B7DE',
@@ -176,7 +246,6 @@ const styles = StyleSheet.create({
         width: 80,
         height: 35,
         right:-100,
-        marginTop: 0,
         borderRadius: 50,
     },
     button2: {
@@ -184,7 +253,6 @@ const styles = StyleSheet.create({
         width: 120,
         height: 52,
         right:-100,
-        marginTop: 0,
         borderRadius: 50,
     },
     center:{
@@ -203,18 +271,19 @@ const styles = StyleSheet.create({
         top: -47,
         bottom: 0,
         justifyContent:'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     position2:{
         position: 'absolute',
-        left: 57,
+        left: 82,
         right: 0,
-        top: -130,
+        top: -145,
         bottom: 0,
         justifyContent:'center',
         alignItems: 'center'
     },
     position3:{
+        position: 'absolute',
         left: 0,
         right: 0,
         top: 150,
@@ -233,15 +302,30 @@ const styles = StyleSheet.create({
     },
     wrap:{
         width: 300,
-        height: 400,
+        height: 275,
         margin: 0,
-        borderRadius: 8,
-        backgroundColor: '#E5E5E5',
+        borderRadius: 20,
+        backgroundColor: '#f5f5f5',
         elevation: 10,
         position: 'absolute',
         left: -150,
         right: 0,
-        top: -420,
+        top: -50,
+        bottom: 0,
+        justifyContent:'center',
+        alignItems: 'center'
+    },
+    wrap2:{
+        width: 300,
+        height: 80,
+        margin: 0,
+        borderRadius: 20,
+        backgroundColor: '#f5f5f5',
+        elevation: 10,
+        position: 'absolute',
+        left: -150,
+        right: 0,
+        top: 270,
         bottom: 0,
         justifyContent:'center',
         alignItems: 'center'
@@ -249,13 +333,10 @@ const styles = StyleSheet.create({
     image3: {
         width: 250,
         height: 250,
-        marginTop: 70,
-        marginLeft: 25,
-        marginBottom: 10,
         position: 'absolute',
         left: 0,
         right: 0,
-        top: 0,
+        top: 100,
         bottom: 0,
         justifyContent:'center',
         alignItems: 'center'
