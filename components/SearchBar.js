@@ -73,13 +73,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     flexDirection: 'row',
-    width: '110%',
+    width: '120%',
     top: 60 + getStatusBarHeight(),
   },
   searchBar__unclicked: {
     padding: 10,
     flexDirection: 'row',
-    width: '100%',
+
+    width: '95%',
     backgroundColor: '#d9dbda',
     borderRadius: 15,
     alignItems: 'center',
