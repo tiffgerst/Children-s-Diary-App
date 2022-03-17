@@ -1,30 +1,89 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import BackButton from '../components/BackButton'
 import Button from '../components/Button'
+import { getStatusBarHeight } from 'react-native-status-bar-height'
 import {
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
   FontAwesome,
 } from '@expo/vector-icons'
+import { TextInput } from 'react-native-paper'
 
 export default function TextEntry({ navigation }) {
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row' }}>
-        <BackButton goBack={navigation.goBack} />
-        <Button
+      <View style={styles.row}>
+        <BackButton
+          goBack={navigation.goBack}
+          style={{ position: 'relative' }}
+        />
+        <TouchableOpacity
           style={styles.button}
-          mode="text"
-          onpress={() => console.log('pressed')}
+          onPress={() => console.log('pressed')}
         >
-          <MaterialCommunityIcons
-            name="text-subject"
-            size={40}
-            color="#5A6174"
-          />
-        </Button>
+          <Text>
+            <MaterialCommunityIcons
+              name="plus-circle"
+              size={29}
+              color="#5A6174"
+            />
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => console.log('pressed')}
+        >
+          <Text>
+            <MaterialCommunityIcons name="palette" size={29} color="#5A6174" />
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => console.log('pressed')}
+        >
+          <Text>
+            <FontAwesome name="tag" size={29} color="#5A6174" />
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => console.log('pressed')}
+        >
+          <Text>
+            <FontAwesome name="unlock-alt" size={29} color="#5A6174" />
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.post}
+          onPress={() => console.log('pressed')}
+        >
+          <Text
+            style={{
+              color: 'white',
+              fontSize: 16,
+              justifyContent: 'center',
+              alignSelf: 'center',
+              padding: 8,
+              fontWeight: 'bold',
+            }}
+          >
+            Post
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.title}>
+        <TextInput
+          placeholder="Title"
+          style={{
+            fontSize: 22,
+            paddingLeft: 20,
+            marginTop: -30,
+            fontWeight: 'bold',
+            backgroundColor: 'white',
+          }}
+        ></TextInput>
       </View>
     </View>
   )
@@ -35,12 +94,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    paddingTop: 100,
   },
   button: {
     backgroundColor: '#fff',
     width: 46,
     height: 46,
     color: '#5A6174',
+    marginVertical: 0,
+    paddingVertical: 0,
+    marginLeft: 15,
   },
+  row: {
+    flex: 0.2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingLeft: 80,
+  },
+  post: {
+    height: 36,
+    width: 82,
+    backgroundColor: '#55B7DE',
+    position: 'absolute',
+    top: getStatusBarHeight() + 20,
+    borderRadius: 6,
+    right: 20,
+  },
+  title: {},
 })

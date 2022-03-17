@@ -16,8 +16,8 @@ export default function BackButton({ goBack }) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 10 + getStatusBarHeight(),
-    left: 2,
+    top: 25 + getStatusBarHeight(),
+    left: 25,
     zIndex: 2,
   },
   image: {
