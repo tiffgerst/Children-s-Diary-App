@@ -1,5 +1,7 @@
 import mssql from 'mssql'
-import config from '../dbConfig.js'
+import config from '../config/dbConfig.js'
+import { compareSync, hashSync } from 'bcrypt'
+import Jwt from 'jsonwebtoken'
 
 const { connect, query } = mssql
 
@@ -12,7 +14,7 @@ export const singleUser = async (req, res) => {
     const result = await query`SELECT * FROM appUser WHERE UserID = ${id}`
     res.json(result.recordset).status(200)
   } catch (err) {
-    res.status(409).json({ message: err.message })
+    res.status(409).send({ message: err.message })
   }
 }
 
@@ -27,21 +29,37 @@ export const updateUser = async (req, res) => {
       await query`UPDATE appUser SET avatarID = ${avatar} WHERE UserID = ${id}`
     res.send(`User:${id} has changed their avatar to  ${avatar}.`).status(200)
   } catch (err) {
-    res.status(409).json({ message: err.message })
+    res.status(409).send({ message: err.message })
   }
 }
 
 // Adds user to database
-export const createUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   const user = req.body
-  const pass = user.passwordHash
+  const username = user.username
+  const passwordHash = hashSync(user.passwordHash, 10)
 
   try {
     await connect(config)
-    await query`INSERT INTO appUser(passwordHash) VALUES (${pass})`
-    res.send(`POST REACHED. User was added to the database.`).status(200)
+    const result =
+      await query`Select * from appUser WHERE username = ${username}`
+    if (result.recordset.length == 0) {
+      await query`INSERT INTO appUser(username,passwordHash) VALUES (${username},${passwordHash})`
+      res.status(200).send({
+        success: true,
+        message: 'user successfully added',
+        username: username,
+      })
+    } else {
+      res.status(409).send({
+        success: false,
+        message: 'Username is already taken',
+      })
+    }
   } catch (err) {
-    res.status(409).json({ message: err.message })
+    res.status(409).send({
+      message: err.message,
+    })
   }
 }
 
@@ -54,6 +72,74 @@ export const deleteUser = async (req, res) => {
     const result = await query`DELETE FROM appUser WHERE UserID = ${id}`
     res.send(`Deleted user: ${id} from the database.`).status(200)
   } catch (err) {
-    res.status(409).json({ message: err.message })
+    res.status(409).send({ message: err.message })
+  }
+}
+
+export const loginUser = async (req, res) => {
+  const user = req.body
+  const username = user.username
+  const passwordHash = user.passwordHash
+
+  try {
+    await connect(config)
+    const hash =
+      await query`SELECT passwordHash, userID FROM appUser WHERE username = ${username}`
+    const pass = hash.recordset[0].passwordHash
+    const userID = hash.recordset[0].userID
+    if (compareSync(passwordHash, pass)) {
+      const payload = {
+        username: user.username,
+      }
+
+      const token = Jwt.sign(payload, 'XYZ', { expiresIn: '1d' })
+
+      res.status(200).send({
+        loginSuccess: true,
+        message: 'logged in',
+        user: {
+          username: username,
+          userID: userID,
+        },
+        token: 'Bearer ' + token,
+      })
+    } else {
+      res.status(401).send({
+        loginSuccess: false,
+        message: 'login in failed',
+      })
+    }
+  } catch (err) {
+    res.status(404).send({
+      message: err.message,
+    })
+  }
+}
+
+export const changePassword = async (req, res) => {
+  const user = req.body
+  const username = user.username
+  const passwordHash = user.passwordHash
+  const newpassword = hashSync(user.newpassword, 10)
+  try {
+    await connect(config)
+    const hash =
+      await query`SELECT passwordHash FROM appUser WHERE username = ${username}`
+    const pass = hash.recordset[0].passwordHash
+    if (compareSync(passwordHash, pass)) {
+      await query`UPDATE appUser SET passwordHash = ${newpassword} WHERE username = ${username}`
+    } else {
+      res.status(401).send({
+        loginSuccess: false,
+        message: 'Wrong password. Password change failed.',
+        user: {
+          username: username,
+        },
+      })
+    }
+  } catch (err) {
+    res.status(404).send({
+      message: err.message,
+    })
   }
 }
