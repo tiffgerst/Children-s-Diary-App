@@ -1,12 +1,14 @@
 import express from 'express'
 import usersRoutes from './routes/appUser.js'
 import cors from 'cors'
+import passport from 'passport'
 
 const app = express()
 app.use(express.json())
 app.use(cors())
+app.use(passport.initialize())
 
-//every route inside the post route is accessed with /researcher
+//every route inside the post route is accessed with /appUser
 app.use('/appUser', usersRoutes)
 
 app.get('/', (req, res) => {

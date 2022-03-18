@@ -90,6 +90,7 @@ export const loginUser = async (req, res) => {
     if (compareSync(passwordHash, pass)) {
       const payload = {
         username: user.username,
+        userID: userID,
       }
 
       const token = Jwt.sign(payload, 'XYZ', { expiresIn: '1d' })
@@ -97,10 +98,6 @@ export const loginUser = async (req, res) => {
       res.status(200).send({
         loginSuccess: true,
         message: 'logged in',
-        user: {
-          username: username,
-          userID: userID,
-        },
         token: 'Bearer ' + token,
       })
     } else {
