@@ -91,6 +91,54 @@ export default function Customisation({ navigation }) {
         <Image source={require('../assets/grey1.png')} style={styles.grey1} />
         <View style={[styles.wrap, styles.center]}>
             <Text style={styles.text5}>Choose Your Avatar</Text>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-01.jpg')} style={styles.avatar_01} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-02.jpg')} style={styles.avatar_02} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-03.jpg')} style={styles.avatar_03} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-04.jpg')} style={styles.avatar_04} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-05.jpg')} style={styles.avatar_05} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-06.jpg')} style={styles.avatar_06} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-07.jpg')} style={styles.avatar_07} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-08.jpg')} style={styles.avatar_08} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-09.jpg')} style={styles.avatar_09} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-10.jpg')} style={styles.avatar_10} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-11.jpg')} style={styles.avatar_11} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-12.jpg')} style={styles.avatar_12} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-13.jpg')} style={styles.avatar_13} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-14.jpg')} style={styles.avatar_14} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-15.jpg')} style={styles.avatar_15} />
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                    <Image source={require('../assets/avatars/avatars-16.jpg')} style={styles.avatar_16} />
+                </TouchableOpacity>
         </View>
         <View style={[styles.wrap2, styles.center]}>
             <Text style={styles.text6}>Custom Avatars</Text>
@@ -105,6 +153,21 @@ export default function Customisation({ navigation }) {
         </Animated.View> 
 
         </View>
+
+        <Image source={require('../assets/line.png')} style={styles.line2} />
+        <Text style={styles.text7}>Mood Icons</Text>
+        <Image source={require('../assets/moods.png')} style={styles.image3} />
+
+        {/* <View>
+        <View>
+        <TouchableOpacity style={[styles.button, styles.position4]} onPress={modalTrigger}>
+            <Text style={styles.text3}>
+                Change
+            </Text>
+        </TouchableOpacity>
+        </View>
+        </View> */}
+
       </Background3>
     )
 }
@@ -157,6 +220,14 @@ const styles = StyleSheet.create({
         top: -210,
         bottom: 0,
     },
+    line2:{
+        width: 350,
+        left: 0,
+        right: 0,
+        top: 10,
+        bottom: 0,
+        zIndex: -10, 
+    },
     text4: {
         position: 'absolute',
         color: '#5A6174',
@@ -184,7 +255,7 @@ const styles = StyleSheet.create({
         top: -128,
         bottom: 0,
         flex: 1, 
-        zIndex: -100,
+        zIndex: 0,
     },
     text5: {
         position: 'absolute',
@@ -212,6 +283,178 @@ const styles = StyleSheet.create({
         zIndex: 100,
         flex:1,
     },
+    text7: {
+        position: 'absolute',
+        color: '#5A6174',
+        fontSize: 20,
+        fontWeight: 'bold',
+        alignSelf: 'flex-start',
+        left: 20,
+        right: 0,
+        top: 490,
+        bottom: 0,
+        zIndex: -10,
+    }, 
+    avatar_01:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 20,
+        right: 0,
+        top: -135,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_02:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 90,
+        right: 0,
+        top: -135,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_03:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 160,
+        right: 0,
+        top: -135,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_04:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 230,
+        right: 0,
+        top: -135,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_05:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 20,
+        right: 0,
+        top: -70,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_06:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 90,
+        right: 0,
+        top: -70,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_07:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 160,
+        right: 0,
+        top: -70,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_08:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 230,
+        right: 0,
+        top: -70,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_09:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 20,
+        right: 0,
+        top: -5,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_10:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 90,
+        right: 0,
+        top: -5,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_11:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 160,
+        right: 0,
+        top: -5,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_12:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 230,
+        right: 0,
+        top: -5,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_13:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 20,
+        right: 0,
+        top: 60,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_14:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 90,
+        right: 0,
+        top: 60,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_15:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 160,
+        right: 0,
+        top: 60,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
+    avatar_16:{
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        left: 230,
+        right: 0,
+        top: 60,
+        bottom: 0,
+        borderRadius: 50,
+    }, 
     avatar_sam:{
         position: 'absolute',
         width: 50,
@@ -225,7 +468,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: 50,
         height: 50,
-        left: 85,
+        left: 90,
         right: 0,
         top: -135,
         bottom: 0,
@@ -263,6 +506,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 14,
         fontWeight: 'bold',
+        zIndex: -100,
     }, 
     position1:{
         position: 'absolute',
@@ -290,6 +534,16 @@ const styles = StyleSheet.create({
         bottom: 0,
         justifyContent:'center',
         alignItems: 'center'
+    },
+    position4:{
+        position: 'absolute',
+        left: 82,
+        right: 0,
+        top: 75,
+        bottom: 0,
+        justifyContent:'center',
+        alignItems: 'center',
+        zIndex: -100,
     },
     background2:{
         position: 'absolute',
@@ -331,15 +585,14 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     image3: {
-        width: 250,
-        height: 250,
         position: 'absolute',
-        left: 0,
+        left: 20,
         right: 0,
-        top: 100,
+        top: 530,
         bottom: 0,
         justifyContent:'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        zIndex: -10,
     },
     text:{
         fontSize: 18,
