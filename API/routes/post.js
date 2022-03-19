@@ -1,10 +1,10 @@
 import express from 'express'
 import {
-  searchPost,
+  searchPostByUserID,
 } from '../controllers/post.js'
 
 const router = express.Router()
 
-router.get('/:post_id', searchPost)
+router.get('/:id', searchPostByUserID)
 
 export default router

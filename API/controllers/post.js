@@ -4,13 +4,13 @@ import config from '../config/dbConfig.js'
 
 const { connect, query } = mssql
 
-// Finds a post by its post ID from the databse
-export const searchPost = async (req, res) => {
-  const post_id = req.params.post_id
+// Finds posts by certain user ID from the databse
+export const searchPostByUserID = async (req, res) => {
+  const id = req.params.id
 
   try {
     await connect(config)
-    const result = await query`SELECT * FROM post WHERE postID = ${post_id}`
+    const result = await query`SELECT * FROM post WHERE userID = ${id}`
     res.json(result.recordset).status(200)
   } catch (err) {
     res.status(409).send({ message: err.message })
