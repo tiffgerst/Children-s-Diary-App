@@ -9,25 +9,26 @@ import {
 } from 'react-native'
 import { theme } from '../src/core/theme'
 import TagButton from './TagButton'
+import moment from 'moment'
 
 function Item({
-  journalDate,
-  journalTitle,
-  journalText,
-  journalImage,
-  journalTag,
+  createDateTime,
+  titleText,
+  contentText,
+  // journalImage,
+  // journalTag,
 }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.date}>{journalDate}</Text>
-      <Text style={styles.title}>{journalTitle}</Text>
-      <Image style={styles.image} source={journalImage} />
+      <Text style={styles.date}>{createDateTime}</Text>
+      <Text style={styles.title}>{titleText}</Text>
+      {/* <Image style={styles.image} source={journalImage} /> */}
       <Text style={styles.text} numberOfLines={1}>
-        {journalText}
+        {contentText}
       </Text>
-      <TagButton style={styles.tag} mode="contained">
+      {/* <TagButton style={styles.tag} mode="contained">
         {journalTag}
-      </TagButton>
+      </TagButton> */}
       <Text style={{ paddingBottom: 10 }} />
     </View>
   )
@@ -41,86 +42,86 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
       return (
         <View>
           <Item
-            journalDate={item.journalDate}
-            journalTitle={item.journalTitle}
-            journalText={item.journalText}
-            journalImage={item.journalImage}
-            journalTag={item.journalTag}
+            createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
+            titleText={item.titleText}
+            contentText={item.contentText}
+            // journalImage={item.journalImage}
+            // journalTag={item.journalTag}
           />
         </View>
       )
     }
     // filter of the date
     if (
-      item.journalDate
+      moment(item.createDateTime).format('DD MMM YYYY')
         .toUpperCase()
         .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
     ) {
       return (
         <View>
           <Item
-            journalDate={item.journalDate}
-            journalTitle={item.journalTitle}
-            journalText={item.journalText}
-            journalImage={item.journalImage}
-            journalTag={item.journalTag}
+            createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
+            titleText={item.titleText}
+            contentText={item.contentText}
+            // journalImage={item.journalImage}
+            // journalTag={item.journalTag}
           />
         </View>
       )
     }
     // filter of the title
     if (
-      item.journalTitle
+      item.titleText
         .toUpperCase()
         .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
     ) {
       return (
         <View>
           <Item
-            journalDate={item.journalDate}
-            journalTitle={item.journalTitle}
-            journalText={item.journalText}
-            journalImage={item.journalImage}
-            journalTag={item.journalTag}
+            createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
+            titleText={item.titleText}
+            contentText={item.contentText}
+            // journalImage={item.journalImage}
+            // journalTag={item.journalTag}
           />
         </View>
       )
     }
     // filter of the content
     if (
-      item.journalText
+      item.contentText
         .toUpperCase()
         .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
     ) {
       return (
         <View>
           <Item
-            journalDate={item.journalDate}
-            journalTitle={item.journalTitle}
-            journalText={item.journalText}
-            journalImage={item.journalImage}
-            journalTag={item.journalTag}
+            createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
+            titleText={item.titleText}
+            contentText={item.contentText}
+            // journalImage={item.journalImage}
+            // journalTag={item.journalTag}
           />
         </View>
       )
     }
-    // filter of the tag
-    if (
-      item.journalTag
-        .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
-    ) {
-      return (
-        <View>
-          <Item
-            journalDate={item.journalDate}
-            journalTitle={item.journalTitle}
-            journalText={item.journalText}
-            journalTag={item.journalTag}
-          />
-        </View>
-      )
-    }
+    // // filter of the tag
+    // if (
+    //   item.journalTag
+    //     .toUpperCase()
+    //     .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
+    // ) {
+    //   return (
+    //     <View>
+    //       <Item
+    //         createDateTime={item.createDateTime}
+    //         titleText={item.titleText}
+    //         contentText={item.contentText}
+    //         journalTag={item.journalTag}
+    //       />
+    //     </View>
+    //   )
+    // }
   }
 
   return (
@@ -134,7 +135,7 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
           contentContainerStyle={styles.grid}
           data={data}
           renderItem={renderItem}
-          keyExtractor={(item) => item.postId}
+          keyExtractor={(item) => item.postID}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
         />

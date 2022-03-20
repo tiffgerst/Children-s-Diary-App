@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   StyleSheet,
   Image,
@@ -17,42 +17,54 @@ import SearchBarList from '../components/SearchBarList'
 import JournalFeed from '../components/JournalFeed'
 import AddButton from '../components/AddButton'
 
-const postData = [
-  {
-    postId: 1,
-    journalDate: '30 Aug 2021',
-    journalTitle: '3 Good things for today',
-    journalText: 'It could be anything from hanging out with friends...',
-    journalTag: 'Sports',
-  },
-  {
-    postId: 2,
-    journalDate: '31 Mar 2021',
-    journalTitle: 'My feelings',
-    journalText: 'I feel excited and calm.',
-    journalTag: 'Sports',
-  },
-  {
-    postId: 3,
-    journalDate: '26 Mar 2021',
-    journalTitle: 'Vacation',
-    journalText: 'Summer is the warmest of the four seasons. Spring',
-    journalTag: 'Friends',
-  },
-  {
-    postId: 4,
-    journalDate: '20 Mar 2021',
-    journalTitle: 'My lovely dogge',
-    journalText: 'Had this dog around growing up',
-    journalImage: require('../assets/journal_image_example.png'),
-    journalTag: 'Family',
-  },
-]
+// const postData = [
+//   {
+//     postID: 1,
+//     createDateTime: '30 Aug 2021',
+//     titleText: '3 Good things for today',
+//     contentText: 'It could be anything from hanging out with friends...',
+//     journalTag: 'Sports',
+//   },
+//   {
+//     postID: 2,
+//     journalDate: '31 Mar 2021',
+//     journalTitle: 'My feelings',
+//     journalText: 'I feel excited and calm.',
+//     journalTag: 'Sports',
+//   },
+//   {
+//     postID: 3,
+//     journalDate: '26 Mar 2021',
+//     journalTitle: 'Vacation',
+//     journalText: 'Summer is the warmest of the four seasons. Spring',
+//     journalTag: 'Friends',
+//   },
+//   {
+//     postID: 4,
+//     journalDate: '20 Mar 2021',
+//     journalTitle: 'My lovely dogge',
+//     journalText: 'Had this dog around growing up',
+//     journalImage: require('../assets/journal_image_example.png'),
+//     journalTag: 'Family',
+//   },
+// ]
 
 export default function Home({ navigation }) {
   const [searchPhrase, setSearchPhrase] = useState('')
   const [clicked, setClicked] = useState(false)
-  const [fakeData, setFakeData] = useState()
+  const [postData, setPostData] = useState()
+  
+  // get post data from api
+  useEffect(() => {
+    const getData = async () => {
+      const apiResponse = await fetch(
+        "http://172.21.9.18:3000/post/1"
+      );
+      const data = await apiResponse.json();
+      setPostData(data);
+    };
+    getData();
+  }, []);
 
   return (
     <Background3 style={styles.background}>
