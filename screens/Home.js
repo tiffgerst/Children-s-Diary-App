@@ -10,8 +10,6 @@ import {
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { theme } from '../src/core/theme'
 import Background3 from '../components/Background3'
-import CalendarButton from '../components/CalendarButton'
-import ProfileButton from '../components/ProfileButton'
 import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import JournalFeed from '../components/JournalFeed'
@@ -23,29 +21,30 @@ import AddButton from '../components/AddButton'
 //     createDateTime: '30 Aug 2021',
 //     titleText: '3 Good things for today',
 //     contentText: 'It could be anything from hanging out with friends...',
-//     journalTag: 'Sports',
+//     // imageURL: '',
+//     // tagNameAll: 'Sports',
 //   },
 //   {
 //     postID: 2,
-//     journalDate: '31 Mar 2021',
-//     journalTitle: 'My feelings',
-//     journalText: 'I feel excited and calm.',
-//     journalTag: 'Sports',
+//     createDateTime: '31 Mar 2021',
+//     titleText: 'My feelings',
+//     contentText: 'I feel excited and calm.',
+//     // journalTag: 'Sports',
 //   },
 //   {
 //     postID: 3,
-//     journalDate: '26 Mar 2021',
-//     journalTitle: 'Vacation',
-//     journalText: 'Summer is the warmest of the four seasons. Spring',
-//     journalTag: 'Friends',
+//     createDateTime: '26 Mar 2021',
+//     titleText: 'Vacation',
+//     contentText: 'Summer is the warmest of the four seasons. Spring',
+//     // journalTag: 'Friends',
 //   },
 //   {
 //     postID: 4,
-//     journalDate: '20 Mar 2021',
-//     journalTitle: 'My lovely dogge',
-//     journalText: 'Had this dog around growing up',
-//     journalImage: require('../assets/journal_image_example.png'),
-//     journalTag: 'Family',
+//     createDateTime: '20 Mar 2021',
+//     titleText: 'My lovely dogge',
+//     contentText: 'Had this dog around growing up',
+//     imageURL: 'https://csb100320016de6b123.blob.core.windows.net/post-image/doggie.png?sp=r&st=2022-03-20T03:11:07Z&se=2022-04-30T10:11:07Z&spr=https&sv=2020-08-04&sr=b&sig=2ngZyIk6E2ttC51zpIs8qDtYr3bj5J9uskoKOi1ZfE8%3D',
+//     // journalTag: 'Family',
 //   },
 // ]
 
@@ -57,8 +56,9 @@ export default function Home({ navigation }) {
   // get post data from api
   useEffect(() => {
     const getData = async () => {
+      const userID = '1'
       const apiResponse = await fetch(
-        "http://172.21.9.18:3000/post/1"
+        "http://172.21.9.18:3000/post/all/" + userID
       );
       const data = await apiResponse.json();
       setPostData(data);
@@ -113,7 +113,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '90%',
     height: '90%',
-    // backgroundColor: theme.colors.tint,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -134,21 +133,6 @@ const styles = StyleSheet.create({
     top: 10 + getStatusBarHeight(),
     right: 4,
   },
-  // search: {
-  //   flex: 1,
-  //   position: 'relative',
-  //   // top: 30 + getStatusBarHeight(),
-  //   lineHeight: 1 ,
-  //   right: 4,
-  // },
-  // SearchContainer: {
-  //   flex: 1,
-  //   position: 'relative',
-  //   top: 60 + getStatusBarHeight(),
-  //   right: 4,
-  //   width:'100%',
-  //   height: '10%',
-  // },
   scroll: {
     top: 62 + getStatusBarHeight(),
     minWidth: '125%',

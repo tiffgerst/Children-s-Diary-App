@@ -6,31 +6,41 @@ import {
   View,
   FlatList,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native'
 import { theme } from '../src/core/theme'
-import TagButton from './TagButton'
+import TagButtonList from './TagButtonList'
 import moment from 'moment'
 
 function Item({
   createDateTime,
   titleText,
   contentText,
-  // journalImage,
-  // journalTag,
+  imageURL,
+  tagNameAll,
 }) {
+  if (tagNameAll[0]==='') {
+    tagNameAll = ''
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.date}>{createDateTime}</Text>
-      <Text style={styles.title}>{titleText}</Text>
-      {/* <Image style={styles.image} source={journalImage} /> */}
-      <Text style={styles.text} numberOfLines={1}>
-        {contentText}
-      </Text>
-      {/* <TagButton style={styles.tag} mode="contained">
-        {journalTag}
-      </TagButton> */}
-      <Text style={{ paddingBottom: 10 }} />
-    </View>
+    <TouchableOpacity>
+      <View style={styles.container}>
+        <Text style={styles.date}>{createDateTime}</Text>
+        <Text style={styles.title}>{titleText}</Text>
+        {imageURL?(<Image style={styles.image} source={{url:imageURL}}/>):(<View></View>)}
+        {contentText?(
+          <Text style={styles.text} numberOfLines={1}>
+            {contentText}
+          </Text>
+        ):(<View></View>)}
+        {tagNameAll?(
+          <TagButtonList
+            data={tagNameAll}
+          />
+        ):(<View></View>)}
+      </View>
+    </TouchableOpacity>
   )
 }
 
@@ -45,8 +55,8 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
             createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
             titleText={item.titleText}
             contentText={item.contentText}
-            // journalImage={item.journalImage}
-            // journalTag={item.journalTag}
+            imageURL={item.imageURL}
+            tagNameAll={item.tagNameAll.split(', ')}
           />
         </View>
       )
@@ -63,8 +73,8 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
             createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
             titleText={item.titleText}
             contentText={item.contentText}
-            // journalImage={item.journalImage}
-            // journalTag={item.journalTag}
+            imageURL={item.imageURL}
+            tagNameAll={item.tagNameAll.split(', ')}
           />
         </View>
       )
@@ -81,8 +91,8 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
             createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
             titleText={item.titleText}
             contentText={item.contentText}
-            // journalImage={item.journalImage}
-            // journalTag={item.journalTag}
+            imageURL={item.imageURL}
+            tagNameAll={item.tagNameAll.split(', ')}
           />
         </View>
       )
@@ -99,29 +109,30 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
             createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
             titleText={item.titleText}
             contentText={item.contentText}
-            // journalImage={item.journalImage}
-            // journalTag={item.journalTag}
+            imageURL={item.imageURL}
+            tagNameAll={item.tagNameAll.split(', ')}
           />
         </View>
       )
     }
-    // // filter of the tag
-    // if (
-    //   item.journalTag
-    //     .toUpperCase()
-    //     .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
-    // ) {
-    //   return (
-    //     <View>
-    //       <Item
-    //         createDateTime={item.createDateTime}
-    //         titleText={item.titleText}
-    //         contentText={item.contentText}
-    //         journalTag={item.journalTag}
-    //       />
-    //     </View>
-    //   )
-    // }
+    // filter of the tag
+    if (
+      item.tagNameAll
+        .toUpperCase()
+        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
+    ) {
+      return (
+        <View>
+          <Item
+            createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
+            titleText={item.titleText}
+            contentText={item.contentText}
+            imageURL={item.imageURL}
+            tagNameAll={item.tagNameAll.split(', ')}
+          />
+        </View>
+      )
+    }
   }
 
   return (
@@ -152,6 +163,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginHorizontal: 5,
     marginVertical: 8,
+    paddingBottom: 8,
     borderRadius: 12,
     backgroundColor: theme.colors.tint,
     borderWidth: 3,
@@ -161,8 +173,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
   },
   grid: {
-    width: '100%',
-    paddingBottom: 300,
+    // width: '100%',
+    paddingBottom: 250,
   },
   date: {
     fontSize: 13,
@@ -183,17 +195,15 @@ const styles = StyleSheet.create({
     color: '#5A6174',
     width: '95%',
     padding: 1,
+    paddingBottom: 10,
     top: 5,
-    left: 10,
+    left: 11,
   },
   image: {
     width: '95%',
+    height: 300,
     alignSelf: 'center',
     top: 2,
     borderRadius: 12,
-  },
-  tag: {
-    top: 15,
-    left: 10,
   },
 })
