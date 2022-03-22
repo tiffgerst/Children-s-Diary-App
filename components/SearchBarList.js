@@ -65,7 +65,7 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
     if (
       moment(item.createDateTime).format('DD MMM YYYY')
         .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
+        .includes(searchPhrase.toUpperCase().trim())
     ) {
       return (
         <View>
@@ -83,7 +83,7 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
     if (
       item.titleText
         .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
+        .includes(searchPhrase.toUpperCase().trim())
     ) {
       return (
         <View>
@@ -101,7 +101,7 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
     if (
       item.contentText
         .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
+        .includes(searchPhrase.toUpperCase().trim())
     ) {
       return (
         <View>
@@ -119,7 +119,7 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
     if (
       item.tagNameAll
         .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
+        .includes(searchPhrase.toUpperCase().trim())
     ) {
       return (
         <View>
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   grid: {
     // width: '100%',
-    paddingBottom: 250,
+    paddingBottom: 220,
   },
   date: {
     fontSize: 13,
