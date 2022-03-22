@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Provider } from 'react-native-paper'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -14,10 +14,33 @@ import {
   Customisation,
   Profile,
 } from './screens'
-
+import * as SecureStore from 'expo-secure-store'
 const Stack = createStackNavigator()
 
 export default function App() {
+  const isLoggedIn = async () => {
+    try {
+      const credentials = await SecureStore.getItemAsync('token')
+      if (credentials) {
+        axios
+          .get('http://192.168.0.75:3000/appUser/isLoggedIn', {
+            headers: {
+              Authorization: credentials,
+            },
+          })
+          .then(() => {
+            navigation.navigate('Home')
+          })
+          .catch((error) => {
+            navigation.navigate('StartScreen')
+          })
+      }
+    } catch (err) {
+      console.log(err)
+      console.log('hi')
+    }
+  }
+
   return (
     <Provider theme={theme}>
       <NavigationContainer>

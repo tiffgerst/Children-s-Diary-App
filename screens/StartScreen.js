@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import Button from '../components/Button'
@@ -7,10 +7,13 @@ import Background from '../components/Background'
 import { usernameValidator } from '../helpers/usernameValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { theme } from '../src/core/theme'
+import axios from 'axios'
+import * as SecureStore from 'expo-secure-store'
 
 export default function StartScreen({ navigation }) {
   const [username, setUsername] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
+  const [login, setLogin] = useState()
 
   const onLoginPressed = () => {
     const usernameError = usernameValidator(username.value)
@@ -18,6 +21,30 @@ export default function StartScreen({ navigation }) {
     if (usernameError || passwordError) {
       setUsername({ ...username, error: usernameError })
       setPassword({ ...password, error: passwordError })
+    } else {
+      axios
+        .post('http://192.168.0.75:3000/appUser/login', {
+          username: username.value,
+          passwordHash: password.value,
+        })
+        .then(async (response) => {
+          const accessToken = response.data.token
+          const userID = response.data.userID.toString()
+          await SecureStore.setItemAsync('token', accessToken)
+          await SecureStore.setItemAsync('userID', userID)
+          // const date = await SecureStore.getItemAsync('date')
+          // if (date) {
+          //   const now = new Date()
+          //   date.toString()
+          // }
+
+          // await SecureStore.setItemAsync('date', date)
+          navigation.navigate('HowAreYouFeelingScreen')
+        })
+        .catch((error) => {
+          setLogin(error.response.data.message)
+          console.log(error.response.data.message)
+        })
     }
   }
 
@@ -28,6 +55,7 @@ export default function StartScreen({ navigation }) {
         value={username.value}
         error={username.error}
         errorText={username.error}
+        autoCapitalize="none"
         onChangeText={(text) => setUsername({ value: text, error: '' })}
         label="Username"
       />
@@ -35,9 +63,11 @@ export default function StartScreen({ navigation }) {
         value={password.value}
         error={password.error}
         errorText={password.error}
+        autoCapitalize="none"
         onChangeText={(text) => setPassword({ value: text, error: '' })}
         label="Password"
         secureTextEntry
+        errorText={login}
       />
       <View style={styles.forgotPassword}>
         <TouchableOpacity
@@ -46,10 +76,7 @@ export default function StartScreen({ navigation }) {
           <Text style={styles.forgot}>Forgot your password?</Text>
         </TouchableOpacity>
       </View>
-      <Button
-        onPress={() => navigation.navigate('HowAreYouFeelingScreen')}
-        mode="contained"
-      >
+      <Button onPress={() => onLoginPressed()} mode="contained">
         Sign In
       </Button>
     </Background>
