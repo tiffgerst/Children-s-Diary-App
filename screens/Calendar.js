@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, FlatList } from 'react-native'
-import { Calendar, CalendarList, Agenda } from 'react-native-calendars'
+import { StyleSheet, View, Text } from 'react-native'
+import { Calendar } from 'react-native-calendars'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { theme } from '../src/core/theme'
 import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
-import JournalFeed from '../components/JournalFeed'
-import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import moment from 'moment'
 
 export default function CalendarScreen({ navigation }) {
-  const [searchPhrase, setSearchPhrase] = useState('')
-  const [clicked, setClicked] = useState(false)
-  const [postData, setPostData] = useState([])
   const [selectedDate, setSelectedDate] = useState('')
-  const [markDate, setMarkDate] = useState([])
-  const [markDates, setMarkDates] = useState([])
+  const [postData, setPostData] = useState([])
 
   // get post data from api
   useEffect(() => {
@@ -29,45 +23,24 @@ export default function CalendarScreen({ navigation }) {
       setPostData(data);
     };
     getData();
-    let data = postData.map(function(dateInfo){return moment(dateInfo.createDateTime).format('YYYY-MM-DD')})
-    setMarkDate(data);
-    // let markDateObject = {};
-    // markDate.forEach((date) => {
-    //   markDateObject[date] = {
-    //       selected: true,
-    //       marked: true,
-    //       selectedColor: '#8FD1CD'
-    //   };
-    // });
   }, []);
 
-  // function getMarkDate () {
-  //   useEffect(() => {
-  //     let data = postData.map(function(dateInfo){return moment(dateInfo.createDateTime).format('YYYY-MM-DD')})
-  //     setMarkDates(data);
-  //     let markDateObjects = {};
-  //     markDate.forEach((date) => {
-  //       markDateObjects[date] = {
-  //           selected: true,
-  //           marked: true,
-  //           selectedColor: '#8FD1CD'
-  //       };
-  //     return markDateObjects
-  //     });
-  //   }, []);
-  // }
-
-
+  let markDate = postData.map(function(dateInfo){return moment(dateInfo.createDateTime).format('YYYY-MM-DD')})
   let markDateObject = {};
-
   markDate.forEach((date) => {
     markDateObject[date] = {
         selected: true,
         marked: true,
-        selectedColor: '#8FD1CD'
+        selectedColor: '#8FD1CD',
+        customStyles: {
+          text: {
+            color: '#6B7285',
+            fontWeight: 'bold',
+          },
+        }
     };
   });
-
+  
   return (
     <Background3 style={styles.background}>
       <BackButton goBack={navigation.goBack} />
@@ -83,7 +56,7 @@ export default function CalendarScreen({ navigation }) {
           textSectionTitleDisabledColor: '#d9e1e8',
           selectedDayBackgroundColor: '#00adf5',
           selectedDayTextColor: '#ffffff',
-          todayTextColor: '#00adf5',
+          todayTextColor: '#0B9D94',
           dayTextColor: '#2d4150',
           textDisabledColor: '#d9e1e8',
           dotColor: '#00adf5',
@@ -103,19 +76,16 @@ export default function CalendarScreen({ navigation }) {
           console.log('selected day', day);
           setSelectedDate(day.dateString);
         }}
-        // markingType={'custom'}
+        markingType={'custom'}
         markedDates={markDateObject}
+        enableSwipeMonths={true}
       />
-           
-      {/* <Text>{JSON.stringify(markDate)}</Text> */}
-
-      <Text style={styles.entry}>Entries</Text>
+      {selectedDate?(<Text style={styles.entry}>Entries {moment(selectedDate).format('DD MMM YYYY')}</Text>):(<View></View>)}
       <View style={styles.scroll}>
         <SearchBarList
-          contentContainerStyle={{paddingBottom: 10}}
           searchPhrase={moment(selectedDate).format('DD MMM YYYY')}
           data={postData}
-          setClicked={setClicked}
+          setClicked={false}
         />
       </View>
     </Background3>
@@ -139,15 +109,15 @@ const styles = StyleSheet.create({
   calendar: {
     backgroundColor: theme.colors.tint,
     width: 360,
-    height: 430,
-    top: 40 + getStatusBarHeight(),
+    height: 410,
+    top: 20 + getStatusBarHeight(),
   },
   entry: {
     flex: 1,
     fontSize: 16,
     fontWeight: 'bold',
     position: 'absolute',
-    top: 450 + getStatusBarHeight(),
+    top: 430 + getStatusBarHeight(),
     left: 12,
     color: theme.colors.secondary,
   },
@@ -162,6 +132,5 @@ const styles = StyleSheet.create({
     width: '90%',
     maxWidth: '95%',
     paddingBottom: 100,
-    // overflow: 'hidden',
   },
 })
