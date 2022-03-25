@@ -85,29 +85,35 @@ export const loginUser = async (req, res) => {
     await connect(config)
     const hash =
       await query`SELECT passwordHash, userID FROM appUser WHERE username = ${username}`
-    const pass = hash.recordset[0].passwordHash
-    const userID = hash.recordset[0].userID
-    if (compareSync(passwordHash, pass)) {
-      const payload = {
-        username: user.username,
-      }
-
-      const token = Jwt.sign(payload, 'XYZ', { expiresIn: '1d' })
-
-      res.status(200).send({
-        loginSuccess: true,
-        message: 'logged in',
-        user: {
-          username: username,
-          userID: userID,
-        },
-        token: 'Bearer ' + token,
-      })
-    } else {
+    console.log(hash.rowsAffected)
+    if (hash.rowsAffected == 0) {
       res.status(401).send({
         loginSuccess: false,
-        message: 'login in failed',
+        message: 'Incorrect Username',
       })
+    } else if (hash.rowsAffected == 1) {
+      const pass = hash.recordset[0].passwordHash
+      const userID = hash.recordset[0].userID
+      if (compareSync(passwordHash, pass)) {
+        const payload = {
+          username: user.username,
+          userID: userID,
+        }
+
+        const token = Jwt.sign(payload, 'XYZ', { expiresIn: '1d' })
+
+        res.status(200).send({
+          loginSuccess: true,
+          message: 'logged in',
+          token: 'Bearer ' + token,
+          userID: userID,
+        })
+      } else {
+        res.status(401).send({
+          loginSuccess: false,
+          message: 'Incorrect Password',
+        })
+      }
     }
   } catch (err) {
     res.status(404).send({
@@ -142,4 +148,9 @@ export const changePassword = async (req, res) => {
       message: err.message,
     })
   }
+}
+
+export const isLoggedIn = async (req, res) => {
+  console.log('here')
+  console.log(req.body)
 }

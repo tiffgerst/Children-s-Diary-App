@@ -1,5 +1,5 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React, { useEffect } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import BackButton from '../components/BackButton'
 import Button from '../components/Button'
 import {
@@ -8,15 +8,25 @@ import {
   MaterialIcons,
   FontAwesome,
 } from '@expo/vector-icons'
+import { getStatusBarHeight } from 'react-native-status-bar-height'
+//import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function NewEntry({ navigation }) {
+  // useEffect(() => {
+  //   let loggedIn = isLoggedIn()
+  //   if (!loggedIn) {
+  //     navigation.navigate('StartScreen')
+  //   }
+  //   console.log(loggedIn)
+  // }, [])
+
   return (
     <View style={styles.container}>
       <BackButton goBack={navigation.goBack} />
       <View>
         <Text style={styles.title}> New Entry</Text>
       </View>
-      <View style={{ marginStart: 30 }}>
+      <View style={{ marginStart: -9 }}>
         <View style={{ flexDirection: 'row' }}>
           <Button
             style={styles.button}
@@ -79,13 +89,18 @@ export default function NewEntry({ navigation }) {
           />
           <Text style={styles.textsugg}> Smart Suggestions</Text>
         </View>
-        <View>
+        <View style={{ marginStart: 20 }}>
           <Button style={styles.buttonlong}></Button>
           <Button style={styles.buttonlong}></Button>
           <Button style={styles.buttonlong}>
             <Text>Random {'\u2728'}</Text>
           </Button>
-          <Button style={{ marginStart: -15 }}>View more ideas</Button>
+          <Button
+            style={{ marginStart: -15 }}
+            onPress={() => navigation.navigate('TextEntry')}
+          >
+            View more ideas
+          </Button>
         </View>
       </View>
     </View>
@@ -98,7 +113,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    paddingTop: 100,
+    alignItems: 'center',
+    paddingTop: getStatusBarHeight() + 30,
   },
   icon: {
     alignSelf: 'center',
@@ -125,7 +141,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginStart: 10,
     marginBottom: -5,
-    color: 'black',
   },
   buttonlong: {
     backgroundColor: '#f2f2f2',
