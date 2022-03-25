@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import BackButton from '../components/BackButton'
 import Button from '../components/Button'
@@ -9,8 +9,17 @@ import {
   FontAwesome,
 } from '@expo/vector-icons'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
+//import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function NewEntry({ navigation }) {
+  // useEffect(() => {
+  //   let loggedIn = isLoggedIn()
+  //   if (!loggedIn) {
+  //     navigation.navigate('StartScreen')
+  //   }
+  //   console.log(loggedIn)
+  // }, [])
+
   return (
     <View style={styles.container}>
       <BackButton goBack={navigation.goBack} />

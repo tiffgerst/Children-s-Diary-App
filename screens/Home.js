@@ -16,6 +16,7 @@ import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import JournalFeed from '../components/JournalFeed'
 import AddButton from '../components/AddButton'
+//import { isLoggedIn } from '../helpers/isLoggedIn'
 
 const postData = [
   {
@@ -53,6 +54,14 @@ export default function Home({ navigation }) {
   const [searchPhrase, setSearchPhrase] = useState('')
   const [clicked, setClicked] = useState(false)
   const [fakeData, setFakeData] = useState()
+
+  // useEffect(() => {
+  //   let loggedIn = isLoggedIn()
+  //   if (!loggedIn) {
+  //     navigation.navigate('StartScreen')
+  //   }
+  //   console.log(loggedIn)
+  // }, [])
 
   return (
     <Background3 style={styles.background}>

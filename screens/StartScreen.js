@@ -5,10 +5,12 @@ import Button from '../components/Button'
 import TextInput from '../components/TextInput'
 import Background from '../components/Background'
 import { usernameValidator } from '../helpers/usernameValidator'
+import { isLoggedIn } from '../helpers/isLoggedIn'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { theme } from '../src/core/theme'
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
+import * as add from '../config'
 
 export default function StartScreen({ navigation }) {
   const [username, setUsername] = useState({ value: '', error: '' })
@@ -16,6 +18,7 @@ export default function StartScreen({ navigation }) {
   const [login, setLogin] = useState()
 
   const onLoginPressed = () => {
+    const ip = add.ip
     const usernameError = usernameValidator(username.value)
     const passwordError = passwordValidator(password.value)
     if (usernameError || passwordError) {
@@ -23,7 +26,7 @@ export default function StartScreen({ navigation }) {
       setPassword({ ...password, error: passwordError })
     } else {
       axios
-        .post('http://192.168.0.75:3000/appUser/login', {
+        .post(`http://${ip}:3000/appUser/login`, {
           username: username.value,
           passwordHash: password.value,
         })
@@ -42,12 +45,17 @@ export default function StartScreen({ navigation }) {
           navigation.navigate('HowAreYouFeelingScreen')
         })
         .catch((error) => {
+          console.log(error)
           setLogin(error.response.data.message)
-          console.log(error.response.data.message)
         })
     }
   }
-
+  useEffect(() => {
+    let loggedIn = isLoggedIn()
+    if (loggedIn) {
+      navigation.navigate('Home')
+    }
+  }, [])
   return (
     <Background style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.image} />
