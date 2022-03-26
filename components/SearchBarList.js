@@ -6,30 +6,41 @@ import {
   View,
   FlatList,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native'
 import { theme } from '../src/core/theme'
-import TagButton from './TagButton'
+import TagButtonList from './TagButtonList'
+import moment from 'moment'
 
 function Item({
-  journalDate,
-  journalTitle,
-  journalText,
-  journalImage,
-  journalTag,
+  createDateTime,
+  titleText,
+  contentText,
+  imageURL,
+  tagNameAll,
 }) {
+  if (tagNameAll[0]==='') {
+    tagNameAll = ''
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.date}>{journalDate}</Text>
-      <Text style={styles.title}>{journalTitle}</Text>
-      <Image style={styles.image} source={journalImage} />
-      <Text style={styles.text} numberOfLines={1}>
-        {journalText}
-      </Text>
-      <TagButton style={styles.tag} mode="contained">
-        {journalTag}
-      </TagButton>
-      <Text style={{ paddingBottom: 10 }} />
-    </View>
+    <TouchableOpacity>
+      <View style={styles.container}>
+        <Text style={styles.date}>{createDateTime}</Text>
+        <Text style={styles.title}>{titleText}</Text>
+        {imageURL?(<Image style={styles.image} source={{url:imageURL}}/>):(<View></View>)}
+        {contentText?(
+          <Text style={styles.text} numberOfLines={1}>
+            {contentText}
+          </Text>
+        ):(<View></View>)}
+        {tagNameAll?(
+          <TagButtonList
+            data={tagNameAll}
+          />
+        ):(<View></View>)}
+      </View>
+    </TouchableOpacity>
   )
 }
 
@@ -41,82 +52,83 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
       return (
         <View>
           <Item
-            journalDate={item.journalDate}
-            journalTitle={item.journalTitle}
-            journalText={item.journalText}
-            journalImage={item.journalImage}
-            journalTag={item.journalTag}
+            createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
+            titleText={item.titleText}
+            contentText={item.contentText}
+            imageURL={item.imageURL}
+            tagNameAll={item.tagNameAll.split(', ')}
           />
         </View>
       )
     }
     // filter of the date
     if (
-      item.journalDate
+      moment(item.createDateTime).format('DD MMM YYYY')
         .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
+        .includes(searchPhrase.toUpperCase().trim())
     ) {
       return (
         <View>
           <Item
-            journalDate={item.journalDate}
-            journalTitle={item.journalTitle}
-            journalText={item.journalText}
-            journalImage={item.journalImage}
-            journalTag={item.journalTag}
+            createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
+            titleText={item.titleText}
+            contentText={item.contentText}
+            imageURL={item.imageURL}
+            tagNameAll={item.tagNameAll.split(', ')}
           />
         </View>
       )
     }
     // filter of the title
     if (
-      item.journalTitle
+      item.titleText
         .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
+        .includes(searchPhrase.toUpperCase().trim())
     ) {
       return (
         <View>
           <Item
-            journalDate={item.journalDate}
-            journalTitle={item.journalTitle}
-            journalText={item.journalText}
-            journalImage={item.journalImage}
-            journalTag={item.journalTag}
+            createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
+            titleText={item.titleText}
+            contentText={item.contentText}
+            imageURL={item.imageURL}
+            tagNameAll={item.tagNameAll.split(', ')}
           />
         </View>
       )
     }
     // filter of the content
     if (
-      item.journalText
+      item.contentText
         .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
+        .includes(searchPhrase.toUpperCase().trim())
     ) {
       return (
         <View>
           <Item
-            journalDate={item.journalDate}
-            journalTitle={item.journalTitle}
-            journalText={item.journalText}
-            journalImage={item.journalImage}
-            journalTag={item.journalTag}
+            createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
+            titleText={item.titleText}
+            contentText={item.contentText}
+            imageURL={item.imageURL}
+            tagNameAll={item.tagNameAll.split(', ')}
           />
         </View>
       )
     }
     // filter of the tag
     if (
-      item.journalTag
+      item.tagNameAll
         .toUpperCase()
-        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ''))
+        .includes(searchPhrase.toUpperCase().trim())
     ) {
       return (
         <View>
           <Item
-            journalDate={item.journalDate}
-            journalTitle={item.journalTitle}
-            journalText={item.journalText}
-            journalTag={item.journalTag}
+            createDateTime={moment(item.createDateTime).format('DD MMM YYYY')}
+            titleText={item.titleText}
+            contentText={item.contentText}
+            imageURL={item.imageURL}
+            tagNameAll={item.tagNameAll.split(', ')}
           />
         </View>
       )
@@ -134,7 +146,7 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
           contentContainerStyle={styles.grid}
           data={data}
           renderItem={renderItem}
-          keyExtractor={(item) => item.postId}
+          keyExtractor={(item) => item.postID}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
         />
@@ -151,6 +163,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginHorizontal: 5,
     marginVertical: 8,
+    paddingBottom: 8,
     borderRadius: 12,
     backgroundColor: theme.colors.tint,
     borderWidth: 3,
@@ -160,8 +173,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
   },
   grid: {
-    width: '100%',
-    paddingBottom: 300,
+    // width: '100%',
+    paddingBottom: 220,
   },
   date: {
     fontSize: 13,
@@ -182,17 +195,15 @@ const styles = StyleSheet.create({
     color: '#5A6174',
     width: '95%',
     padding: 1,
+    paddingBottom: 10,
     top: 5,
-    left: 10,
+    left: 11,
   },
   image: {
     width: '95%',
+    height: 300,
     alignSelf: 'center',
     top: 2,
     borderRadius: 12,
-  },
-  tag: {
-    top: 15,
-    left: 10,
   },
 })

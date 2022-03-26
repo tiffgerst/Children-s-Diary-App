@@ -24,7 +24,7 @@ function SearchBar({ clicked, searchPhrase, setSearchPhrase, setClicked }) {
           name="search"
           size={20}
           color="#5A6174"
-          style={{ marginLeft: 1 }}
+          style={{ marginLeft: 5 }}
         />
         {/* Input field */}
         <TextInput
@@ -42,7 +42,7 @@ function SearchBar({ clicked, searchPhrase, setSearchPhrase, setClicked }) {
             name="cross"
             size={20}
             color="#5A6174"
-            style={{ padding: 1 }}
+            style={{ marginRight: 4 }}
             onPress={() => {
               setSearchPhrase('')
             }}
@@ -70,7 +70,7 @@ export default SearchBar
 const styles = StyleSheet.create({
   container: {
     margin: 15,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     width: '120%',
@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
   searchBar__unclicked: {
     padding: 10,
     flexDirection: 'row',
-
     width: '95%',
     backgroundColor: '#d9dbda',
     borderRadius: 15,
