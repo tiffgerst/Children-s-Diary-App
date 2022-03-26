@@ -17,7 +17,7 @@ export default function CalendarScreen({ navigation }) {
     const userID = '1'
     const getData = async () => {
       const apiResponse = await fetch(
-        "http://172.21.9.18:3000/post/all/" + userID
+        "http://172.21.8.59:3000/post/all/" + userID
       );
       const data = await apiResponse.json();
       setPostData(data);

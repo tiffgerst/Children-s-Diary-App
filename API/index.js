@@ -1,13 +1,16 @@
 import express from "express";
-import bodyParser from "body-parser";
 import usersRoutes from "./routes/appUser.js";
 import postsRoutes from "./routes/post.js";
+import cors from 'cors'
+import passport from 'passport'
 
-const app = express();
-app.use(bodyParser.json());
+const app = express()
+app.use(express.json())
+app.use(cors())
+app.use(passport.initialize())
 
-//every route inside the post route is accessed with /researcher
-app.use("/appUser", usersRoutes);
+//every route inside the post route is accessed with /appUser
+app.use('/appUser', usersRoutes)
 app.use("/post", postsRoutes);
 
 app.get("/", (req, res) => {

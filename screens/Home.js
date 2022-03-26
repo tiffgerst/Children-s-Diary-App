@@ -12,6 +12,7 @@ import Background3 from '../components/Background3'
 import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import AddButton from '../components/AddButton'
+//import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function Home({ navigation }) {
   const [searchPhrase, setSearchPhrase] = useState('')
@@ -23,13 +24,21 @@ export default function Home({ navigation }) {
     const getData = async () => {
       const userID = '1'
       const apiResponse = await fetch(
-        "http://172.21.9.18:3000/post/all/" + userID
+        "http://172.21.8.59:3000/post/all/" + userID
       );
       const data = await apiResponse.json();
       setPostData(data);
     };
     getData();
   }, []);
+
+  // useEffect(() => {
+  //   let loggedIn = isLoggedIn()
+  //   if (!loggedIn) {
+  //     navigation.navigate('StartScreen')
+  //   }
+  //   console.log(loggedIn)
+  // }, [])
 
   return (
     <Background3 style={styles.background}>
