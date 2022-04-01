@@ -1,17 +1,62 @@
-import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import BackButton from '../components/BackButton'
-import Button from '../components/Button'
-import { getStatusBarHeight } from 'react-native-status-bar-height'
+import React, { useState } from 'react'
 import {
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-  FontAwesome,
-} from '@expo/vector-icons'
-import { TextInput } from 'react-native-paper'
+  Dimensions,
+  KeyboardAvoidingView,
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native'
+import BackButton from '../components/BackButton'
+import { getStatusBarHeight } from 'react-native-status-bar-height'
+import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import * as SecureStore from 'expo-secure-store'
+//import { format } from 'date-fns'
 
-export default function TextEntry({ navigation }) {
+export default function TextEntry() {
+  const [note, setNote] = useState('')
+  const navigation = useNavigation()
+  const weekday = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
+  const month = [
+    'Jan',
+    'Feb',
+    'March',
+    'Apr',
+    'May',
+    'June',
+    'July',
+    'Aug',
+    'Sept',
+    'Oct',
+    'Nov',
+    'Dez',
+  ]
+  const getCurrentDate = () => {
+    let date = new Date()
+    let day = weekday[date.getDay()]
+    let num = date.getDate()
+    let name = month[date.getMonth()]
+    let year = date.getFullYear()
+    let hour = date.getHours()
+    let min = date.getMinutes()
+
+    //Alert.alert(date + '-' + month + '-' + year);
+    // You can turn it in to your desired format
+    return day + ', ' + num + ' ' + name + ' ' + year + ' ' + hour + ':' + min //format: dd-mm-yyyy;
+  }
+
+  const saveNote = async () => {
+    const value = await SecureStore.getItemAsync('Notes')
+    const n = value ? JSON.parse(value) : []
+    n.push(note)
+    await SecureStore.setItemAsync('Notes', JSON.stringify(n)).then(() =>
+      navigation.navigate('AllNotes')
+    )
+    setNote('')
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -19,7 +64,7 @@ export default function TextEntry({ navigation }) {
           goBack={navigation.goBack}
           style={{ position: 'relative' }}
         />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.button}
           onPress={() => console.log('pressed')}
         >
@@ -30,7 +75,7 @@ export default function TextEntry({ navigation }) {
               color="#5A6174"
             />
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           style={styles.button}
           onPress={() => console.log('pressed')}
@@ -76,13 +121,40 @@ export default function TextEntry({ navigation }) {
       <View style={styles.title}>
         <TextInput
           placeholder="Title"
+          autoFocus
           style={{
             fontSize: 22,
             paddingLeft: 20,
+            paddingBottom: 5,
             marginTop: -30,
             fontWeight: 'bold',
             backgroundColor: 'white',
           }}
+        ></TextInput>
+        <Text
+          style={{
+            fontSize: 14,
+            paddingBottom: 7,
+            paddingLeft: 20,
+          }}
+        >
+          {getCurrentDate()}
+        </Text>
+        <Text
+          style={{
+            fontSize: 14,
+            paddingBottom: 7,
+            paddingLeft: 20,
+          }}
+        >
+          Tags
+        </Text>
+        <TextInput
+          placeholder="Write here :)"
+          value={note}
+          onChangeText={setNote}
+          style={{ color: '#000', fontSize: 14, paddingLeft: 20 }}
+          multiline={true}
         ></TextInput>
       </View>
     </View>
@@ -106,7 +178,7 @@ const styles = StyleSheet.create({
     flex: 0.2,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     paddingLeft: 70,
     paddingTop: 10,
   },
