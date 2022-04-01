@@ -1,36 +1,29 @@
 import React, { useState, useEffect } from 'react'
-import {
-  StyleSheet,
-  Image,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native'
+import { StyleSheet, Image, View, Text, TouchableOpacity } from 'react-native'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { theme } from '../src/core/theme'
 import Background3 from '../components/Background3'
 import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import AddButton from '../components/AddButton'
+import * as add from '../config'
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function Home({ navigation }) {
   const [searchPhrase, setSearchPhrase] = useState('')
   const [clicked, setClicked] = useState(false)
   const [postData, setPostData] = useState()
-  
+  const ip = add.ip
   // get post data from api
   useEffect(() => {
     const getData = async () => {
-      const userID = '1'
-      const apiResponse = await fetch(
-        "http://172.21.8.59:3000/post/all/" + userID
-      );
-      const data = await apiResponse.json();
-      setPostData(data);
-    };
-    getData();
-  }, []);
+      const userID = '10'
+      const apiResponse = await fetch(`http://${ip}:3000/post/all/` + userID)
+      const data = await apiResponse.json()
+      setPostData(data)
+    }
+    getData()
+  }, [])
 
   // useEffect(() => {
   //   let loggedIn = isLoggedIn()
