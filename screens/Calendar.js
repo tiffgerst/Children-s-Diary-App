@@ -7,40 +7,44 @@ import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
 import SearchBarList from '../components/SearchBarList'
 import moment from 'moment'
+import * as add from '../config'
 
 export default function CalendarScreen({ navigation }) {
   const [selectedDate, setSelectedDate] = useState('')
   const [postData, setPostData] = useState([])
+  const ip = add.ip
 
   // get post data from api
   useEffect(() => {
-    const userID = '1'
+    const userID = '10'
     const getData = async () => {
       const apiResponse = await fetch(
-        "http://172.21.8.59:3000/post/all/" + userID
-      );
-      const data = await apiResponse.json();
-      setPostData(data);
-    };
-    getData();
-  }, []);
+        'http://172.21.8.59:3000/post/all/' + userID
+      )
+      const data = await apiResponse.json()
+      setPostData(data)
+    }
+    getData()
+  }, [])
 
-  let markDate = postData.map(function(dateInfo){return moment(dateInfo.createDateTime).format('YYYY-MM-DD')})
-  let markDateObject = {};
+  let markDate = postData.map(function (dateInfo) {
+    return moment(dateInfo.createDateTime).format('YYYY-MM-DD')
+  })
+  let markDateObject = {}
   markDate.forEach((date) => {
     markDateObject[date] = {
-        selected: true,
-        marked: true,
-        selectedColor: '#8FD1CD',
-        customStyles: {
-          text: {
-            color: '#6B7285',
-            fontWeight: 'bold',
-          },
-        }
-    };
-  });
-  
+      selected: true,
+      marked: true,
+      selectedColor: '#8FD1CD',
+      customStyles: {
+        text: {
+          color: '#6B7285',
+          fontWeight: 'bold',
+        },
+      },
+    }
+  })
+
   return (
     <Background3 style={styles.background}>
       <BackButton goBack={navigation.goBack} />
@@ -72,15 +76,21 @@ export default function CalendarScreen({ navigation }) {
           textMonthFontSize: 20,
           textDayHeaderFontSize: 15,
         }}
-        onDayPress={day => {
-          console.log('selected day', day);
-          setSelectedDate(day.dateString);
+        onDayPress={(day) => {
+          console.log('selected day', day)
+          setSelectedDate(day.dateString)
         }}
         markingType={'custom'}
         markedDates={markDateObject}
         enableSwipeMonths={true}
       />
-      {selectedDate?(<Text style={styles.entry}>Entries {moment(selectedDate).format('DD MMM YYYY')}</Text>):(<View></View>)}
+      {selectedDate ? (
+        <Text style={styles.entry}>
+          Entries {moment(selectedDate).format('DD MMM YYYY')}
+        </Text>
+      ) : (
+        <View></View>
+      )}
       <View style={styles.scroll}>
         <SearchBarList
           searchPhrase={moment(selectedDate).format('DD MMM YYYY')}

@@ -1,7 +1,6 @@
 import mssql from 'mssql'
 import config from '../config/dbConfig.js'
 
-
 const { connect, query } = mssql
 
 // Finds posts by certain user ID from the databse
