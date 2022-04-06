@@ -57,6 +57,7 @@ export default function Home({ navigation }) {
         clicked={clicked}
         setClicked={setClicked}
       />
+      <TouchableOpacity onPress={() => navigation.navigate('PostFeed')}><Text>Post</Text></TouchableOpacity>
       <View style={styles.scroll}>
         <SearchBarList
           searchPhrase={searchPhrase}
