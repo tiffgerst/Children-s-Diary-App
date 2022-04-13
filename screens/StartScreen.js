@@ -19,6 +19,7 @@ export default function StartScreen({ navigation }) {
 
   const onLoginPressed = () => {
     const ip = add.ip
+
     const usernameError = usernameValidator(username.value)
     const passwordError = passwordValidator(password.value)
     if (usernameError || passwordError) {
@@ -35,6 +36,8 @@ export default function StartScreen({ navigation }) {
           const userID = response.data.userID.toString()
           await SecureStore.setItemAsync('token', accessToken)
           await SecureStore.setItemAsync('userID', userID)
+          const ID = await SecureStore.getItemAsync('userID')
+          console.log(ID)
           navigation.navigate('HowAreYouFeelingScreen')
         })
         .catch((error) => {

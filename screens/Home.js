@@ -6,6 +6,7 @@ import Background3 from '../components/Background3'
 import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import AddButton from '../components/AddButton'
+import * as SecureStore from 'expo-secure-store'
 import * as add from '../config'
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
@@ -17,21 +18,13 @@ export default function Home({ navigation }) {
   // get post data from api
   useEffect(() => {
     const getData = async () => {
-      const userID = '10'
+      const userID = await SecureStore.getItemAsync('userID')
       const apiResponse = await fetch(`http://${ip}:3000/post/all/` + userID)
       const data = await apiResponse.json()
       setPostData(data)
     }
     getData()
   }, [])
-
-  // useEffect(() => {
-  //   let loggedIn = isLoggedIn()
-  //   if (!loggedIn) {
-  //     navigation.navigate('StartScreen')
-  //   }
-  //   console.log(loggedIn)
-  // }, [])
 
   return (
     <Background3 style={styles.background}>

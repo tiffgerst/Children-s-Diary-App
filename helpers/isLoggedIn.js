@@ -7,7 +7,6 @@ export async function isLoggedIn() {
   let login = false
   try {
     const credentials = await SecureStore.getItemAsync('token')
-    console.log(credentials)
     if (credentials) {
       axios
         //192.168.0.75
@@ -21,7 +20,7 @@ export async function isLoggedIn() {
         })
         .catch((error) => {
           login = false
-          console.log('boo')
+          console.log(error)
         })
     }
   } catch (err) {

@@ -16,8 +16,8 @@ export default function CalendarScreen({ navigation }) {
 
   // get post data from api
   useEffect(() => {
-    const userID = '10'
     const getData = async () => {
+      const userID = await SecureStore.getItemAsync('userID')
       const apiResponse = await fetch(`http://${ip}:3000/post/all/` + userID)
       const data = await apiResponse.json()
       setPostData(data)
