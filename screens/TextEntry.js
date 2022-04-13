@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import {
-  Dimensions,
-  KeyboardAvoidingView,
   StyleSheet,
   TextInput,
   View,
@@ -13,7 +11,6 @@ import { getStatusBarHeight } from 'react-native-status-bar-height'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import * as SecureStore from 'expo-secure-store'
-//import { format } from 'date-fns'
 
 export default function TextEntry() {
   const [note, setNote] = useState('')

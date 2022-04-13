@@ -35,13 +35,6 @@ export default function StartScreen({ navigation }) {
           const userID = response.data.userID.toString()
           await SecureStore.setItemAsync('token', accessToken)
           await SecureStore.setItemAsync('userID', userID)
-          // const date = await SecureStore.getItemAsync('date')
-          // if (date) {
-          //   const now = new Date()
-          //   date.toString()
-          // }
-
-          // await SecureStore.setItemAsync('date', date)
           navigation.navigate('HowAreYouFeelingScreen')
         })
         .catch((error) => {

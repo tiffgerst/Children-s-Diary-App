@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import BackButton from '../components/BackButton'
 import Button from '../components/Button'
@@ -9,17 +9,26 @@ import {
   FontAwesome,
 } from '@expo/vector-icons'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
+import * as add from '../config'
+import axios from 'axios'
+
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function NewEntry({ navigation }) {
-  // useEffect(() => {
-  //   let loggedIn = isLoggedIn()
-  //   if (!loggedIn) {
-  //     navigation.navigate('StartScreen')
-  //   }
-  //   console.log(loggedIn)
-  // }, [])
-
+  const ip = add.ip
+  const [prompt1, setprompt1] = useState()
+  const [prompt2, setprompt2] = useState()
+  const getPrompts = () => {
+    axios
+      .get(`http://${ip}:3000/prompts`, {})
+      .then(async (response) => {
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+  getPrompts()
   return (
     <View style={styles.container}>
       <BackButton goBack={navigation.goBack} />
