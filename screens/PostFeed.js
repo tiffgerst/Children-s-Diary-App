@@ -6,7 +6,6 @@ import TagButtonList from '../components/TagButtonList'
 import * as add from '../ip/config'
 
 export default function PostFeed({ route, navigation }) {
-  const [postData, setPostData] = useState([])
   const [backgroundURL, setBackgroundURL] = useState('')
   const [date, setDate] = useState('')
   const [title, setTitle] = useState('')
@@ -21,23 +20,21 @@ export default function PostFeed({ route, navigation }) {
     const getData = async () => {
       const apiResponse = await fetch(`http://${ip}:3000/post/` + postID)
       const data = await apiResponse.json();
-      setPostData(data);
-      setBackgroundURL(postData[0].backgroundURL);
-      setDate(moment(postData[0].createDateTime).format('ddd, DD MMM YYYY HH:MM'))
-      setTitle(postData[0].titleText)
-      setContent(postData[0].contentText)
-      setTag(postData[0].tagNameAll.split(', '))
-      setImageURL(postData[0].imageURL)
+      let backgroundURL = await data[0].backgroundURL
+      let date = await data[0].createDateTime
+      let title = await data[0].titleText
+      let content = await data[0].contentText
+      let tag = await data[0].tagNameAll.split(', ')
+      let imageURL = await data[0].imageURL
+      setBackgroundURL(backgroundURL);
+      setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
+      setTitle(title)
+      setContent(content)
+      setTag(tag)
+      setImageURL(imageURL)
     };
     getData();
   }, []);
-
-  // let backgroundURL = postData[0].backgroundURL
-  // let date = moment(postData[0].createDateTime).format('ddd, DD MMM YYYY HH:MM')
-  // let title = postData[0].titleText
-  // let content = postData[0].contentText
-  // let tag = postData[0].tagNameAll.split(', ')
-  // let imageURL = postData[0].imageURL
 
   if (tag[0]==='') {
     tag = ''
