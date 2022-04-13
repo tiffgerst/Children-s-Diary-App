@@ -5,7 +5,7 @@ import config from '../config/dbConfig.js'
 const { connect, query } = mssql
 
 // Finds a post by its post ID and joins them with images and tags
-export const searchPostByUserID = async (req, res) => {
+export const searchPostByPostID = async (req, res) => {
   const id = req.params.id
 
   try {
@@ -18,7 +18,8 @@ export const searchPostByUserID = async (req, res) => {
         ISNULL(titleText, '') AS titleText,
         ISNULL(contentText, '') AS contentText, 
         ISNULL(tagNameAll, '') AS tagNameAll, 
-        imageURL
+        imageURL,
+        ISNULL(backgroundURL, '') AS backgroundURL
       FROM post
       LEFT JOIN (
         SELECT post.postID, 
@@ -35,6 +36,8 @@ export const searchPostByUserID = async (req, res) => {
       ON post.postID = tag.postID
       LEFT JOIN postImageUploaded image
       ON post.postID = image.postID
+      LEFT JOIN background
+      ON post.backgroundID = background.backgroundID
       WHERE post.postID = ${id} 
     `
     res.json(result.recordset).status(200)
@@ -44,7 +47,7 @@ export const searchPostByUserID = async (req, res) => {
 }
 
 // Finds posts by their user ID and joins them with images and tags
-export const postWithImageTag = async (req, res) => {
+export const searchPostByUserID = async (req, res) => {
   const id = req.params.id
 
   try {

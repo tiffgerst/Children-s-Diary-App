@@ -18,13 +18,15 @@ function Item({
   contentText,
   imageURL,
   tagNameAll,
+  postID,
+  navigation
 }) {
   if (tagNameAll[0]==='') {
     tagNameAll = ''
   }
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => navigation.navigate('PostFeed', {postID:postID})}>
       <View style={styles.container}>
         <Text style={styles.date}>{createDateTime}</Text>
         <Text style={styles.title}>{titleText}</Text>
@@ -45,7 +47,7 @@ function Item({
 }
 
 // the filter
-function SearchBarList({ searchPhrase, setClicked, data }) {
+function SearchBarList({ searchPhrase, setClicked, data, navigation }) {
   const renderItem = ({ item }) => {
     // when no input, show all
     if (searchPhrase === '') {
@@ -57,6 +59,8 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
             contentText={item.contentText}
             imageURL={item.imageURL}
             tagNameAll={item.tagNameAll.split(', ')}
+            postID={item.postID}
+            navigation={navigation}
           />
         </View>
       )
@@ -75,6 +79,8 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
             contentText={item.contentText}
             imageURL={item.imageURL}
             tagNameAll={item.tagNameAll.split(', ')}
+            postID={item.postID}
+            navigation={navigation}
           />
         </View>
       )
@@ -93,6 +99,8 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
             contentText={item.contentText}
             imageURL={item.imageURL}
             tagNameAll={item.tagNameAll.split(', ')}
+            postID={item.postID}
+            navigation={navigation}
           />
         </View>
       )
@@ -111,6 +119,8 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
             contentText={item.contentText}
             imageURL={item.imageURL}
             tagNameAll={item.tagNameAll.split(', ')}
+            postID={item.postID}
+            navigation={navigation}
           />
         </View>
       )
@@ -129,6 +139,8 @@ function SearchBarList({ searchPhrase, setClicked, data }) {
             contentText={item.contentText}
             imageURL={item.imageURL}
             tagNameAll={item.tagNameAll.split(', ')}
+            postID={item.postID}
+            navigation={navigation}
           />
         </View>
       )

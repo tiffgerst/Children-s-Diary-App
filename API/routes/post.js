@@ -1,12 +1,12 @@
 import express from 'express'
 import {
-  searchPostByUserID,
-  postWithImageTag
+  searchPostByPostID,
+  searchPostByUserID
 } from '../controllers/post.js'
 
 const router = express.Router()
 
-router.get('/:id', searchPostByUserID)
-router.get('/all/:id', postWithImageTag)
+router.get('/:id', searchPostByPostID)
+router.get('/all/:id', searchPostByUserID)
 
 export default router

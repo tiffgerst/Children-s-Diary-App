@@ -7,18 +7,18 @@ import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
 import SearchBarList from '../components/SearchBarList'
 import moment from 'moment'
+import * as add from '../config'
 
 export default function CalendarScreen({ navigation }) {
   const [selectedDate, setSelectedDate] = useState('')
   const [postData, setPostData] = useState([])
+  const ip = add.ip
+  const userID = add.userID
 
   // get post data from api
   useEffect(() => {
-    const userID = '1'
     const getData = async () => {
-      const apiResponse = await fetch(
-        "http://172.21.8.59:3000/post/all/" + userID
-      );
+      const apiResponse = await fetch(`http://${ip}:3000/post/all/` + userID)
       const data = await apiResponse.json();
       setPostData(data);
     };
@@ -86,6 +86,7 @@ export default function CalendarScreen({ navigation }) {
           searchPhrase={moment(selectedDate).format('DD MMM YYYY')}
           data={postData}
           setClicked={false}
+          navigation={navigation}
         />
       </View>
     </Background3>

@@ -14,10 +14,11 @@ export default function Home({ navigation }) {
   const [clicked, setClicked] = useState(false)
   const [postData, setPostData] = useState()
   const ip = add.ip
+  const userID = add.userID
+
   // get post data from api
   useEffect(() => {
     const getData = async () => {
-      const userID = '10'
       const apiResponse = await fetch(`http://${ip}:3000/post/all/` + userID)
       const data = await apiResponse.json()
       setPostData(data)
@@ -57,12 +58,12 @@ export default function Home({ navigation }) {
         clicked={clicked}
         setClicked={setClicked}
       />
-      <TouchableOpacity onPress={() => navigation.navigate('PostFeed')}><Text>Post</Text></TouchableOpacity>
       <View style={styles.scroll}>
         <SearchBarList
           searchPhrase={searchPhrase}
           data={postData}
           setClicked={setClicked}
+          navigation={navigation}
         />
       </View>
       <AddButton

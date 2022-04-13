@@ -1,56 +1,79 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, ImageBackground, ScrollView, TouchableOpacity } from 'react-native'
 import BackButton from '../components/BackButton'
-import { getStatusBarHeight } from 'react-native-status-bar-height'
 import moment from 'moment'
 import TagButtonList from '../components/TagButtonList'
+import * as add from '../config'
 
-export default function PostFeed({ navigation }) {
+export default function PostFeed({ route, navigation }) {
   const [postData, setPostData] = useState([])
-  const [date, setDate] = useState()
+  const [backgroundURL, setBackgroundURL] = useState('')
+  const [date, setDate] = useState('')
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [tag, setTag] = useState('')
+  let [tag, setTag] = useState('')
   const [imageURL, setImageURL] = useState('')
+  const ip = add.ip
+  const {postID} = route.params
   
   // get post data from api
   useEffect(() => {
     const getData = async () => {
-    const postID = '1'
-    const apiResponse = await fetch(
-      "http://172.21.8.59:3000/post/" + postID
-      );
+      const apiResponse = await fetch(`http://${ip}:3000/post/` + postID)
       const data = await apiResponse.json();
       setPostData(data);
-      setDate(moment(postData[0].createDateTime).format('DD MMM YYYY'))
+      setBackgroundURL(postData[0].backgroundURL);
+      setDate(moment(postData[0].createDateTime).format('ddd, DD MMM YYYY HH:MM'))
       setTitle(postData[0].titleText)
       setContent(postData[0].contentText)
-      setTag(postData[0].tagNameAll)
+      setTag(postData[0].tagNameAll.split(', '))
       setImageURL(postData[0].imageURL)
     };
     getData();
   }, []);
 
-    
+  // let backgroundURL = postData[0].backgroundURL
+  // let date = moment(postData[0].createDateTime).format('ddd, DD MMM YYYY HH:MM')
+  // let title = postData[0].titleText
+  // let content = postData[0].contentText
+  // let tag = postData[0].tagNameAll.split(', ')
+  // let imageURL = postData[0].imageURL
+
+  if (tag[0]==='') {
+    tag = ''
+  }
+
   return (
     <View style={styles.container}>
+      <ImageBackground
+        source={{url:backgroundURL}}
+        resizeMode="cover"
+        style={styles.backgroundImage}
+      >
       <View style={styles.row}>
         <BackButton goBack={navigation.goBack} style={{ position: 'relative' }}/>
-        <TouchableOpacity style={styles.edit} onPress={() => console.log('pressed')}>
-          <Text>Edit</Text>
+        <TouchableOpacity style={styles.editButton} onPress={() => console.log('pressed')}>
+          <Text style={styles.buttonFont}>Edit</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.remove} onPress={() => console.log('pressed')}>
-          <Text>Remove</Text>
+        <TouchableOpacity style={styles.removeButton} onPress={() => console.log('pressed')}>
+          <Text style={styles.buttonFont}>Remove</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.title}>
-          <Text>{JSON.stringify(postData)}</Text>
-          <Text style={styles.date}>{date}</Text>
-          <Text style={styles.title}>{title}</Text>
-          {tag?(<TagButtonList data={tag}/>):(<View></View>)}
+      <View style={styles.postTitle}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.date}>{date}</Text>
+      </View>
+      {tag?(
+      <View style={styles.postTag}>
+        <TagButtonList style={styles.tag} data={tag}/>
+      </View>):(<View style={{padding:10}}></View>)}
+      <View style={styles.postContent}>
+        <ScrollView>
           <Text style={styles.content}>{content}</Text>
           {imageURL?(<Image style={styles.image} source={{url:imageURL}}/>):(<View></View>)}
+        </ScrollView>
       </View>
+      </ImageBackground>
     </View>
   )
 }
@@ -58,36 +81,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
-  button: {
-    backgroundColor: '#fff',
-    width: 46,
-    height: 46,
-    color: '#5A6174',
-    marginVertical: 0,
-    paddingVertical: 0,
-    marginLeft: 15,
+  backgroundImage: {
+    width: '102%',
+    height: '103%',
+    overflow: 'visible',
+    alignSelf: 'center',
   },
   row: {
-    flex: 0.2,
+    flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingLeft: 80,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    paddingRight: 10,
+    paddingTop: 10,
   },
-  post: {
+  editButton: {
     height: 36,
     width: 82,
-    backgroundColor: '#55B7DE',
-    position: 'absolute',
-    top: getStatusBarHeight() + 20,
+    backgroundColor: '#7AC9A1',
     borderRadius: 6,
-    right: 20,
+    top: -8,
+    left: -8,
+    margin: 5,
   },
-  remove: {},
-  edit: {
+  removeButton: {
+    height: 36,
+    width: 82,
+    backgroundColor: '#FD909A',
+    borderRadius: 6,
+    top: -8,
+    left: -8,
+    margin: 5,
+  },
+  buttonFont: {
     color: 'white',
     fontSize: 16,
     justifyContent: 'center',
@@ -95,15 +123,55 @@ const styles = StyleSheet.create({
     padding: 8,
     fontWeight: 'bold',
   },
-  date: {},
-  title: {
-    fontSize: 22,
+  postTitle: {
+    flex: 0.5,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
     paddingLeft: 20,
-    marginTop: -30,
-    fontWeight: 'bold',
-    backgroundColor: 'white',
+    paddingRight: 20,
+    paddingTop: 10,
   },
-  tag: {},
-  content: {},
-  image: {},
+  postTag: {
+    flex: 0.3,
+    alignItems: 'flex-start',
+    paddingLeft: 14,
+    paddingRight: 20,
+    paddingTop: 10,
+  },
+  postContent: {
+    flex: 6,
+    justifyContent: 'flex-start',
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 10,
+    top: 10,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#5A6174',
+    padding: 5,
+  },
+  date: {
+    fontSize: 15,
+    color: '#5A6174',
+    padding: 5,
+  },
+  tag: {
+    flex: 1,
+    top: 10,
+  },
+  content: {
+    fontSize: 15,
+    color: '#5A6174',
+    padding: 5,
+    lineHeight: 22,
+  },
+  image: {
+    width: '95%',
+    height: 400,
+    alignSelf: 'center',
+    borderRadius: 12,
+    margin: 10,
+  },
 })
