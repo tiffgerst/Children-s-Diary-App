@@ -6,7 +6,8 @@ import Background3 from '../components/Background3'
 import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import AddButton from '../components/AddButton'
-import * as add from '../config'
+import * as SecureStore from 'expo-secure-store'
+import * as add from '../ip/config'
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function Home({ navigation }) {
@@ -14,10 +15,11 @@ export default function Home({ navigation }) {
   const [clicked, setClicked] = useState(false)
   const [postData, setPostData] = useState()
   const ip = add.ip
+
   // get post data from api
   useEffect(() => {
     const getData = async () => {
-      const userID = '10'
+      const userID = await SecureStore.getItemAsync('userID')
       const apiResponse = await fetch(`http://${ip}:3000/post/all/` + userID)
       const data = await apiResponse.json()
       setPostData(data)
@@ -62,6 +64,7 @@ export default function Home({ navigation }) {
           searchPhrase={searchPhrase}
           data={postData}
           setClicked={setClicked}
+          navigation={navigation}
         />
       </View>
       <AddButton

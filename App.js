@@ -13,6 +13,7 @@ import {
   TextEntry,
   Customisation,
   Profile,
+  PostFeed,
 } from './screens'
 
 const Stack = createStackNavigator()
@@ -40,6 +41,7 @@ export default function App({ navigation }) {
           <Stack.Screen name="TextEntry" component={TextEntry} />
           <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="Customisation" component={Customisation} />
+          <Stack.Screen name="PostFeed" component={PostFeed} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

@@ -21,6 +21,27 @@ export default function TagButtonList({ data }) {
     if (item === 'Dreams') {
         return styles.dreams
     }
+    if (item === 'Social Worker') {
+      return styles.socialWorker
+    }
+    if (item === 'Feelings') {
+      return styles.feelings
+    }
+    if (item === 'School') {
+      return styles.school
+    }
+    if (item === 'Holiday') {
+      return styles.holiday
+    }
+    if (item === 'Food') {
+      return styles.food
+    }
+    if (item === 'Shopping') {
+      return styles.shopping
+    }
+    if (item === 'Travel') {
+      return styles.travel
+    }
   }
   return (
     <View style={styles.tagContainerView}>
@@ -65,5 +86,26 @@ const styles = StyleSheet.create({
   },
   dreams: {
     backgroundColor: '#92A2EE',
+  },
+  socialWorker: {
+    backgroundColor: '#F9C978',
+  },
+  feelings: {
+    backgroundColor: '#FFD00D',
+  },
+  school: {
+    backgroundColor: '#5993C1',
+  },
+  holiday: {
+    backgroundColor: '#A3CB8B',
+  },
+  food: {
+    backgroundColor: '#EAAC9D',
+  },
+  shopping: {
+    backgroundColor: '#CEB9EF',
+  },
+  travel: {
+    backgroundColor: '#B4CC56',
   },
 })
