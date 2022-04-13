@@ -10,7 +10,7 @@ import { passwordValidator } from '../helpers/passwordValidator'
 import { theme } from '../src/core/theme'
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
-import * as add from '../config'
+import * as add from '../ip/config'
 
 export default function StartScreen({ navigation }) {
   const [username, setUsername] = useState({ value: '', error: '' })

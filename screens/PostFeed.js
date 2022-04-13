@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, ImageBackground, ScrollView, TouchableOp
 import BackButton from '../components/BackButton'
 import moment from 'moment'
 import TagButtonList from '../components/TagButtonList'
-import * as add from '../config'
+import * as add from '../ip/config'
 
 export default function PostFeed({ route, navigation }) {
   const [postData, setPostData] = useState([])
