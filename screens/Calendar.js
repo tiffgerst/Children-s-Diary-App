@@ -7,7 +7,7 @@ import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
 import SearchBarList from '../components/SearchBarList'
 import moment from 'moment'
-import * as add from '../config'
+import * as add from '../ip/config'
 
 export default function CalendarScreen({ navigation }) {
   const [selectedDate, setSelectedDate] = useState('')

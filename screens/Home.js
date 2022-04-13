@@ -7,7 +7,7 @@ import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import AddButton from '../components/AddButton'
 import * as SecureStore from 'expo-secure-store'
-import * as add from '../config'
+import * as add from '../ip/config'
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function Home({ navigation }) {
