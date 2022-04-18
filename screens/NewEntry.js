@@ -9,7 +9,7 @@ import {
   FontAwesome,
 } from '@expo/vector-icons'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
-import * as add from '../config'
+import * as add from '../ip/config'
 import axios from 'axios'
 
 //import { isLoggedIn } from '../helpers/isLoggedIn'
@@ -60,6 +60,7 @@ export default function NewEntry({ navigation }) {
                 name="microphone"
                 size={40}
                 color="#5A6174"
+                onPress={() => navigation.navigate('Record')}
               />
               <Text style={styles.text}>Recording</Text>
             </View>

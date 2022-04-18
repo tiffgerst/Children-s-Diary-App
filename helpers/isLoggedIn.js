@@ -1,6 +1,6 @@
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
-import * as add from '../config'
+import * as add from '../ip/config'
 
 export async function isLoggedIn() {
   const ip = add.ip
