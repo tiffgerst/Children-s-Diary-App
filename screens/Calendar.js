@@ -7,6 +7,7 @@ import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
 import SearchBarList from '../components/SearchBarList'
 import moment from 'moment'
+import * as SecureStore from 'expo-secure-store'
 import * as add from '../ip/config'
 
 export default function CalendarScreen({ navigation }) {
@@ -94,6 +95,7 @@ export default function CalendarScreen({ navigation }) {
           searchPhrase={moment(selectedDate).format('DD MMM YYYY')}
           data={postData}
           setClicked={false}
+          navigation={navigation}
         />
       </View>
     </Background3>

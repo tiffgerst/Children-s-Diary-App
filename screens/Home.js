@@ -15,6 +15,7 @@ export default function Home({ navigation }) {
   const [clicked, setClicked] = useState(false)
   const [postData, setPostData] = useState()
   const ip = add.ip
+
   // get post data from api
   useEffect(() => {
     const getData = async () => {
@@ -55,6 +56,7 @@ export default function Home({ navigation }) {
           searchPhrase={searchPhrase}
           data={postData}
           setClicked={setClicked}
+          navigation={navigation}
         />
       </View>
       <AddButton

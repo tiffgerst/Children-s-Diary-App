@@ -14,6 +14,7 @@ import {
   Customisation,
   Profile,
   Record,
+  PostFeed,
 } from './screens'
 
 const Stack = createStackNavigator()
@@ -42,6 +43,7 @@ export default function App({ navigation }) {
           <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="Customisation" component={Customisation} />
           <Stack.Screen name="Record" component={Record} />
+          <Stack.Screen name="PostFeed" component={PostFeed} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
