@@ -12,7 +12,8 @@ import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import * as SecureStore from 'expo-secure-store'
 
-export default function TextEntry() {
+export default function TextEntry({ route }) {
+  const title = route.params.title
   const [note, setNote] = useState('')
   const navigation = useNavigation()
   const weekday = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
@@ -61,18 +62,6 @@ export default function TextEntry() {
           goBack={navigation.goBack}
           style={{ position: 'relative' }}
         />
-        {/* <TouchableOpacity
-          style={styles.button}
-          onPress={() => console.log('pressed')}
-        >
-          <Text>
-            <MaterialCommunityIcons
-              name="plus-circle"
-              size={29}
-              color="#5A6174"
-            />
-          </Text>
-        </TouchableOpacity> */}
         <TouchableOpacity
           style={styles.button}
           onPress={() => console.log('pressed')}
@@ -127,7 +116,9 @@ export default function TextEntry() {
             fontWeight: 'bold',
             backgroundColor: 'white',
           }}
-        ></TextInput>
+        >
+          {title}
+        </TextInput>
         <Text
           style={{
             fontSize: 14,

@@ -8,18 +8,18 @@ import BackButton from '../components/BackButton'
 import SearchBarList from '../components/SearchBarList'
 import moment from 'moment'
 import * as SecureStore from 'expo-secure-store'
-import * as add from '../ip/config'
 
 export default function CalendarScreen({ navigation }) {
   const [selectedDate, setSelectedDate] = useState('')
   const [postData, setPostData] = useState([])
-  const ip = add.ip
 
   // get post data from api
   useEffect(() => {
     const getData = async () => {
       const userID = await SecureStore.getItemAsync('userID')
-      const apiResponse = await fetch(`http://${ip}:3000/post/all/` + userID)
+      const apiResponse = await fetch(
+        `https://mirradiaryapp.azurewebsites.net/post/all/` + userID
+      )
       const data = await apiResponse.json()
       setPostData(data)
     }
