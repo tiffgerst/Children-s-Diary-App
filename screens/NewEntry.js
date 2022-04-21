@@ -15,7 +15,7 @@ export default function NewEntry({ navigation }) {
   const [prompt3, setprompt3] = useState()
   const getPrompts = () => {
     api
-      .get(`prompts/h`)
+      .get(`prompts/`)
       .then((response) => {
         const p1 = response.data[0].prompt
         const p2 = response.data[1].prompt

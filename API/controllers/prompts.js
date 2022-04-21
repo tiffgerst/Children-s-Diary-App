@@ -1,13 +1,11 @@
 import mssql from 'mssql'
 import config from '../config/dbConfig.js'
-import Jwt from 'jsonwebtoken'
 
 const { connect, query } = mssql
 
 // Finds one user by their ID from the databse
 export const getPrompt = async (req, res) => {
   try {
-    console.log('booo')
     await connect(config)
     const result =
       await query`select Top 3 prompt from prompts order by NEWID()`

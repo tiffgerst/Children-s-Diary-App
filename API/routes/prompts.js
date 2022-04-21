@@ -4,6 +4,6 @@ import passport from 'passport'
 import '../config/passport.js'
 
 const router = express.Router()
-router.get('/h', getPrompt)
+router.get('/', getPrompt)
 
 export default router
