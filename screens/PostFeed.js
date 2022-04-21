@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Image, ImageBackground, ScrollView, TouchableOpacity } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ImageBackground,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native'
 import BackButton from '../components/BackButton'
 import moment from 'moment'
 import TagButtonList from '../components/TagButtonList'
@@ -13,63 +21,79 @@ export default function PostFeed({ route, navigation }) {
   let [tag, setTag] = useState('')
   const [imageURL, setImageURL] = useState('')
   const ip = add.ip
-  const {postID} = route.params
-  
+  const { postID } = route.params
+
   // get post data from api
   useEffect(() => {
     const getData = async () => {
       const apiResponse = await fetch(`http://${ip}:3000/post/` + postID)
-      const data = await apiResponse.json();
+      const data = await apiResponse.json()
       let backgroundURL = await data[0].backgroundURL
       let date = await data[0].createDateTime
       let title = await data[0].titleText
       let content = await data[0].contentText
       let tag = await data[0].tagNameAll.split(', ')
       let imageURL = await data[0].imageURL
-      setBackgroundURL(backgroundURL);
+      setBackgroundURL(backgroundURL)
       setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
       setTitle(title)
       setContent(content)
       setTag(tag)
       setImageURL(imageURL)
-    };
-    getData();
-  }, []);
+    }
+    getData()
+  }, [])
 
-  if (tag[0]==='') {
+  if (tag[0] === '') {
     tag = ''
   }
 
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={{url:backgroundURL}}
+        source={{ url: backgroundURL }}
         resizeMode="cover"
         style={styles.backgroundImage}
       >
-      <View style={styles.row}>
-        <BackButton goBack={navigation.goBack} style={{ position: 'relative' }}/>
-        <TouchableOpacity style={styles.editButton} onPress={() => console.log('pressed')}>
-          <Text style={styles.buttonFont}>Edit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.removeButton} onPress={() => console.log('pressed')}>
-          <Text style={styles.buttonFont}>Remove</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.postTitle}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.date}>{date}</Text>
-      </View>
-      {tag?(
-      <View style={styles.postTag}>
-        <TagButtonList style={styles.tag} data={tag}/>
-      </View>):(<View style={{padding:10}}></View>)}
-      <View style={styles.postContent}>
-        <ScrollView>
-          <Text style={styles.content}>{content}</Text>
-          {imageURL?(<Image style={styles.image} source={{url:imageURL}}/>):(<View></View>)}
-        </ScrollView>
-      </View>
+        <View style={styles.row}>
+          <BackButton
+            goBack={navigation.goBack}
+            style={{ position: 'relative' }}
+          />
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => console.log('pressed')}
+          >
+            <Text style={styles.buttonFont}>Edit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.removeButton}
+            onPress={() => console.log('pressed')}
+          >
+            <Text style={styles.buttonFont}>Remove</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.postTitle}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.date}>{date}</Text>
+        </View>
+        {tag ? (
+          <View style={styles.postTag}>
+            <TagButtonList style={styles.tag} data={tag} />
+          </View>
+        ) : (
+          <View style={{ padding: 10 }} />
+        )}
+        <View style={styles.postContent}>
+          <ScrollView>
+            <Text style={styles.content}>{content}</Text>
+            {imageURL ? (
+              <Image style={styles.image} source={{ url: imageURL }} />
+            ) : (
+              <View />
+            )}
+          </ScrollView>
+        </View>
       </ImageBackground>
     </View>
   )

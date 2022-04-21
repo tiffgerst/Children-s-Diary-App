@@ -7,12 +7,14 @@ import {
   loginUser,
   changePassword,
   isLoggedIn,
+  userEmail,
 } from '../controllers/appUser.js'
 import passport from 'passport'
 import '../config/passport.js'
 
 const router = express.Router()
 router.get('/getUser/:id', singleUser)
+router.get('/getEmail/:email', userEmail)
 router.patch('/:id', updateUser)
 router.post('/register', registerUser)
 router.delete('/:id', deleteUser)
