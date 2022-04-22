@@ -29,7 +29,7 @@ const emojiData = [
 ]
 
 export default function HowAreYouFeelingScreen({ navigation }) {
-  const [entryText, setEntryText] = useState([])
+  const [entryText, setEntryText] = useState('')
   const [emojis, setEmojis] = useState(emojiData)
   const [selectedEmojis, setSelectedEmojis] = useState([])
   const [userID, setUserID] = useState(null)
@@ -47,25 +47,21 @@ export default function HowAreYouFeelingScreen({ navigation }) {
   // Sumbit new Post to the databse with users selected mood icons and written input text
   const onSubmitPost = () => {
     const ip = add.ip
-    const date = new Date()
-    const dateTimeSQL = date.toISOString().slice(0, 19).replace('T', ' ')
 
-    // console.log(dateTimeSQL)
-
-    axios
-      .post(`http://${ip}:3000/post/feelingEntry`, {
-        userID,
-        dateTimeSQL,
-        entryText,
-        selectedEmojis,
-      })
-      .then(async (response) => {
-        console.log(response)
-        navigation.navigate('Home')
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    if (selectedEmojis.length !== 0 && entryText !== '') {
+      axios
+        .post(`http://${ip}:3000/post/feelingEntry`, {
+          userID,
+          entryText,
+          selectedEmojis,
+        })
+        .then(async (response) => {
+          navigation.navigate('Home')
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
   }
 
   const renderEmojis = ({ item, index }) => {

@@ -76,7 +76,7 @@ export const searchPostByUserID = async (req, res) => {
       ON post.postID = tag.postID
       LEFT JOIN postImageUploaded image
       ON post.postID = image.postID
-      WHERE userID = ${id} 
+      WHERE userID = ${id}
     `
     res.json(result.recordset).status(200)
   } catch (err) {
@@ -88,14 +88,13 @@ export const searchPostByUserID = async (req, res) => {
 export const submitFeelingEntry = async (req, res) => {
   const post = req.body
   const userID = post.userID
-  const dateTime = post.dataTimeSQL
   const titleText = 'My feelings'
   const text = post.entryText.value
   const emojis = post.selectedEmojis
 
   try {
     await connect(config)
-    if (emojis.length > 0 || text !== '') {
+    if (emojis.length !== 0 || text !== '') {
       await query`INSERT INTO post(userID, createDateTime, titleText, contentText) VALUES (${userID}, CURRENT_TIMESTAMP, ${titleText}, ${text})`
       res.status(200).send({
         success: true,
