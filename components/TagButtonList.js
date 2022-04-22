@@ -1,25 +1,20 @@
 import React from 'react'
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-} from 'react-native'
+import { StyleSheet, Text, View, FlatList } from 'react-native'
 import TagButton from './TagButton'
 
 export default function TagButtonList({ data }) {
   const getColor = ({ item }) => {
     if (item === 'Family') {
-        return styles.family
+      return styles.family
     }
     if (item === 'Friends') {
-        return styles.friends
+      return styles.friends
     }
     if (item === 'Sports') {
-        return styles.sports
+      return styles.sports
     }
     if (item === 'Dreams') {
-        return styles.dreams
+      return styles.dreams
     }
     if (item === 'Social Worker') {
       return styles.socialWorker
@@ -46,18 +41,21 @@ export default function TagButtonList({ data }) {
   return (
     <View style={styles.tagContainerView}>
       <Text>
-        　<FlatList
-            contentContainerStyle={styles.tagList}
-            data={data}
-            horizontal
-            keyExtractor={(item) => item}
-            renderItem={({item}) => (
-              <TagButton style={[styles.tag, getColor({item})]} mode="contained">
-                {item}
-              </TagButton>
-            )}
-            scrollEnabled={false}
-        　/>
+        <FlatList
+          contentContainerStyle={styles.tagList}
+          data={data}
+          horizontal
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <TagButton
+              style={[styles.tag, getColor({ item })]}
+              mode="contained"
+            >
+              {item}
+            </TagButton>
+          )}
+          scrollEnabled={false}
+        />
       </Text>
     </View>
   )
@@ -67,7 +65,7 @@ const styles = StyleSheet.create({
   tagContainerView: {
     alignSelf: 'center',
     paddingTop: 5,
-    width:'102%',
+    width: '102%',
   },
   tagList: {
     alignSelf: 'flex-end',

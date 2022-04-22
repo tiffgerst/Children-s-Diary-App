@@ -12,19 +12,20 @@ import * as SecureStore from 'expo-secure-store'
 export default function Home({ navigation }) {
   const [searchPhrase, setSearchPhrase] = useState('')
   const [clicked, setClicked] = useState(false)
-  const [postData, setPostData] = useState()
+  const [postData, setPostData] = useState('')
 
   // get post data from api
   useEffect(() => {
     const getData = async () => {
       const userID = await SecureStore.getItemAsync('userID')
       const apiResponse = await fetch(
-        `https://mirradiaryapp.azurewebsites.net/post/all/` + userID
+        `https://mirradiaryapp.azurewebsites.net/post/all/${userID}`
       )
       const data = await apiResponse.json()
       setPostData(data)
     }
     getData()
+    console.log(postData)
   }, [])
 
   return (

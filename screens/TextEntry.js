@@ -16,8 +16,34 @@ import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import * as SecureStore from 'expo-secure-store'
 import BackgroundButton from '../components/backcolor'
+import Tag from '../components/Tag'
+import TagButtonList from '../components/TagButtonList'
 
 export default function TextEntry({ route }) {
+  const dat = [
+    '#FFA500',
+    '#ffe6ff',
+    '#e6ccff',
+    '#ffff66',
+    '#00ffcc',
+    '#ccffff',
+    '#fff',
+  ]
+  const tags = [
+    'Family',
+    'Friends',
+    'Sports',
+    'Dreams',
+    'Social Worker',
+    'Feelings',
+    'School',
+    'Holiday',
+    'Food',
+    'Shopping',
+    'Travel',
+  ]
+  const a = []
+  const [pick, setpick] = useState(a)
   const [modalVisible1, setModal1Visible] = useState('')
   const [modalVisible2, setModal2Visible] = useState('')
   const [modalVisible3, setModal3Visible] = useState('')
@@ -25,7 +51,7 @@ export default function TextEntry({ route }) {
   const [check2, setcheck2] = useState('')
   const [check1, setcheck1] = useState('√')
   const [background, setbackground] = useState('#fff')
-  const [dat, setdat] = useState('')
+  const [tag, settag] = useState('')
   const title = route.params.title
   const [note, setNote] = useState('')
   const navigation = useNavigation()
@@ -55,26 +81,35 @@ export default function TextEntry({ route }) {
 
     return day + ', ' + num + ' ' + name + ' ' + year + ' ' + hour + ':' + min
   }
-  const getBackground = () => {
-    api
-      .get(`background/`)
-      .then((response) => {
-        const arr = []
-        for (let i = 0; i < response.data.length; i++) {
-          arr[i] = {
-            id: response.data[i].backgroundID,
-            color: response.data[i].backgroundURL,
-          }
-        }
-        setdat(arr)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+  const update = (a) => {
+    console.log(a)
+    if (pick.indexOf(a) == 0 && pick.length == 1) {
+      console.log('hi')
+      pick.shift()
+    } else if (pick.indexOf(a) < 0) {
+      console.log('b')
+      pick.push(a)
+    } else {
+      console.log(pick.indexOf(a))
+      pick.splice(pick.indexOf(a), 1)
+    }
   }
-  useEffect(() => {
-    getBackground()
-  }, [])
+  const bool = (x) => {
+    if (pick.includes(x)) {
+      return true
+    } else {
+      return false
+    }
+  }
+  const renderItem = ({ item }) => (
+    <BackgroundButton
+      color={item}
+      onPress={() => {
+        setbackground(item)
+      }}
+    />
+  )
+  const post = () => {}
 
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
@@ -101,6 +136,13 @@ export default function TextEntry({ route }) {
             onBackdropPress={() => setModal1Visible(!modalVisible1)}
           >
             <View style={styles.centeredView1}>
+              <FlatList
+                contentContainerStyle={styles.grid}
+                data={dat}
+                keyExtractor={(item) => item}
+                renderItem={renderItem}
+                numColumns={3}
+              />
               <View style={styles.triangle}></View>
             </View>
           </Modal>
@@ -119,9 +161,31 @@ export default function TextEntry({ route }) {
             animationType="none"
             transparent={true}
             visible={modalVisible2}
-            onBackdropPress={() => setModal2Visible(!modalVisible2)}
+            onBackdropPress={() =>
+              setModal2Visible(!modalVisible2) & console.log(pick)
+            }
           >
             <View style={styles.centeredView2}>
+              <FlatList
+                contentContainerStyle={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}
+                data={tags}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                  <Tag
+                    name={item}
+                    bool={bool(item)}
+                    onPress={() => {
+                      update(item)
+                    }}
+                  >
+                    {item}
+                  </Tag>
+                )}
+              />
               <View style={styles.triangle2}></View>
             </View>
           </Modal>
@@ -147,16 +211,16 @@ export default function TextEntry({ route }) {
                 onPress={() =>
                   setprivacy(true) & setcheck1('√') & setcheck2('')
                 }
-                style={styles.lock}
               >
                 <Text>Private, only for me {check1}</Text>
               </TouchableOpacity>
-              <Text>-----------------------</Text>
+              <Text style={{ paddingBottom: 8, paddingTop: -4 }}>
+                ______________________
+              </Text>
               <TouchableOpacity
                 onPress={() =>
                   setprivacy(false) & setcheck1('') & setcheck2('√')
                 }
-                style={styles.lock}
               >
                 <Text>Share with my social worker {check2}</Text>
               </TouchableOpacity>
@@ -183,7 +247,7 @@ export default function TextEntry({ route }) {
           </Text>
         </TouchableOpacity>
       </View>
-      <View>
+      <View style={{ flex: 0.8, marginTop: -25 }}>
         <TextInput
           placeholder="Title"
           autoFocus
@@ -191,7 +255,6 @@ export default function TextEntry({ route }) {
             fontSize: 22,
             paddingLeft: 20,
             paddingBottom: 5,
-            marginTop: -60,
             fontWeight: 'bold',
           }}
         >
@@ -206,57 +269,50 @@ export default function TextEntry({ route }) {
         >
           {getCurrentDate()}
         </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            paddingBottom: 7,
-            paddingLeft: 20,
-          }}
-        >
-          Tags
-        </Text>
-        <TextInput
-          placeholder="Write here :)"
-          value={note}
-          onChangeText={setNote}
-          style={{ color: '#000', fontSize: 14, paddingLeft: 20 }}
-          multiline={true}
-        ></TextInput>
+        {/* {tag ? ( */}
+        <View style={{ paddingLeft: 20 }}>
+          <FlatList
+            contentContainerStyle={{ marginLeft: -4 }}
+            horizontal
+            data={pick}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+              <Tag name={item} bool={true}>
+                {item}
+              </Tag>
+            )}
+          />
+          {/* <TagButtonList data={pick} /> */}
 
-        <Text
-          style={{
-            fontSize: 14,
-            paddingBottom: 7,
-            paddingLeft: 20,
-          }}
-        >
-          Tags
-        </Text>
-        <BackgroundButton color={'pink'} />
-        <Text>Hi</Text>
-        <FlatList
-          contentContainerStyle={styles.grid}
-          data={dat}
-          renderItem={({ item }) => <BackgroundButton color={item.color} />}
-          numColumns={3}
-        />
-        <Text>Hi</Text>
+          {/* ) : (
+          <View style={{ padding: 10 }}></View>
+        )} */}
+          <TextInput
+            placeholder="Write here :)"
+            value={note}
+            onChangeText={setNote}
+            style={{
+              color: '#000',
+              fontSize: 14,
+            }}
+            multiline={true}
+          ></TextInput>
+        </View>
       </View>
     </View>
   )
 }
 const styles = StyleSheet.create({
   centeredView1: {
-    height: 100,
+    height: 150,
     width: 220,
-    top: -290,
+    top: -270,
     left: 30,
     margin: 20,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#99ff99',
     borderRadius: 20,
     padding: 5,
     alignItems: 'center',
-    justifyContent: 'center',
     shadowColor: 'grey',
     shadowOffset: {
       width: 0,
@@ -267,16 +323,15 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   centeredView2: {
-    height: 100,
-    width: 220,
-    top: -290,
+    height: 215,
+    width: 200,
+    top: -245,
     left: 30,
     margin: 20,
-    backgroundColor: '#f2f2f2',
-    borderRadius: 20,
-    padding: 5,
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 15,
+    backgroundColor: '#ffe6ff',
+    borderRadius: 20,
     shadowColor: 'grey',
     shadowOffset: {
       width: 0,
@@ -292,7 +347,7 @@ const styles = StyleSheet.create({
     top: -290,
     left: 30,
     margin: 20,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#e6ccff',
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -309,18 +364,20 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     position: 'relative',
-    top: -55,
+    top: -145,
     left: -75,
     borderLeftWidth: 10,
     borderLeftColor: 'transparent',
     borderRightWidth: 10,
     borderRightColor: 'transparent',
     borderBottomWidth: 10,
-    borderBottomColor: 'lightgrey',
+    borderBottomColor: '#99ff99',
+    shadowOpacity: 0.05,
+    shadowRadius: 1.5,
     shadowColor: 'grey',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 5,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -329,14 +386,14 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     position: 'relative',
-    top: -55,
-    left: -10,
+    top: -215,
+    left: 0,
     borderLeftWidth: 10,
     borderLeftColor: 'transparent',
     borderRightWidth: 10,
     borderRightColor: 'transparent',
     borderBottomWidth: 10,
-    borderBottomColor: 'lightgrey',
+    borderBottomColor: '#e6ccff',
     shadowColor: 'grey',
     shadowOffset: {
       width: 0,
@@ -351,13 +408,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -10,
     left: 155,
-    backgroundColor: '#f2f2f2',
     borderLeftWidth: 10,
     borderLeftColor: 'transparent',
     borderRightWidth: 10,
     borderRightColor: 'transparent',
     borderBottomWidth: 10,
-    borderBottomColor: 'lightgrey',
+    borderBottomColor: '#e6ccff',
     shadowColor: 'grey',
     shadowOffset: {
       width: 0,
@@ -371,14 +427,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
   },
-  grid: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    maxWidth: '100%',
-    overflow: 'scroll',
-    marginBottom: 15,
-  },
+  grid: { alignItems: 'center', padding: 5 },
 
   button: {
     width: 46,
@@ -387,12 +436,12 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   row: {
-    flex: 0.2,
+    flex: 0.1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingLeft: 10,
-    paddingTop: 5,
+    paddingTop: 50,
   },
   post: {
     height: 36,
@@ -402,5 +451,4 @@ const styles = StyleSheet.create({
     top: -8,
     left: 20,
   },
-  lock: {},
 })
