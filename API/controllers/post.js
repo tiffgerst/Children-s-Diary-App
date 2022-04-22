@@ -3,7 +3,7 @@ import config from '../config/dbConfig.js'
 
 const { connect, query } = mssql
 
-// Finds a post by its post ID and joins them with images and tags
+// Finds a post by its post ID and joins them with images, tags, and emojis
 export const searchPostByPostID = async (req, res) => {
   const id = req.params.id
 
@@ -76,10 +76,35 @@ export const searchPostByUserID = async (req, res) => {
       ON post.postID = tag.postID
       LEFT JOIN postImageUploaded image
       ON post.postID = image.postID
-      WHERE userID = ${id} 
+      WHERE userID = ${id}
     `
     res.json(result.recordset).status(200)
   } catch (err) {
     res.status(409).send({ message: err.message })
+  }
+}
+
+export const submitFeelingEntry = async (req, res) => {
+  const post = req.body
+  const userID = post.userID
+  const titleText = 'My feelings'
+  const text = post.entryText.value
+  const emojis = post.selectedEmojis
+  const emojiLinkID = post.unique_id_post
+
+  // Submits Post from 'HowAreYouFeeling' screen
+  try {
+    await connect(config)
+    if (emojis.length !== 0 || text !== '') {
+      await query`INSERT INTO post(userID, createDateTime, titleText, contentText, moodIconLink) VALUES (${userID}, CURRENT_TIMESTAMP, ${titleText}, ${text}, ${emojiLinkID})`
+      res.status(200).send({
+        success: true,
+      })
+      console.log(emojis)
+    }
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
   }
 }

@@ -82,7 +82,7 @@ export default function PostFeed({ route, navigation }) {
             <TagButtonList style={styles.tag} data={tag} />
           </View>
         ) : (
-          <View style={{ padding: 10 }}></View>
+          <View style={{ padding: 10 }} />
         )}
         <View style={styles.postContent}>
           <ScrollView>
@@ -90,7 +90,7 @@ export default function PostFeed({ route, navigation }) {
             {imageURL ? (
               <Image style={styles.image} source={{ url: imageURL }} />
             ) : (
-              <View></View>
+              <View />
             )}
           </ScrollView>
         </View>
