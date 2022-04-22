@@ -8,40 +8,42 @@ import BackButton from '../components/BackButton'
 import SearchBarList from '../components/SearchBarList'
 import moment from 'moment'
 import * as SecureStore from 'expo-secure-store'
-import * as add from '../ip/config'
 
 export default function CalendarScreen({ navigation }) {
   const [selectedDate, setSelectedDate] = useState('')
   const [postData, setPostData] = useState([])
-  const ip = add.ip
 
   // get post data from api
   useEffect(() => {
     const getData = async () => {
       const userID = await SecureStore.getItemAsync('userID')
-      const apiResponse = await fetch(`http://${ip}:3000/post/all/` + userID)
-      const data = await apiResponse.json();
-      setPostData(data);
-    };
-    getData();
-  }, []);
+      const apiResponse = await fetch(
+        `https://mirradiaryapp.azurewebsites.net/post/all/` + userID
+      )
+      const data = await apiResponse.json()
+      setPostData(data)
+    }
+    getData()
+  }, [])
 
-  let markDate = postData.map(function(dateInfo){return moment(dateInfo.createDateTime).format('YYYY-MM-DD')})
-  let markDateObject = {};
+  let markDate = postData.map(function (dateInfo) {
+    return moment(dateInfo.createDateTime).format('YYYY-MM-DD')
+  })
+  let markDateObject = {}
   markDate.forEach((date) => {
     markDateObject[date] = {
-        selected: true,
-        marked: true,
-        selectedColor: '#8FD1CD',
-        customStyles: {
-          text: {
-            color: '#6B7285',
-            fontWeight: 'bold',
-          },
-        }
-    };
-  });
-  
+      selected: true,
+      marked: true,
+      selectedColor: '#8FD1CD',
+      customStyles: {
+        text: {
+          color: '#6B7285',
+          fontWeight: 'bold',
+        },
+      },
+    }
+  })
+
   return (
     <Background3 style={styles.background}>
       <BackButton goBack={navigation.goBack} />
@@ -73,15 +75,21 @@ export default function CalendarScreen({ navigation }) {
           textMonthFontSize: 20,
           textDayHeaderFontSize: 15,
         }}
-        onDayPress={day => {
-          console.log('selected day', day);
-          setSelectedDate(day.dateString);
+        onDayPress={(day) => {
+          console.log('selected day', day)
+          setSelectedDate(day.dateString)
         }}
         markingType={'custom'}
         markedDates={markDateObject}
         enableSwipeMonths={true}
       />
-      {selectedDate?(<Text style={styles.entry}>Entries {moment(selectedDate).format('DD MMM YYYY')}</Text>):(<View></View>)}
+      {selectedDate ? (
+        <Text style={styles.entry}>
+          Entries {moment(selectedDate).format('DD MMM YYYY')}
+        </Text>
+      ) : (
+        <View></View>
+      )}
       <View style={styles.scroll}>
         <SearchBarList
           searchPhrase={moment(selectedDate).format('DD MMM YYYY')}

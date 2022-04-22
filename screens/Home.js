@@ -7,35 +7,29 @@ import Background3 from '../components/Background3'
 import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import AddButton from '../components/AddButton'
-import * as add from '../ip/config'
+import * as SecureStore from 'expo-secure-store'
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function Home({ navigation }) {
   const [searchPhrase, setSearchPhrase] = useState('')
   const [clicked, setClicked] = useState(false)
-  const [postData, setPostData] = useState()
-  const ip = add.ip
+  const [postData, setPostData] = useState('')
 
   // get post data from api
   useEffect(() => {
     const getData = async () => {
       const userID = await SecureStore.getItemAsync('userID')
-      const apiResponse = await fetch(`http://${ip}:3000/post/all/` + userID)
+      const apiResponse = await fetch(
+        `https://mirradiaryapp.azurewebsites.net/post/all/${userID}`
+      )
       const data = await apiResponse.json()
       const sorted = data.sort((a, b) => b.postID - a.postID)
       setPostData(sorted)
       console.log(postData)
     }
     getData()
+    console.log(postData)
   }, [])
-
-  // useEffect(() => {
-  //   let loggedIn = isLoggedIn()
-  //   if (!loggedIn) {
-  //     navigation.navigate('StartScreen')
-  //   }
-  //   console.log(loggedIn)
-  // }, [])
 
   return (
     <Background3 style={styles.background}>

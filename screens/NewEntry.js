@@ -1,25 +1,36 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import BackButton from '../components/BackButton'
 import Button from '../components/Button'
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-  FontAwesome,
-} from '@expo/vector-icons'
+import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
+import axios from 'axios'
+import api from '../connections/api'
+
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function NewEntry({ navigation }) {
-  // useEffect(() => {
-  //   let loggedIn = isLoggedIn()
-  //   if (!loggedIn) {
-  //     navigation.navigate('StartScreen')
-  //   }
-  //   console.log(loggedIn)
-  // }, [])
-
+  const [prompt1, setprompt1] = useState()
+  const [prompt2, setprompt2] = useState()
+  const [prompt3, setprompt3] = useState()
+  const getPrompts = () => {
+    api
+      .get(`prompts/`)
+      .then((response) => {
+        const p1 = response.data[0].prompt
+        const p2 = response.data[1].prompt
+        const p3 = response.data[2].prompt
+        setprompt1(p1)
+        setprompt2(p2)
+        setprompt3(p3)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+  useEffect(() => {
+    getPrompts()
+  }, [])
   return (
     <View style={styles.container}>
       <BackButton goBack={navigation.goBack} />
@@ -31,7 +42,11 @@ export default function NewEntry({ navigation }) {
           <Button
             style={styles.button}
             mode="contained"
-            onPress={() => navigation.navigate('TextEntry')}
+            onPress={() =>
+              navigation.navigate('TextEntry', {
+                title: '',
+              })
+            }
           >
             <View>
               <MaterialCommunityIcons
@@ -51,6 +66,7 @@ export default function NewEntry({ navigation }) {
                 name="microphone"
                 size={40}
                 color="#5A6174"
+                onPress={() => navigation.navigate('Record')}
               />
               <Text style={styles.text}>Recording</Text>
             </View>
@@ -90,15 +106,37 @@ export default function NewEntry({ navigation }) {
           <Text style={styles.textsugg}> Smart Suggestions</Text>
         </View>
         <View style={{ marginStart: 20 }}>
-          <Button style={styles.buttonlong}></Button>
-          <Button style={styles.buttonlong}></Button>
-          <Button style={styles.buttonlong}>
-            <Text>Random {'\u2728'}</Text>
+          <Button
+            style={styles.buttonlong}
+            onPress={() =>
+              navigation.navigate('TextEntry', {
+                title: prompt1,
+              })
+            }
+          >
+            <Text>{prompt1}</Text>
           </Button>
           <Button
-            style={{ marginStart: -15 }}
-            onPress={() => navigation.navigate('TextEntry')}
+            style={styles.buttonlong}
+            onPress={() =>
+              navigation.navigate('TextEntry', {
+                title: prompt2,
+              })
+            }
           >
+            <Text>{prompt2}</Text>
+          </Button>
+          <Button
+            style={styles.buttonlong}
+            onPress={() =>
+              navigation.navigate('TextEntry', {
+                title: prompt3,
+              })
+            }
+          >
+            <Text>Random {'\u2728'}</Text>
+          </Button>
+          <Button style={{ marginStart: -15 }} onPress={() => getPrompts()}>
             View more ideas
           </Button>
         </View>

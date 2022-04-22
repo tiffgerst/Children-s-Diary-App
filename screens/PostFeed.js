@@ -11,7 +11,6 @@ import {
 import BackButton from '../components/BackButton'
 import moment from 'moment'
 import TagButtonList from '../components/TagButtonList'
-import * as add from '../ip/config'
 
 export default function PostFeed({ route, navigation }) {
   const [backgroundURL, setBackgroundURL] = useState('')
@@ -20,13 +19,14 @@ export default function PostFeed({ route, navigation }) {
   const [content, setContent] = useState('')
   let [tag, setTag] = useState('')
   const [imageURL, setImageURL] = useState('')
-  const ip = add.ip
   const { postID } = route.params
 
   // get post data from api
   useEffect(() => {
     const getData = async () => {
-      const apiResponse = await fetch(`http://${ip}:3000/post/` + postID)
+      const apiResponse = await fetch(
+        `https://mirradiaryapp.azurewebsites.net/post/` + postID
+      )
       const data = await apiResponse.json()
       let backgroundURL = await data[0].backgroundURL
       let date = await data[0].createDateTime
