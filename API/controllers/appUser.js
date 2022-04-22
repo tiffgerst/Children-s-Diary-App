@@ -154,3 +154,16 @@ export const isLoggedIn = async (req, res) => {
   console.log('here')
   console.log(req.body)
 }
+
+// Finds a user by their email from the databse, for password reset functionality
+export const userEmail = async (req, res) => {
+  const email = req.params.email
+
+  try {
+    await connect(config)
+    const result = await query`SELECT * FROM appUser WHERE email = ${email}`
+    res.json(result.recordset).status(200)
+  } catch (err) {
+    res.status(409).send({ message: err.message })
+  }
+}
