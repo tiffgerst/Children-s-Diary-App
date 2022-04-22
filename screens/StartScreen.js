@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Text } from 'react-native-paper'
+import * as SecureStore from 'expo-secure-store'
+import axios from 'axios'
 import Button from '../components/Button'
 import TextInput from '../components/TextInput'
 import Background from '../components/Background'
@@ -8,8 +10,6 @@ import { usernameValidator } from '../helpers/usernameValidator'
 import { isLoggedIn } from '../helpers/isLoggedIn'
 import { passwordValidator } from '../helpers/passwordValidator'
 import { theme } from '../src/core/theme'
-import axios from 'axios'
-import * as SecureStore from 'expo-secure-store'
 import * as add from '../ip/config'
 
 export default function StartScreen({ navigation }) {

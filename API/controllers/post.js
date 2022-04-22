@@ -84,3 +84,27 @@ export const searchPostByUserID = async (req, res) => {
     res.status(409).send({ message: err.message })
   }
 }
+
+// Submits Post from 'HowAreYouFeeling' screen
+export const submitFeelingEntry = async (req, res) => {
+  const post = req.body
+  const userID = post.userID
+  const dateTime = post.dataTimeSQL
+  const titleText = 'My feelings'
+  const text = post.entryText.value
+  const emojis = post.selectedEmojis
+
+  try {
+    await connect(config)
+    if (emojis.length > 0 || text !== '') {
+      await query`INSERT INTO post(userID, createDateTime, titleText, contentText) VALUES (${userID}, CURRENT_TIMESTAMP, ${titleText}, ${text})`
+      res.status(200).send({
+        success: true,
+      })
+    }
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+}
