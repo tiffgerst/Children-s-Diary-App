@@ -1,7 +1,6 @@
 import mssql from 'mssql'
 import config from '../config/dbConfig.js'
 
-
 const { connect, query } = mssql
 
 // Finds a post by its post ID and joins them with images and tags
