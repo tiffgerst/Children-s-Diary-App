@@ -8,7 +8,10 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import axios from 'axios'
+import 'react-native-get-random-values'
+import { v4 as uuid } from 'uuid'
 import * as SecureStore from 'expo-secure-store'
+import { showMessage, hideMessage } from 'react-native-flash-message'
 import Button from '../components/Button'
 import TextInputMedium from '../components/TextInputMedium'
 import Background2 from '../components/Background2'
@@ -16,73 +19,105 @@ import { theme } from '../src/core/theme'
 import SkipButton from '../components/SkipButton'
 import * as add from '../ip/config'
 
-const emojiData = [
-  { id: 1, emotion: 'Excited', emoji: require('../assets/moodIcons/Excited.png'), },
-  { id: 2, emotion: 'Happy', emoji: require('../assets/moodIcons/Happy.png') },
-  { id: 3, emotion: 'Confused', emoji: require('../assets/moodIcons/Confused.png'), },
-  { id: 4, emotion: 'Grateful', emoji: require('../assets/moodIcons/Grateful.png'), },
-  { id: 5, emotion: 'Calm', emoji: require('../assets/moodIcons/Calm.png') },
-  { id: 6, emotion: 'Sad', emoji: require('../assets/moodIcons/Sad.png') },
-  { id: 7, emotion: 'Angry', emoji: require('../assets/moodIcons/Angry.png') },
-  { id: 8, emotion: 'Sleepy', emoji: require('../assets/moodIcons/Sleepy.png'), },
-  { id: 9, emotion: 'Anxious', emoji: require('../assets/moodIcons/Anxious.png'), },
-]
-
 export default function HowAreYouFeelingScreen({ navigation }) {
   const [entryText, setEntryText] = useState('')
-  const [emojis, setEmojis] = useState(emojiData)
+  const [emojis, setEmojis] = useState(null)
   const [selectedEmojis, setSelectedEmojis] = useState([])
   const [userID, setUserID] = useState(null)
+  const ip = add.ip
 
   // Obtain user ID from SecureStore
   useEffect(() => {
     const getData = async () => {
+      // Obtain user ID from SecureStore
       const secureStoreID = await SecureStore.getItemAsync('userID').then(
         (id) => setUserID(id)
       )
-    }
-    getData()
-  }, [])
-
-  // Sumbit new Post to the databse with users selected mood icons and written input text
-  const onSubmitPost = () => {
-    const ip = add.ip
-
-    if (selectedEmojis.length !== 0 && entryText !== '') {
+      // GET default mood icon emojis
       axios
-        .post(`http://${ip}:3000/post/feelingEntry`, {
+        .get(`http://${ip}:3000/moodIcons/getMoodIcons`, {
           userID,
-          entryText,
-          selectedEmojis,
         })
         .then(async (response) => {
-          navigation.navigate('Home')
+          setEmojis(response.data)
         })
         .catch((error) => {
           console.log(error)
         })
     }
+    getData()
+  }, [])
+
+  const onSubmitPost = () => {
+    const unique_id = uuid()
+    const unique_id_post = unique_id.slice(0, 8)
+
+    if (selectedEmojis.length !== 0 && entryText !== '') {
+      // Sumbit new Post to the databse with users written input text
+      axios
+        .post(`http://${ip}:3000/post/feelingEntry`, {
+          userID,
+          entryText,
+          unique_id_post,
+          selectedEmojis,
+        })
+        .then(async () => {
+          axios
+            // If post successfully created, add reward points to the users count
+            .patch(`http://${ip}:3000/appUser/reward/` + userID, {
+              userID,
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+
+          // Link each selected emoji to the post created
+          selectedEmojis.forEach((moodIconID) =>
+            axios
+              .post(`http://${ip}:3000/moodIcons/postLink`, {
+                moodIconID,
+                unique_id_post,
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+          )
+
+          navigation.navigate('Home')
+
+          showMessage({
+            message: 'Awesome!  New entry earned you 5 \u2B50',
+            type: 'info',
+            duration: '2000',
+            floating: true,
+            icon: { icon: '../assets/Star.png', position: 'right' },
+            backgroundColor: '#7AC9A1',
+            titleStyle: { fontWeight: 'bold', textAlign: 'center' },
+            animationDuration: '275',
+          })
+        })
+    }
   }
 
   const renderEmojis = ({ item, index }) => {
-    const { id, emotion, emoji } = item
+    const { moodIconID, moodIconURL, moodIconName } = item
 
-    const isSelected = selectedEmojis.filter((i) => i === id).length > 0 // checking if the emoji is already selected
+    const isSelected = selectedEmojis.filter((i) => i === moodIconID).length > 0 // checking if the emoji is already selected
 
     // keep track of the emojis that the user is selecting
     return (
       <TouchableOpacity
         onPress={() => {
           if (isSelected) {
-            setSelectedEmojis((prev) => prev.filter((i) => i !== id))
+            setSelectedEmojis((prev) => prev.filter((i) => i !== moodIconID))
           } else {
-            setSelectedEmojis((prev) => [...prev, id])
+            setSelectedEmojis((prev) => [...prev, moodIconID])
           }
         }}
       >
         <View style={isSelected ? styles.emojiSelected : styles.emojiView}>
-          <Image source={item.emoji} style={styles.emojiImage} />
-          <Text style={styles.emojiText}>{item.emotion}</Text>
+          <Image source={{ uri: item.moodIconURL }} style={styles.emojiImage} />
+          <Text style={styles.emojiText}>{item.moodIconName}</Text>
         </View>
       </TouchableOpacity>
     )
@@ -102,7 +137,7 @@ export default function HowAreYouFeelingScreen({ navigation }) {
         contentContainerStyle={styles.grid}
         data={emojis}
         renderItem={renderEmojis}
-        keyExtractor={(item) => `key-${item.id}`}
+        keyExtractor={(item) => `key-${item.moodIconID}`}
         scrollEnabled={false}
       />
 

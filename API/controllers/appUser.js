@@ -167,3 +167,19 @@ export const userEmail = async (req, res) => {
     res.status(409).send({ message: err.message })
   }
 }
+
+// Updates User reward point count
+export const updateRewardPoints = async (req, res) => {
+  const id = req.params.id
+  const reward = 5
+
+  try {
+    await connect(config)
+    const result =
+      await query`UPDATE appUser SET reward = reward + ${reward} WHERE UserID = ${id}`
+    res.send(`User:${id} has earned ${reward} stars.`).status(200)
+  } catch (err) {
+    res.status(409).send({ message: err.message })
+  }
+}
+
