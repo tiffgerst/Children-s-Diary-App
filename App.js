@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Provider } from 'react-native-paper'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import FlashMessage from "react-native-flash-message";
 import { theme } from './src/core/theme'
 import {
   StartScreen,
@@ -49,6 +50,7 @@ export default function App({ navigation }) {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      <FlashMessage position="top" />
     </Provider>
   )
 }

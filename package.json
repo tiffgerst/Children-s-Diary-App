@@ -25,7 +25,9 @@
     "react-native": "0.64.3",
     "react-native-calendars": "^1.1279.0",
     "react-native-elements": "^3.4.2",
+    "react-native-flash-message": "^0.2.1",
     "react-native-gesture-handler": "~2.1.0",
+    "react-native-get-random-values": "^1.7.2",
     "react-native-keychain": "^8.0.0",
     "react-native-paper": "^4.11.2",
     "react-native-paper-grid": "^0.1.12",
@@ -34,6 +36,7 @@
     "react-native-secure-storage": "^0.1.2",
     "react-native-status-bar-height": "^2.6.0",
     "react-native-web": "0.17.1",
+    "uuid": "^8.3.2",
     "yarn": "^1.22.17"
   },
   "devDependencies": {

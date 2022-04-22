@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Image, View, Text, TouchableOpacity } from 'react-native'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
+import * as SecureStore from 'expo-secure-store'
 import { theme } from '../src/core/theme'
 import Background3 from '../components/Background3'
 import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import AddButton from '../components/AddButton'
-import * as SecureStore from 'expo-secure-store'
 import * as add from '../ip/config'
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
@@ -22,7 +22,9 @@ export default function Home({ navigation }) {
       const userID = await SecureStore.getItemAsync('userID')
       const apiResponse = await fetch(`http://${ip}:3000/post/all/` + userID)
       const data = await apiResponse.json()
-      setPostData(data)
+      const sorted = data.sort((a, b) => b.postID - a.postID)
+      setPostData(sorted)
+      console.log(postData)
     }
     getData()
   }, [])
