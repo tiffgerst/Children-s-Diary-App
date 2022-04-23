@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/fff397cf-8b75-4d2f-b336-a4ee44d5781f/resourceGroups/Database/providers/Microsoft.Web/sites/mirradiaryapp",
+    "appService.deploySubpath": "API"
+}

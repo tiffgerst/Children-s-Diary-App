@@ -60,7 +60,8 @@ export const searchPostByUserID = async (req, res) => {
         ISNULL(titleText, '') AS titleText,
         ISNULL(contentText, '') AS contentText, 
         ISNULL(tagNameAll, '') AS tagNameAll, 
-        imageURL
+        imageURL,
+        uniqueID
       FROM post
       LEFT JOIN (
         SELECT post.postID, 
