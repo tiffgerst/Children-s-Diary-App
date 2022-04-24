@@ -19,6 +19,8 @@ import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
 import TagButtonList from '../components/TagButtonList'
 import * as ImagePicker from 'expo-image-picker'
+import { v4 as uuid } from 'uuid'
+import * as add from '../ip/config'
 
 export default function ImageEntry({ route }) {
   React.useEffect(() => {
@@ -28,6 +30,17 @@ export default function ImageEntry({ route }) {
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, []);
+
+  // Get user ID from SecureStore
+  const [userID, setUserID] = useState(null)
+  useEffect(() => {
+    const getData = async () => {
+      const secureStoreID = await SecureStore.getItemAsync('userID').then(
+        (id) => setUserID(id)
+      )
+    }
+    getData()
+  }, [])
 
   const dat = [
     '#FFA500',
@@ -132,6 +145,45 @@ export default function ImageEntry({ route }) {
       setImage(result.uri);
     }
   };
+
+  const ip = add.ip
+  const [titleText, setTitleText] = useState('')
+  const [contentText, setContentText] = useState('')
+
+  const onPost = () => {
+    const unique_id = uuid()
+    const unique_id_post = unique_id.slice(0, 8)
+    if (titleText !== '') {
+      // Add new post to the databse
+      axios
+        .post(`http://${ip}:3000/post/add`, {
+          userID,
+          background,
+          privacy,
+          titleText,
+          contentText,
+          image,
+          unique_id_post,
+        })
+        .then(async () => {
+
+        //   // Link each tag to the post created
+        //   selectedEmojis.forEach((moodIconID) =>
+        //     axios
+        //       .post(`http://${ip}:3000/moodIcons/postLink`, {
+        //         moodIconID,
+        //         unique_id_post,
+        //       })
+        //       .catch((error) => {
+        //         console.log(error)
+        //       })
+        //   )
+
+          navigation.navigate('Home')
+
+        })
+    }
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
@@ -253,7 +305,7 @@ export default function ImageEntry({ route }) {
 
         <TouchableOpacity
           style={styles.post}
-          onPress={() => console.log('pressed')}
+          onPress={() => onPost()}
         >
           <Text
             style={{
@@ -271,17 +323,16 @@ export default function ImageEntry({ route }) {
       </View>
       <View style={{ flex: 0.8, marginTop: -25 }}>
         <TextInput
+          value={titleText.value}
+          onChangeText={(text) => setTitleText({ value: text })}
           placeholder="Title"
-          autoFocus
           style={{
             fontSize: 22,
             paddingLeft: 20,
             paddingBottom: 5,
             fontWeight: 'bold',
           }}
-        >
-          {title}
-        </TextInput>
+        />
         <Text
           style={{
             fontSize: 14,
@@ -291,7 +342,6 @@ export default function ImageEntry({ route }) {
         >
           {getCurrentDate()}
         </Text>
-        {/* {tag ? ( */}
         <View style={{ paddingLeft: 20 }}>
           <FlatList
             contentContainerStyle={{ marginLeft: -4 }}
@@ -310,15 +360,15 @@ export default function ImageEntry({ route }) {
           <View style={{ padding: 10 }}></View>
         )} */}
           <TextInput
+            value={contentText.value}
+            onChangeText={(text) => setContentText({ value: text })}
             placeholder="Write here :)"
-            value={note}
-            onChangeText={setNote}
             style={{
               color: '#000',
               fontSize: 14,
             }}
             multiline={true}
-          ></TextInput>
+          />
           {image && <Image source={{ uri: image }} style={styles.image} />}
         </View>
       </View>

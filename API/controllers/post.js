@@ -109,3 +109,45 @@ export const submitFeelingEntry = async (req, res) => {
     })
   }
 }
+
+// Adds new post to database
+export const addPost = async (req, res) => {
+  const post = req.body
+  const userID = post.userID
+  const backgroundColor = post.background
+  const privacy = post.privacy
+  const titleText = post.titleText.value
+  const contentText = post.contentText.value
+  const imageURL = post.image
+  const uniqueID = post.unique_id_post
+
+  try {
+    await connect(config)
+    if (titleText !== '') {
+      await query`INSERT INTO post (userID, createDateTime, backgroundColor, privacy, titleText, contentText, uniqueID) VALUES (${userID}, CURRENT_TIMESTAMP, ${backgroundColor}, ${privacy}, ${titleText}, ${contentText}, ${uniqueID})`
+      res.status(200).send({
+        success: true,
+      })
+      console.log(titleText)
+    }
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+
+  try {
+    await connect(config)
+    if (titleText !== '') {
+      await query`INSERT INTO postImageUploaded (imageURL, postLink) VALUES (${imageURL}, ${uniqueID})`
+      res.status(200).send({
+        success: true,
+      })
+      console.log(titleText)
+    }
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+}
