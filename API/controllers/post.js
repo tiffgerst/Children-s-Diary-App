@@ -34,7 +34,7 @@ export const searchPostByPostID = async (req, res) => {
       ) AS tag
       ON post.postID = tag.postID
       LEFT JOIN postImageUploaded image
-      ON post.postID = image.postID
+      ON post.uniqueID = image.postLink
       LEFT JOIN background
       ON post.backgroundID = background.backgroundID
       WHERE post.postID = ${id} 
@@ -76,7 +76,7 @@ export const searchPostByUserID = async (req, res) => {
       ) AS tag
       ON post.postID = tag.postID
       LEFT JOIN postImageUploaded image
-      ON post.postID = image.postID
+      ON post.uniqueID = image.postLink
       WHERE userID = ${id}
     `
     res.json(result.recordset).status(200)
@@ -102,6 +102,79 @@ export const submitFeelingEntry = async (req, res) => {
         success: true,
       })
       console.log(emojis)
+    }
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+}
+
+// Adds new post to database
+export const addPost = async (req, res) => {
+  const post = req.body
+  const userID = post.userID
+  const backgroundColor = post.background
+  const privacy = post.privacy
+  const titleText = post.titleText.value
+  const contentText = post.contentText.value
+  const imageURL = post.imageURL
+  const uniqueID = post.unique_id_post
+
+  try {
+    await connect(config)
+    if (titleText !== '') {
+      await query`INSERT INTO post (userID, createDateTime, backgroundColor, privacy, titleText, contentText, uniqueID) VALUES (${userID}, CURRENT_TIMESTAMP, ${backgroundColor}, ${privacy}, ${titleText}, ${contentText}, ${uniqueID})`
+      res.status(200).send({
+        success: true,
+      })
+      console.log(titleText)
+    }
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+
+  try {
+    await connect(config)
+    if (imageURL !== '') {
+      await query`INSERT INTO postImageUploaded (imageURL, postLink) VALUES (${imageURL}, ${uniqueID})`
+      res.status(200).send({
+        success: true,
+      })
+      console.log(titleText)
+    }
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+}
+
+// Updates new post to database
+export const updatePost = async (req, res) => {
+  const id = req.params.id
+  const post = req.body
+  const backgroundColor = post.background
+  const privacy = post.privacy
+  const titleText = post.titleText.value
+  const contentText = post.contentText.value
+
+  try {
+    await connect(config)
+    if (titleText !== '') {
+      await query`UPDATE post SET 
+        createDateTime = CURRENT_TIMESTAMP
+        backgroundColor = ${backgroundColor}
+        privacy = ${privacy}
+        titleText = ${titleText}
+        contentText = ${contentText}
+        WHERE postID = ${id}`
+      res.status(200).send({
+        success: true,
+      })
+      console.log(titleText)
     }
   } catch (err) {
     res.status(409).send({
