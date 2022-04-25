@@ -12,10 +12,12 @@ import {
   Calendar,
   NewEntry,
   TextEntry,
+  ImageEntry,
   Customisation,
   Profile,
   //Record,
   PostFeed,
+  EditEntry,
   ResetPassLinkSent,
 } from './screens'
 
@@ -42,10 +44,12 @@ export default function App({ navigation }) {
           <Stack.Screen name="Calendar" component={Calendar} />
           <Stack.Screen name="NewEntry" component={NewEntry} />
           <Stack.Screen name="TextEntry" component={TextEntry} />
+          <Stack.Screen name="ImageEntry" component={ImageEntry} />
           <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="Customisation" component={Customisation} />
           {/*<Stack.Screen name="Record" component={Record} />*/}
           <Stack.Screen name="PostFeed" component={PostFeed} />
+          <Stack.Screen name="EditEntry" component={EditEntry} />
           <Stack.Screen
             name="ResetPassLinkSent"
             component={ResetPassLinkSent}

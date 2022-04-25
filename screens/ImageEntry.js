@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import Modal from 'react-native-modal'
 import {
   StyleSheet,
+  Image,
   View,
   Text,
   TouchableOpacity,
   TextInput,
   FlatList,
-  Alert,
 } from 'react-native'
 import axios from 'axios'
 import BackButton from '../components/BackButton'
@@ -16,15 +16,35 @@ import { useNavigation } from '@react-navigation/native'
 import * as SecureStore from 'expo-secure-store'
 import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
-import TagButtonList from '../components/TagButtonList'
-import 'react-native-get-random-values'
+import * as ImagePicker from 'expo-image-picker'
 import { v4 as uuid } from 'uuid'
-import { showMessage, hideMessage } from 'react-native-flash-message'
-import TextInputMedium from '../components/TextInputMedium'
+import firebaseConfig from '../API/config/firebaseConfig.js'
+import { initializeApp } from 'firebase/app';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import * as add from '../ip/config'
 
-export default function TextEntry({ route, navigation }) {
-  const ip = add.ip
+initializeApp(firebaseConfig);
+
+export default function ImageEntry({ route }) {
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      pickImage()
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, []);
+
+  // Get user ID from SecureStore
+  const [userID, setUserID] = useState(null)
+  useEffect(() => {
+    const getData = async () => {
+      const secureStoreID = await SecureStore.getItemAsync('userID').then(
+        (id) => setUserID(id)
+      )
+    }
+    getData()
+  }, [])
+
   const dat = [
     '#FFA500',
     '#ffe6ff',
@@ -34,7 +54,6 @@ export default function TextEntry({ route, navigation }) {
     '#ccffff',
     '#fff',
   ]
-
   const tags = [
     'Family',
     'Friends',
@@ -57,11 +76,7 @@ export default function TextEntry({ route, navigation }) {
   const [check2, setcheck2] = useState('')
   const [check1, setcheck1] = useState('√')
   const [background, setbackground] = useState('#fff')
-  const [tag, settag] = useState('')
-  const title = route.params.title
-  const [tit, settit] = useState(title)
-  const [note, setNote] = useState('')
-
+  const navigation = useNavigation()
   const weekday = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
   const month = [
     'Jan',
@@ -75,7 +90,7 @@ export default function TextEntry({ route, navigation }) {
     'Sept',
     'Oct',
     'Nov',
-    'Dez',
+    'Dec',
   ]
   const getCurrentDate = () => {
     let date = new Date()
@@ -89,11 +104,15 @@ export default function TextEntry({ route, navigation }) {
     return day + ', ' + num + ' ' + name + ' ' + year + ' ' + hour + ':' + min
   }
   const update = (a) => {
+    console.log(a)
     if (pick.indexOf(a) == 0 && pick.length == 1) {
+      console.log('hi')
       pick.shift()
     } else if (pick.indexOf(a) < 0) {
+      console.log('b')
       pick.push(a)
     } else {
+      console.log(pick.indexOf(a))
       pick.splice(pick.indexOf(a), 1)
     }
   }
@@ -112,87 +131,64 @@ export default function TextEntry({ route, navigation }) {
       }}
     />
   )
-  const cancel = () => {
-    if (note !== '') {
-      Alert.alert(
-        'Unposted notes will be lost',
-        `Are you sure you want to leave this entry? It will be deleted.`,
-        [
-          {
-            text: 'Yes',
-            onPress: () => {
-              navigation.navigate('NewEntry')
-            },
-          },
-          {
-            text: 'No',
-          },
-        ]
-      )
-    } else {
-      navigation.navigate('NewEntry')
+  const [image, setImage] = useState(null)
+  const [imageURL, setImageURL] = useState()
+  const pickImage = async () => {
+    // Launch the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    console.log(result);
+    if (!result.cancelled) {
+      setImage(result.uri);
+      const storage = getStorage()
+      const imageRef = ref(storage, new Date().toISOString())
+      const img = await fetch(result.uri)
+      const bytes = await img.blob()
+      const uploaded = await uploadBytes(imageRef, bytes)
+      await getDownloadURL(imageRef).then((x) => {
+        setImageURL(x);
+        console.log(x);
+      });
     }
-  }
-  const onSubmitPost = async () => {
+  };
+  const ip = add.ip
+  const [titleText, setTitleText] = useState('')
+  const [contentText, setContentText] = useState('')
+  const onPost = () => {
     const unique_id = uuid()
     const unique_id_post = unique_id.slice(0, 8)
-    const userID = await SecureStore.getItemAsync('userID')
-
-    if (tit == '' || note == '') {
-      Alert.alert('Unable to post', 'Post must have a title and body text', {
-        cancelable: true,
-        onDismiss: () =>
-          Alert.alert(
-            'This alert was dismissed by tapping outside of the alert dialog.'
-          ),
-      })
-    } else {
+    if (titleText !== '') {
+      // Add new post to the databse
       axios
-        .post(`http://${ip}:3000/post/newPost`, {
-          userID: userID,
-          note: note,
-          unique_id_post: unique_id_post,
-          tit: tit,
-          privacy: privacy,
-          background: background,
+        .post(`http://${ip}:3000/post/add`, {
+          userID,
+          background,
+          privacy,
+          titleText,
+          contentText,
+          imageURL,
+          unique_id_post,
         })
-        .then(async (response) => {
-          const postID = response.data.postID
-          axios
-            // If post successfully created, add reward points to the users count
-            .patch(`http://${ip}:3000/appUser/reward/` + userID, {
-              userID: userID,
-            })
-            .catch((error) => {
-              console.log(error.message)
-              console.log('reward')
-            })
+        .then(async () => {
 
-          //Link each selected emoji to the post created
-          pick.forEach((tag) =>
-            axios
-              .post(`http://${ip}:3000/post/tags`, {
-                tag: tag,
-                postID: postID,
-              })
-              .catch((error) => {
-                console.log(error)
-                console.log('tags')
-              })
-          )
+        //   // Link each tag to the post created
+        //   selectedEmojis.forEach((moodIconID) =>
+        //     axios
+        //       .post(`http://${ip}:3000/moodIcons/postLink`, {
+        //         moodIconID,
+        //         unique_id_post,
+        //       })
+        //       .catch((error) => {
+        //         console.log(error)
+        //       })
+        //   )
 
           navigation.navigate('Home')
 
-          showMessage({
-            message: 'Awesome!  New entry earned you 10 \u2B50',
-            type: 'info',
-            duration: '2000',
-            floating: true,
-            icon: { icon: '../assets/Star.png', position: 'right' },
-            backgroundColor: '#7AC9A1',
-            titleStyle: { fontWeight: 'bold', textAlign: 'center' },
-            animationDuration: '275',
-          })
         })
     }
   }
@@ -200,7 +196,10 @@ export default function TextEntry({ route, navigation }) {
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
       <View style={styles.row}>
-        <BackButton goBack={cancel} style={{ position: 'relative' }} />
+        <BackButton
+          goBack={navigation.goBack}
+          style={{ position: 'relative' }}
+        />
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
@@ -244,7 +243,9 @@ export default function TextEntry({ route, navigation }) {
             animationType="none"
             transparent={true}
             visible={modalVisible2}
-            onBackdropPress={() => setModal2Visible(!modalVisible2)}
+            onBackdropPress={() =>
+              setModal2Visible(!modalVisible2) & console.log(pick)
+            }
           >
             <View style={styles.centeredView2}>
               <FlatList
@@ -310,7 +311,10 @@ export default function TextEntry({ route, navigation }) {
           </Modal>
         </View>
 
-        <TouchableOpacity style={styles.post} onPress={() => onSubmitPost()}>
+        <TouchableOpacity
+          style={styles.post}
+          onPress={() => onPost()}
+        >
           <Text
             style={{
               color: 'white',
@@ -327,18 +331,16 @@ export default function TextEntry({ route, navigation }) {
       </View>
       <View style={{ flex: 0.8, marginTop: -25 }}>
         <TextInput
+          value={titleText.value}
+          onChangeText={(text) => setTitleText({ value: text })}
           placeholder="Title"
-          autoFocus
-          onChangeText={settit}
           style={{
             fontSize: 22,
             paddingLeft: 20,
             paddingBottom: 5,
             fontWeight: 'bold',
           }}
-        >
-          {title}
-        </TextInput>
+        />
         <Text
           style={{
             fontSize: 14,
@@ -360,10 +362,9 @@ export default function TextEntry({ route, navigation }) {
               </Tag>
             )}
           />
-
           <TextInput
-            value={note}
-            onChangeText={(text) => setNote(text)}
+            value={contentText.value}
+            onChangeText={(text) => setContentText({ value: text })}
             placeholder="Write here :)"
             style={{
               color: '#000',
@@ -371,6 +372,7 @@ export default function TextEntry({ route, navigation }) {
             }}
             multiline={true}
           />
+          {image && <Image source={{ uri: image }} style={styles.image} />}
         </View>
       </View>
     </View>
@@ -438,7 +440,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     position: 'relative',
-    top: -142,
+    top: -145,
     left: -75,
     borderLeftWidth: 10,
     borderLeftColor: 'transparent',
@@ -524,5 +526,11 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     top: -8,
     left: 20,
+  },
+  image: {
+    width: 330,
+    height: 330,
+    borderRadius: 12,
+    margin: 10,
   },
 })

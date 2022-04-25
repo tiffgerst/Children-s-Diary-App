@@ -11,6 +11,7 @@ import {
 import BackButton from '../components/BackButton'
 import moment from 'moment'
 import TagButtonList from '../components/TagButtonList'
+import * as add from '../ip/config'
 
 export default function PostFeed({ route, navigation }) {
   const [backgroundURL, setBackgroundURL] = useState('')
@@ -21,28 +22,56 @@ export default function PostFeed({ route, navigation }) {
   const [imageURL, setImageURL] = useState('')
   const { postID } = route.params
 
-  // get post data from api
-  useEffect(() => {
-    const getData = async () => {
-      const apiResponse = await fetch(
-        `https://mirradiaryapp.azurewebsites.net/post/` + postID
-      )
-      const data = await apiResponse.json()
-      let backgroundURL = await data[0].backgroundURL
-      let date = await data[0].createDateTime
-      let title = await data[0].titleText
-      let content = await data[0].contentText
-      let tag = await data[0].tagNameAll.split(', ')
-      let imageURL = await data[0].imageURL
-      setBackgroundURL(backgroundURL)
-      setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
-      setTitle(title)
-      setContent(content)
-      setTag(tag)
-      setImageURL(imageURL)
-    }
-    getData()
-  }, [])
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      const ip = add.ip
+      const getData = async () => {
+        const apiResponse = await fetch(
+          `http://${ip}:3000/post/` + postID
+        )
+        const data = await apiResponse.json()
+        let backgroundURL = await data[0].backgroundURL
+        let date = await data[0].createDateTime
+        let title = await data[0].titleText
+        let content = await data[0].contentText
+        let tag = await data[0].tagNameAll.split(', ')
+        let imageURL = await data[0].imageURL
+        setBackgroundURL(backgroundURL)
+        setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
+        setTitle(title)
+        setContent(content)
+        setTag(tag)
+        setImageURL(imageURL)
+      }
+      getData()
+    }, [])
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, []);
+  
+  // // get post data from api
+  // useEffect(() => {
+  //   const ip = add.ip
+  //   const getData = async () => {
+  //     const apiResponse = await fetch(
+  //       `http://${ip}:3000/post/` + postID
+  //     )
+  //     const data = await apiResponse.json()
+  //     let backgroundURL = await data[0].backgroundURL
+  //     let date = await data[0].createDateTime
+  //     let title = await data[0].titleText
+  //     let content = await data[0].contentText
+  //     let tag = await data[0].tagNameAll.split(', ')
+  //     let imageURL = await data[0].imageURL
+  //     setBackgroundURL(backgroundURL)
+  //     setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
+  //     setTitle(title)
+  //     setContent(content)
+  //     setTag(tag)
+  //     setImageURL(imageURL)
+  //   }
+  //   getData()
+  // }, [])
 
   if (tag[0] === '') {
     tag = ''
@@ -62,7 +91,7 @@ export default function PostFeed({ route, navigation }) {
           />
           <TouchableOpacity
             style={styles.editButton}
-            onPress={() => console.log('pressed')}
+            onPress={() => navigation.navigate('EditEntry', { postID:postID, date: date, title:title, content:content, tag:tag, imageURL:imageURL })}
           >
             <Text style={styles.buttonFont}>Edit</Text>
           </TouchableOpacity>
@@ -189,8 +218,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   image: {
-    width: '95%',
-    height: 400,
+    width: 330,
+    height: 330,
     alignSelf: 'center',
     borderRadius: 12,
     margin: 10,

@@ -31,6 +31,7 @@ export default function NewEntry({ navigation }) {
   useEffect(() => {
     getPrompts()
   }, [])
+
   return (
     <View style={styles.container}>
       <BackButton goBack={navigation.goBack} />
@@ -73,7 +74,15 @@ export default function NewEntry({ navigation }) {
           </Button>
         </View>
         <View style={{ flexDirection: 'row' }}>
-          <Button style={[styles.button]} mode="contained">
+          <Button
+            style={styles.button}
+            mode="contained"
+            onPress={() =>
+              navigation.navigate('ImageEntry', {
+                title: '',
+              })
+            }
+          >
             <View>
               <MaterialCommunityIcons
                 style={styles.icon}
