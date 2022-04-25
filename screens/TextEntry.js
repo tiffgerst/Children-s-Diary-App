@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  Alert,
 } from 'react-native'
 import axios from 'axios'
 import api from '../connections/api'
@@ -18,8 +19,14 @@ import * as SecureStore from 'expo-secure-store'
 import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
 import TagButtonList from '../components/TagButtonList'
+import 'react-native-get-random-values'
+import { v4 as uuid } from 'uuid'
+import { showMessage, hideMessage } from 'react-native-flash-message'
+import TextInputMedium from '../components/TextInputMedium'
+import * as add from '../ip/config'
 
-export default function TextEntry({ route }) {
+export default function TextEntry({ route, navigation }) {
+  const ip = add.ip
   const dat = [
     '#FFA500',
     '#ffe6ff',
@@ -29,6 +36,7 @@ export default function TextEntry({ route }) {
     '#ccffff',
     '#fff',
   ]
+
   const tags = [
     'Family',
     'Friends',
@@ -53,8 +61,9 @@ export default function TextEntry({ route }) {
   const [background, setbackground] = useState('#fff')
   const [tag, settag] = useState('')
   const title = route.params.title
+  const [tit, settit] = useState(title)
   const [note, setNote] = useState('')
-  const navigation = useNavigation()
+
   const weekday = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
   const month = [
     'Jan',
@@ -82,15 +91,11 @@ export default function TextEntry({ route }) {
     return day + ', ' + num + ' ' + name + ' ' + year + ' ' + hour + ':' + min
   }
   const update = (a) => {
-    console.log(a)
     if (pick.indexOf(a) == 0 && pick.length == 1) {
-      console.log('hi')
       pick.shift()
     } else if (pick.indexOf(a) < 0) {
-      console.log('b')
       pick.push(a)
     } else {
-      console.log(pick.indexOf(a))
       pick.splice(pick.indexOf(a), 1)
     }
   }
@@ -109,15 +114,89 @@ export default function TextEntry({ route }) {
       }}
     />
   )
-  const post = () => {}
+  const cancel = () => {
+    Alert.alert(
+      'Unposted notes will be lost',
+      `Are you sure you want to leave this entry? It will be deleted.`,
+      [
+        {
+          text: 'Yes',
+          onPress: () => {
+            navigation.navigate('NewEntry')
+          },
+        },
+        {
+          text: 'No',
+        },
+      ]
+    )
+  }
+  const onSubmitPost = async () => {
+    const unique_id = uuid()
+    const unique_id_post = unique_id.slice(0, 8)
+    const userID = await SecureStore.getItemAsync('userID')
+
+    if (tit == '' || note == '') {
+      Alert.alert('Unable to post', 'Post must have a title and body text', {
+        cancelable: true,
+        onDismiss: () =>
+          Alert.alert(
+            'This alert was dismissed by tapping outside of the alert dialog.'
+          ),
+      })
+    } else {
+      axios
+        .post(`http://${ip}:3000/post/newPost`, {
+          userID: userID,
+          note: note,
+          unique_id_post: unique_id_post,
+          tit: tit,
+          privacy: privacy,
+          background: background,
+        })
+        .then(async (response) => {
+          const postID = response.data.postID
+          axios
+            // If post successfully created, add reward points to the users count
+            .patch(`http://${ip}:3000/appUser/reward/` + userID, {
+              userID,
+            })
+            .catch((error) => {
+              console.log(error.message)
+            })
+
+          //Link each selected emoji to the post created
+          pick.forEach((tag) =>
+            axios
+              .post(`http://${ip}:3000/post/tags`, {
+                tag: tag,
+                postID: postID,
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+          )
+
+          navigation.navigate('Home')
+
+          showMessage({
+            message: 'Awesome!  New entry earned you 10 \u2B50',
+            type: 'info',
+            duration: '2000',
+            floating: true,
+            icon: { icon: '../assets/Star.png', position: 'right' },
+            backgroundColor: '#7AC9A1',
+            titleStyle: { fontWeight: 'bold', textAlign: 'center' },
+            animationDuration: '275',
+          })
+        })
+    }
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
       <View style={styles.row}>
-        <BackButton
-          goBack={navigation.goBack}
-          style={{ position: 'relative' }}
-        />
+        <BackButton goBack={cancel} style={{ position: 'relative' }} />
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
@@ -161,9 +240,7 @@ export default function TextEntry({ route }) {
             animationType="none"
             transparent={true}
             visible={modalVisible2}
-            onBackdropPress={() =>
-              setModal2Visible(!modalVisible2) & console.log(pick)
-            }
+            onBackdropPress={() => setModal2Visible(!modalVisible2)}
           >
             <View style={styles.centeredView2}>
               <FlatList
@@ -229,10 +306,7 @@ export default function TextEntry({ route }) {
           </Modal>
         </View>
 
-        <TouchableOpacity
-          style={styles.post}
-          onPress={() => console.log('pressed')}
-        >
+        <TouchableOpacity style={styles.post} onPress={() => onSubmitPost()}>
           <Text
             style={{
               color: 'white',
@@ -251,6 +325,7 @@ export default function TextEntry({ route }) {
         <TextInput
           placeholder="Title"
           autoFocus
+          onChangeText={settit}
           style={{
             fontSize: 22,
             paddingLeft: 20,
@@ -269,7 +344,6 @@ export default function TextEntry({ route }) {
         >
           {getCurrentDate()}
         </Text>
-        {/* {tag ? ( */}
         <View style={{ paddingLeft: 20 }}>
           <FlatList
             contentContainerStyle={{ marginLeft: -4 }}
@@ -282,11 +356,7 @@ export default function TextEntry({ route }) {
               </Tag>
             )}
           />
-          {/* <TagButtonList data={pick} /> */}
 
-          {/* ) : (
-          <View style={{ padding: 10 }}></View>
-        )} */}
           <TextInput
             placeholder="Write here :)"
             value={note}
@@ -364,7 +434,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     position: 'relative',
-    top: -145,
+    top: -142,
     left: -75,
     borderLeftWidth: 10,
     borderLeftColor: 'transparent',
