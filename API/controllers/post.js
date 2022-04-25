@@ -138,8 +138,39 @@ export const addPost = async (req, res) => {
 
   try {
     await connect(config)
-    if (titleText !== '') {
+    if (imageURL !== '') {
       await query`INSERT INTO postImageUploaded (imageURL, postLink) VALUES (${imageURL}, ${uniqueID})`
+      res.status(200).send({
+        success: true,
+      })
+      console.log(titleText)
+    }
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+}
+
+// Updates new post to database
+export const updatePost = async (req, res) => {
+  const id = req.params.id
+  const post = req.body
+  const backgroundColor = post.background
+  const privacy = post.privacy
+  const titleText = post.titleText.value
+  const contentText = post.contentText.value
+
+  try {
+    await connect(config)
+    if (titleText !== '') {
+      await query`UPDATE post SET 
+        createDateTime = CURRENT_TIMESTAMP
+        backgroundColor = ${backgroundColor}
+        privacy = ${privacy}
+        titleText = ${titleText}
+        contentText = ${contentText}
+        WHERE postID = ${id}`
       res.status(200).send({
         success: true,
       })

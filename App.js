@@ -17,6 +17,7 @@ import {
   Profile,
   //Record,
   PostFeed,
+  EditEntry,
   ResetPassLinkSent,
 } from './screens'
 
@@ -48,6 +49,7 @@ export default function App({ navigation }) {
           <Stack.Screen name="Customisation" component={Customisation} />
           {/*<Stack.Screen name="Record" component={Record} />*/}
           <Stack.Screen name="PostFeed" component={PostFeed} />
+          <Stack.Screen name="EditEntry" component={EditEntry} />
           <Stack.Screen
             name="ResetPassLinkSent"
             component={ResetPassLinkSent}

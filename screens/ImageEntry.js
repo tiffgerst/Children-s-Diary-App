@@ -10,14 +10,12 @@ import {
   FlatList,
 } from 'react-native'
 import axios from 'axios'
-import api from '../connections/api'
 import BackButton from '../components/BackButton'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import * as SecureStore from 'expo-secure-store'
 import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
-import TagButtonList from '../components/TagButtonList'
 import * as ImagePicker from 'expo-image-picker'
 import { v4 as uuid } from 'uuid'
 import firebaseConfig from '../API/config/firebaseConfig.js'
@@ -78,9 +76,6 @@ export default function ImageEntry({ route }) {
   const [check2, setcheck2] = useState('')
   const [check1, setcheck1] = useState('√')
   const [background, setbackground] = useState('#fff')
-  const [tag, settag] = useState('')
-  const title = route.params.title
-  const [note, setNote] = useState('')
   const navigation = useNavigation()
   const weekday = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
   const month = [
@@ -160,12 +155,9 @@ export default function ImageEntry({ route }) {
       });
     }
   };
-
-
   const ip = add.ip
   const [titleText, setTitleText] = useState('')
   const [contentText, setContentText] = useState('')
-
   const onPost = () => {
     const unique_id = uuid()
     const unique_id_post = unique_id.slice(0, 8)
@@ -370,11 +362,6 @@ export default function ImageEntry({ route }) {
               </Tag>
             )}
           />
-          {/* <TagButtonList data={pick} /> */}
-
-          {/* ) : (
-          <View style={{ padding: 10 }}></View>
-        )} */}
           <TextInput
             value={contentText.value}
             onChangeText={(text) => setContentText({ value: text })}
@@ -543,7 +530,6 @@ const styles = StyleSheet.create({
   image: {
     width: 330,
     height: 330,
-    // alignSelf: 'center',
     borderRadius: 12,
     margin: 10,
   },

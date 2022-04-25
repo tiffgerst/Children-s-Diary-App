@@ -12,34 +12,45 @@ import * as add from '../ip/config'
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function Home({ navigation }) {
-  // React.useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     getData()
-  //   });
-  //   // Return the function to unsubscribe from the event so it gets removed on unmount
-  //   return unsubscribe;
-  // }, [navigation]);
-
   const [searchPhrase, setSearchPhrase] = useState('')
   const [clicked, setClicked] = useState(false)
   const [postData, setPostData] = useState('')
 
-  // get post data from api
-  useEffect(() => {
-    const ip = add.ip
-    const getData = async () => {
-      const userID = await SecureStore.getItemAsync('userID')
-      const apiResponse = await fetch(
-        `http://${ip}:3000/post/all/${userID}`
-      )
-      const data = await apiResponse.json()
-      const sorted = data.sort((a, b) => b.postID - a.postID)
-      setPostData(sorted)
+  // // get post data from api
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     const userID = await SecureStore.getItemAsync('userID')
+  //     const apiResponse = await fetch(
+  //       `https://mirradiaryapp.azurewebsites.net/post/all/${userID}`
+  //     )
+  //     const data = await apiResponse.json()
+  //     const sorted = data.sort((a, b) => b.postID - a.postID)
+  //     setPostData(sorted)
+  //     console.log(postData)
+  //   }
+  //   getData()
+  //   console.log(postData)
+  // }, [])
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      const ip = add.ip
+      const getData = async () => {
+        const userID = await SecureStore.getItemAsync('userID')
+        const apiResponse = await fetch(
+          `http://${ip}:3000/post/all/${userID}`
+        )
+        const data = await apiResponse.json()
+        const sorted = data.sort((a, b) => b.postID - a.postID)
+        setPostData(sorted)
+        console.log(postData)
+      }
+      getData()
       console.log(postData)
-    }
-    getData()
-    console.log(postData)
-  }, [])
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, []);
 
   return (
     <Background3 style={styles.background}>
