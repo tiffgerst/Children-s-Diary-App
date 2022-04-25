@@ -11,6 +11,7 @@ import {
 import BackButton from '../components/BackButton'
 import moment from 'moment'
 import TagButtonList from '../components/TagButtonList'
+import * as add from '../ip/config'
 
 export default function PostFeed({ route, navigation }) {
   const [backgroundURL, setBackgroundURL] = useState('')
@@ -23,9 +24,10 @@ export default function PostFeed({ route, navigation }) {
 
   // get post data from api
   useEffect(() => {
+    const ip = add.ip
     const getData = async () => {
       const apiResponse = await fetch(
-        `https://mirradiaryapp.azurewebsites.net/post/` + postID
+        `http://${ip}:3000/post/` + postID
       )
       const data = await apiResponse.json()
       let backgroundURL = await data[0].backgroundURL
@@ -189,8 +191,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   image: {
-    width: '95%',
-    height: 400,
+    width: 330,
+    height: 330,
     alignSelf: 'center',
     borderRadius: 12,
     margin: 10,

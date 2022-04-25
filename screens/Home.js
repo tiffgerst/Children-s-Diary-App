@@ -7,20 +7,30 @@ import Background3 from '../components/Background3'
 import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import AddButton from '../components/AddButton'
+import * as add from '../ip/config'
 
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function Home({ navigation }) {
+  // React.useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     getData()
+  //   });
+  //   // Return the function to unsubscribe from the event so it gets removed on unmount
+  //   return unsubscribe;
+  // }, [navigation]);
+
   const [searchPhrase, setSearchPhrase] = useState('')
   const [clicked, setClicked] = useState(false)
   const [postData, setPostData] = useState('')
 
   // get post data from api
   useEffect(() => {
+    const ip = add.ip
     const getData = async () => {
       const userID = await SecureStore.getItemAsync('userID')
       const apiResponse = await fetch(
-        `https://mirradiaryapp.azurewebsites.net/post/all/${userID}`
+        `http://${ip}:3000/post/all/${userID}`
       )
       const data = await apiResponse.json()
       const sorted = data.sort((a, b) => b.postID - a.postID)

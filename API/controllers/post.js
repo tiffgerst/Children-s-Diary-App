@@ -34,7 +34,7 @@ export const searchPostByPostID = async (req, res) => {
       ) AS tag
       ON post.postID = tag.postID
       LEFT JOIN postImageUploaded image
-      ON post.postID = image.postID
+      ON post.uniqueID = image.postLink
       LEFT JOIN background
       ON post.backgroundID = background.backgroundID
       WHERE post.postID = ${id} 
@@ -76,7 +76,7 @@ export const searchPostByUserID = async (req, res) => {
       ) AS tag
       ON post.postID = tag.postID
       LEFT JOIN postImageUploaded image
-      ON post.postID = image.postID
+      ON post.uniqueID = image.postLink
       WHERE userID = ${id}
     `
     res.json(result.recordset).status(200)
@@ -118,7 +118,7 @@ export const addPost = async (req, res) => {
   const privacy = post.privacy
   const titleText = post.titleText.value
   const contentText = post.contentText.value
-  const imageURL = post.image
+  const imageURL = post.imageURL
   const uniqueID = post.unique_id_post
 
   try {

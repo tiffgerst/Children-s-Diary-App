@@ -20,7 +20,12 @@ import Tag from '../components/Tag'
 import TagButtonList from '../components/TagButtonList'
 import * as ImagePicker from 'expo-image-picker'
 import { v4 as uuid } from 'uuid'
+import firebaseConfig from '../API/config/firebaseConfig.js'
+import { initializeApp } from 'firebase/app';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import * as add from '../ip/config'
+
+initializeApp(firebaseConfig);
 
 export default function ImageEntry({ route }) {
   React.useEffect(() => {
@@ -132,6 +137,7 @@ export default function ImageEntry({ route }) {
     />
   )
   const [image, setImage] = useState(null)
+  const [imageURL, setImageURL] = useState()
   const pickImage = async () => {
     // Launch the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -143,8 +149,18 @@ export default function ImageEntry({ route }) {
     console.log(result);
     if (!result.cancelled) {
       setImage(result.uri);
+      const storage = getStorage()
+      const imageRef = ref(storage, new Date().toISOString())
+      const img = await fetch(result.uri)
+      const bytes = await img.blob()
+      const uploaded = await uploadBytes(imageRef, bytes)
+      await getDownloadURL(imageRef).then((x) => {
+        setImageURL(x);
+        console.log(x);
+      });
     }
   };
+
 
   const ip = add.ip
   const [titleText, setTitleText] = useState('')
@@ -162,7 +178,7 @@ export default function ImageEntry({ route }) {
           privacy,
           titleText,
           contentText,
-          image,
+          imageURL,
           unique_id_post,
         })
         .then(async () => {
