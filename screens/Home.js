@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { StyleSheet, Image, View, Text, TouchableOpacity } from 'react-native'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
 import * as SecureStore from 'expo-secure-store'
@@ -7,6 +7,7 @@ import Background3 from '../components/Background3'
 import SearchBar from '../components/SearchBar'
 import SearchBarList from '../components/SearchBarList'
 import AddButton from '../components/AddButton'
+import { useFocusEffect, useIsFocused } from '@react-navigation/core'
 
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 

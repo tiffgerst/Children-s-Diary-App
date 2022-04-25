@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
 
-export default function Tag({ name, onPress, onPressOut, bool }) {
+export default function Tag({ name, onPress, bool }) {
   const [isPressed, setisPressed] = useState(bool)
   const setcolour = () => {
     if (!isPressed) {

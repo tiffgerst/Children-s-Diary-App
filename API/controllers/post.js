@@ -108,3 +108,56 @@ export const submitFeelingEntry = async (req, res) => {
     })
   }
 }
+
+export const newPost = async (req, res) => {
+  const post = req.body
+  const userID = post.userID
+  const titleText = post.tit
+  const text = post.note
+  const privacy = post.privacy
+  const backgroundColor = post.background
+  const id = post.unique_id_post
+
+  console.log(post)
+
+  // Submits Post from 'TextEntry' screen
+  try {
+    await connect(config)
+    const back =
+      await query`SELECT backgroundID from background WHERE backgroundURL = ${backgroundColor}`
+    const backID = back.recordset[0].backgroundID
+    await query`INSERT INTO post (userID, createDateTime, titleText, contentText, privacy, backgroundColor, uniqueID, backgroundID) VALUES (${userID}, CURRENT_TIMESTAMP, ${titleText}, ${text}, ${privacy},${backgroundColor},${id},${backID})`
+    const pid = await query`Select postID from post WHERE uniqueID = ${id}`
+
+    res.status(200).send({
+      success: true,
+      postID: pid.recordset[0].postID,
+    })
+    console.log(titleText)
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+}
+export const tags = async (req, res) => {
+  const post = req.body
+  const postID = post.postID
+  const tag = post.tag
+
+  // Submits Post from 'TextEntry' screen
+  try {
+    await connect(config)
+    const t = await query`SELECT tagID from tag_category WHERE tagName=${tag}`
+    const tID = t.recordset[0].tagID
+    await query`INSERT INTO post_tag (tagID,postID) VALUES (${tID},${postID})`
+
+    res.status(200).send({
+      success: true,
+    })
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+}
