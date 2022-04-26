@@ -35,7 +35,8 @@ export default function CalendarScreen({ navigation }) {
         `http://${ip}:3000/post/all/` + userID
       )
       const data = await apiResponse.json()
-      setPostData(data)
+      const sorted = data.sort((a, b) => b.postID - a.postID)
+      setPostData(sorted)
     }
     getData()
   }, [])

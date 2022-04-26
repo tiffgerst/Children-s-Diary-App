@@ -190,6 +190,26 @@ export const tags = async (req, res) => {
   }
 }
 
+export const image = async (req, res) => {
+  const post = req.body
+  const uniqueID = post.unique_id_post
+  const imageURL = post.imageURL
+
+  // Submits Post from 'ImageEntry' screen
+  try {
+    await connect(config)
+    await query`INSERT INTO postImageUploaded (imageURL, postLink) VALUES (${imageURL}, ${uniqueID})`
+
+    res.status(200).send({
+      success: true,
+    })
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+}
+
 // Updates new post to database
 export const updatePost = async (req, res) => {
   const id = req.params.id
