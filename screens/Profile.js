@@ -7,6 +7,7 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
+  Linking,
 } from 'react-native'
 import theme from '../src/core/theme'
 import Background3 from '../components/Background3'
@@ -20,9 +21,13 @@ import {
   FontAwesome,
 } from '@expo/vector-icons'
 import * as SecureStore from 'expo-secure-store'
+import * as add from '../ip/config'
+import axios from 'axios'
 
 export default function Profile({ navigation }) {
   const [isEnabled, setIsEnabled] = useState(true)
+  const ip = add.ip
+
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState)
   const handleLogout = async () => {
     try {
@@ -33,6 +38,22 @@ export default function Profile({ navigation }) {
       console.log(error)
     }
   }
+  const email = async () => {
+    const userID = await SecureStore.getItemAsync('userID')
+    axios
+      .post(`http://${ip}:3000/appUser/email`, {
+        userID: userID,
+      })
+      .then(async (response) => {
+        const mail = response.data
+        console.log(mail)
+        Linking.openURL(`mailto:${mail}`)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   return (
     <Background3 style={styles.background}>
       <BackButton goBack={navigation.goBack} />
@@ -69,11 +90,7 @@ export default function Profile({ navigation }) {
       >
         Customisation
       </Button2>
-      <Button2
-        style={styles.button}
-        mode="contained"
-        onPress={() => navigation.navigate('Message')}
-      >
+      <Button2 style={styles.button} mode="contained" onPress={() => email()}>
         Message my social worker
       </Button2>
       <Button2
