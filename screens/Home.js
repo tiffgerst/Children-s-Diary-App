@@ -36,6 +36,7 @@ export default function Home({ navigation }) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       const ip = add.ip
+      // get post data from api
       const getData = async () => {
         const userID = await SecureStore.getItemAsync('userID')
         const apiResponse = await fetch(`http://${ip}:3000/post/all/${userID}`)

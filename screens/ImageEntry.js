@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  Alert,
 } from 'react-native'
 import axios from 'axios'
 import BackButton from '../components/BackButton'
@@ -18,6 +19,7 @@ import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
 import * as ImagePicker from 'expo-image-picker'
 import { v4 as uuid } from 'uuid'
+import { showMessage, hideMessage } from 'react-native-flash-message'
 import firebaseConfig from '../API/config/firebaseConfig.js'
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
@@ -25,7 +27,7 @@ import * as add from '../ip/config'
 
 initializeApp(firebaseConfig);
 
-export default function ImageEntry({ route }) {
+export default function ImageEntry({ route, navigation }) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       pickImage()
@@ -76,7 +78,11 @@ export default function ImageEntry({ route }) {
   const [check2, setcheck2] = useState('')
   const [check1, setcheck1] = useState('√')
   const [background, setbackground] = useState('#fff')
-  const navigation = useNavigation()
+  const [tag, settag] = useState('')
+  const title = route.params.title
+  const [tit, settit] = useState(title)
+  const [note, setNote] = useState('')
+
   const weekday = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
   const month = [
     'Jan',
@@ -131,6 +137,98 @@ export default function ImageEntry({ route }) {
       }}
     />
   )
+  const cancel = () => {
+    if (note !== '') {
+      Alert.alert(
+        'Unposted notes will be lost',
+        `Are you sure you want to leave this entry? It will be deleted.`,
+        [
+          {
+            text: 'Yes',
+            onPress: () => {
+              navigation.navigate('NewEntry')
+            },
+          },
+          {
+            text: 'No',
+          },
+        ]
+      )
+    } else {
+      navigation.navigate('NewEntry')
+    }
+  }
+  const ip = add.ip
+  const onSubmitPost = async () => {
+    const unique_id = uuid()
+    const unique_id_post = unique_id.slice(0, 8)
+    const userID = await SecureStore.getItemAsync('userID')
+
+    if (tit == '' || note == '') {
+      Alert.alert('Unable to post', 'Post must have a title and body text', {
+        cancelable: true,
+        onDismiss: () =>
+          Alert.alert(
+            'This alert was dismissed by tapping outside of the alert dialog.'
+          ),
+      })
+    } else {
+      axios
+        .post(`http://${ip}:3000/post/newPost`, {
+          userID: userID,
+          note: note,
+          unique_id_post: unique_id_post,
+          tit: tit,
+          privacy: privacy,
+          background: background,
+        })
+        .then(async (response) => {
+          const postID = response.data.postID
+          axios
+            // If post successfully created, add reward points to the users count
+            .patch(`http://${ip}:3000/appUser/reward/` + userID, {
+              userID: userID,
+            })
+            .catch((error) => {
+              console.log(error.message)
+              console.log('reward')
+            })
+
+          //Link each selected tag to the post created
+          pick.forEach((tag) =>
+            axios
+              .post(`http://${ip}:3000/post/tags`, {
+                tag: tag,
+                postID: postID,
+              })
+              .catch((error) => {
+                console.log(error)
+                console.log('tags')
+              })
+          )
+          //Link selected image to the post created
+          axios
+          .post(`http://${ip}:3000/post/image`, {
+            unique_id_post: unique_id_post,
+            imageURL: imageURL
+          })
+
+          navigation.navigate('Home')
+
+          showMessage({
+            message: 'Awesome!  New entry earned you 10 \u2B50',
+            type: 'info',
+            duration: '2000',
+            floating: true,
+            icon: { icon: '../assets/Star.png', position: 'right' },
+            backgroundColor: '#7AC9A1',
+            titleStyle: { fontWeight: 'bold', textAlign: 'center' },
+            animationDuration: '275',
+          })
+        })
+    }
+  }
+
   const [image, setImage] = useState(null)
   const [imageURL, setImageURL] = useState()
   const pickImage = async () => {
@@ -155,49 +253,49 @@ export default function ImageEntry({ route }) {
       });
     }
   };
-  const ip = add.ip
-  const [titleText, setTitleText] = useState('')
-  const [contentText, setContentText] = useState('')
-  const onPost = () => {
-    const unique_id = uuid()
-    const unique_id_post = unique_id.slice(0, 8)
-    if (titleText !== '') {
-      // Add new post to the databse
-      axios
-        .post(`http://${ip}:3000/post/add`, {
-          userID,
-          background,
-          privacy,
-          titleText,
-          contentText,
-          imageURL,
-          unique_id_post,
-        })
-        .then(async () => {
+  // const ip = add.ip
+  // const [titleText, setTitleText] = useState('')
+  // const [contentText, setContentText] = useState('')
+  // const onPost = () => {
+  //   const unique_id = uuid()
+  //   const unique_id_post = unique_id.slice(0, 8)
+  //   if (titleText !== '') {
+  //     // Add new post to the databse
+  //     axios
+  //       .post(`http://${ip}:3000/post/add`, {
+  //         userID,
+  //         background,
+  //         privacy,
+  //         titleText,
+  //         contentText,
+  //         imageURL,
+  //         unique_id_post,
+  //       })
+  //       .then(async () => {
 
-        //   // Link each tag to the post created
-        //   selectedEmojis.forEach((moodIconID) =>
-        //     axios
-        //       .post(`http://${ip}:3000/moodIcons/postLink`, {
-        //         moodIconID,
-        //         unique_id_post,
-        //       })
-        //       .catch((error) => {
-        //         console.log(error)
-        //       })
-        //   )
+  //       //   // Link each tag to the post created
+  //       //   selectedEmojis.forEach((moodIconID) =>
+  //       //     axios
+  //       //       .post(`http://${ip}:3000/moodIcons/postLink`, {
+  //       //         moodIconID,
+  //       //         unique_id_post,
+  //       //       })
+  //       //       .catch((error) => {
+  //       //         console.log(error)
+  //       //       })
+  //       //   )
 
-          navigation.navigate('Home')
+  //         navigation.navigate('Home')
 
-        })
-    }
-  }
+  //       })
+  //   }
+  // }
 
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
       <View style={styles.row}>
         <BackButton
-          goBack={navigation.goBack}
+          goBack={cancel}
           style={{ position: 'relative' }}
         />
         <TouchableOpacity
@@ -311,10 +409,7 @@ export default function ImageEntry({ route }) {
           </Modal>
         </View>
 
-        <TouchableOpacity
-          style={styles.post}
-          onPress={() => onPost()}
-        >
+        <TouchableOpacity style={styles.post} onPress={() => onSubmitPost()}>
           <Text
             style={{
               color: 'white',
@@ -331,23 +426,14 @@ export default function ImageEntry({ route }) {
       </View>
       <View style={{ flex: 0.8, marginTop: -25 }}>
         <TextInput
-          value={titleText.value}
-          onChangeText={(text) => setTitleText({ value: text })}
           placeholder="Title"
-          style={{
-            fontSize: 22,
-            paddingLeft: 20,
-            paddingBottom: 5,
-            fontWeight: 'bold',
-          }}
-        />
-        <Text
-          style={{
-            fontSize: 14,
-            paddingBottom: 7,
-            paddingLeft: 20,
-          }}
+          autoFocus
+          onChangeText={settit}
+          style={styles.title}
         >
+          {title}
+        </TextInput>
+        <Text style={styles.date}>
           {getCurrentDate()}
         </Text>
         <View style={{ paddingLeft: 20 }}>
@@ -363,13 +449,10 @@ export default function ImageEntry({ route }) {
             )}
           />
           <TextInput
-            value={contentText.value}
-            onChangeText={(text) => setContentText({ value: text })}
+            value={note}
+            onChangeText={(text) => setNote(text)}
             placeholder="Write here :)"
-            style={{
-              color: '#000',
-              fontSize: 14,
-            }}
+            style={styles.content}
             multiline={true}
           />
           {image && <Image source={{ uri: image }} style={styles.image} />}
@@ -526,6 +609,28 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     top: -8,
     left: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#5A6174',
+    padding: 5,
+    marginLeft: 19,
+    marginTop: 12,
+  },
+  date: {
+    fontSize: 15,
+    color: '#5A6174',
+    padding: 5,
+    marginLeft: 20,
+  },
+  content: {
+    fontSize: 15,
+    color: '#5A6174',
+    padding: 5,
+    lineHeight: 22,
+    marginLeft: 1,
+    marginTop: 10,
   },
   image: {
     width: 330,

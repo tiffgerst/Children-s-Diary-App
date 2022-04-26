@@ -66,12 +66,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingTop: 5,
     width: '102%',
+    height: 30,
   },
   tagList: {
     alignSelf: 'flex-end',
+    marginLeft: 8,
+    marginTop: 2,
   },
   tag: {
-    marginRight: 6,
+    marginLeft: 6,
   },
   family: {
     backgroundColor: '#65A4D9',
