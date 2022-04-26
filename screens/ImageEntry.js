@@ -253,43 +253,6 @@ export default function ImageEntry({ route, navigation }) {
       });
     }
   };
-  // const ip = add.ip
-  // const [titleText, setTitleText] = useState('')
-  // const [contentText, setContentText] = useState('')
-  // const onPost = () => {
-  //   const unique_id = uuid()
-  //   const unique_id_post = unique_id.slice(0, 8)
-  //   if (titleText !== '') {
-  //     // Add new post to the databse
-  //     axios
-  //       .post(`http://${ip}:3000/post/add`, {
-  //         userID,
-  //         background,
-  //         privacy,
-  //         titleText,
-  //         contentText,
-  //         imageURL,
-  //         unique_id_post,
-  //       })
-  //       .then(async () => {
-
-  //       //   // Link each tag to the post created
-  //       //   selectedEmojis.forEach((moodIconID) =>
-  //       //     axios
-  //       //       .post(`http://${ip}:3000/moodIcons/postLink`, {
-  //       //         moodIconID,
-  //       //         unique_id_post,
-  //       //       })
-  //       //       .catch((error) => {
-  //       //         console.log(error)
-  //       //       })
-  //       //   )
-
-  //         navigation.navigate('Home')
-
-  //       })
-  //   }
-  // }
 
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
