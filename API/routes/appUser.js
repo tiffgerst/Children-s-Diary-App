@@ -1,7 +1,7 @@
 import express from 'express'
 import {
   singleUser,
-  updateUser,
+  updateAvatar,
   registerUser,
   deleteUser,
   loginUser,
@@ -9,6 +9,8 @@ import {
   isLoggedIn,
   userEmail,
   updateRewardPoints,
+  updateDisplayName,
+  getStars,
 } from '../controllers/appUser.js'
 import passport from 'passport'
 import '../config/passport.js'
@@ -21,12 +23,14 @@ router.get(
   // passport.authenticate('jwt', { session: false }),
   singleUser
 )
-router.patch('/:id', updateUser)
+router.patch('/avatar/:id', updateAvatar)
+router.get('/reward/getReward/:id', getStars)
 router.post('/register', registerUser)
 router.delete('/:id', deleteUser)
 router.post('/login', loginUser)
 router.patch('/change', changePassword)
 router.patch('/reward/:id', updateRewardPoints)
+router.patch('/displayname/:id', updateDisplayName)
 router.post(
   '/isLoggedIn',
   passport.authenticate('jwt', { session: false }),

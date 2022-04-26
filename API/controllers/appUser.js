@@ -5,7 +5,7 @@ import Jwt from 'jsonwebtoken'
 
 const { connect, query } = mssql
 
-// Finds one user by their ID from the databse
+// Finds one user by their ID from the database
 export const singleUser = async (req, res) => {
   const id = req.params.id
 
@@ -18,11 +18,24 @@ export const singleUser = async (req, res) => {
   }
 }
 
-// Updates User pincode
-export const updateUser = async (req, res) => {
+export const getStars = async (req, res) => {
+  const id = req.params.id
+
+  try {
+    await connect(config)
+    const result = await query`SELECT reward FROM appUser WHERE UserID = ${id}`
+    res.json(result.recordset).status(200)
+  } catch (err) {
+    res.status(409).send({ message: err.message })
+  }
+}
+
+// Updates the avatar of the user
+export const updateAvatar = async (req, res) => {
   const id = req.params.id
   const avatar = req.body.avatarID
-
+  console.log(id)
+  console.log(avatar)
   try {
     await connect(config)
     const result =
@@ -183,3 +196,23 @@ export const updateRewardPoints = async (req, res) => {
   }
 }
 
+// Update the display name of the user
+export const updateDisplayName = async (req, res) => {
+  const id = req.params.id
+  const displayName = req.body.displayName
+
+  try {
+    await connect(config)
+    if (displayName !== '') {
+      await query`UPDATE appUser SET displayname = ${displayName} WHERE userID = ${id}`
+      res.status(200).send({
+        success: true,
+      })
+      console.log(displayName)
+    }
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+}

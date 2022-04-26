@@ -13,16 +13,18 @@ import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
 import Button2 from '../components/Button2'
 import Button from '../components/Button'
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-  FontAwesome,
-} from '@expo/vector-icons'
+import SearchBarList from '../components/SearchBarList'
 import * as SecureStore from 'expo-secure-store'
+import * as add from '../ip/config'
 
 export default function Profile({ navigation }) {
+  const [userID, setUserID] = useState(null)
+  const [postData, setPostData] = useState()
   const [isEnabled, setIsEnabled] = useState(true)
+  const [avatarID, setAvatarID] = useState(null)
+  const [avatarURL, setAvatarURL] = useState(null)
+  const [stars, setStars] = useState(null)
+  const ip = add.ip
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState)
   const handleLogout = async () => {
     try {
@@ -33,17 +35,43 @@ export default function Profile({ navigation }) {
       console.log(error)
     }
   }
+  useEffect(() => {
+    const getData = async () => {
+      const userID = await SecureStore.getItemAsync('userID')
+      const apiResponse = await fetch(`http://${ip}:3000/appUser/getUser/` + userID)
+      const data = await apiResponse.json()
+      const display_name = data[0].displayname
+      const avatarID = data[0].avatarID
+      setUserID(userID)
+      setPostData(display_name)
+      setAvatarID(avatarID)
+      const URL = await fetch(`http://${ip}:3000/avatar/getAvatarURL/` + avatarID)
+      const avatarinfo = await URL.json()
+      const avatarURL = avatarinfo[0].avatarURL
+      setAvatarURL(avatarURL)
+      const reward = await fetch(`http://${ip}:3000/appUser/reward/getReward/` + userID)
+      const rewardinfo = await reward.json()
+      const stars = rewardinfo[0].reward
+      setStars(stars)
+      console.log(stars)
+    }
+    getData()
+  }, [])
+
+
   return (
     <Background3 style={styles.background}>
-      <BackButton goBack={navigation.goBack} />
-      <Image source={require('../assets/sam.png')} style={styles.image} />
-      <View>
-        <Text style={styles.title}>Sam</Text>
+      <BackButton goBack={navigation.goBack}/>
+      
+      <Image source={{uri: avatarURL}} style={styles.image}/>
+      
+      <Text style={styles.title}>{postData}</Text>
+      <View style={styles.wrap}>
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={require('../assets/Star.png')} style={styles.small_image}/>
+          <Text style={styles.text}> {stars} </Text>
+        </View>
       </View>
-      <Image
-        source={require('../assets/stars.png')}
-        style={styles.small_image}
-      />
 
       <Text style={styles.text2}>Achievements</Text>
 
@@ -105,19 +133,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
-  image: {
-    marginTop: 80,
-    width: '80%',
-    overflow: 'visible',
-    marginBottom: 10,
+  image_border:{
+    borderRadius: 80,
+  },
+  image_shadow:{
     shadowColor: '#4048BF',
     shadowOffset: {
       width: 5.4,
-      height: 5.4,
-    },
+      height: 5.4,},
     shadowOpacity: 0.74,
     shadowRadius: 20,
-    elevation: 10,
+  },
+  image: {
+    marginTop: 90,
+    width: '65%',
+    height: '22%',
+    overflow: 'visible',
+    marginBottom: 30,
+    shadowColor: '#4048BF',
+    shadowOffset: {
+      width: 5.4,
+      height: 5.4,},
+    shadowOpacity: 0.74,
+    shadowRadius: 20,
   },
   image2: {
     marginTop: 10,
@@ -129,7 +167,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: '25%',
     overflow: 'visible',
-    marginBottom: 25,
+    marginBottom: 10,
   },
   button: {
     backgroundColor: '#EEEEEE',
@@ -151,8 +189,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   text: {
-    color: '#FFFFFF',
+    color: '#5A6174',
     fontWeight: 'bold',
+    fontSize: 18,
+    marginTop: 7
   },
   text2: {
     color: '#5A6174',
@@ -166,4 +206,16 @@ const styles = StyleSheet.create({
     right: -130,
     marginVertical: -15,
   },
+  wrap:{
+    width: 82,
+    height: 36,
+    margin: 0,
+    borderRadius: 5,
+    backgroundColor: '#EEEEEE',
+    elevation: 10,
+    justifyContent:'center',
+    alignItems: 'center',
+    marginTop:10,
+    marginBottom:20
+},
 })

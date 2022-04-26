@@ -21,6 +21,7 @@ import * as add from '../ip/config'
 
 export default function HowAreYouFeelingScreen({ navigation }) {
   const [entryText, setEntryText] = useState('')
+  const [displayName, setdisplayName] = useState()
   const [emojis, setEmojis] = useState(null)
   const [selectedEmojis, setSelectedEmojis] = useState([])
   const [userID, setUserID] = useState(null)
@@ -33,6 +34,13 @@ export default function HowAreYouFeelingScreen({ navigation }) {
       const secureStoreID = await SecureStore.getItemAsync('userID').then(
         (id) => setUserID(id)
       )
+      console.log(userID)
+      const userID = await SecureStore.getItemAsync('userID')
+      const apiResponse = await fetch(`http://${ip}:3000/appUser/getUser/` + userID)
+      const userinfo = await apiResponse.json()
+      const display_name = userinfo[0].displayname
+      setdisplayName(display_name)
+
       // GET default mood icon emojis
       axios
         .get(`http://${ip}:3000/moodIcons/getMoodIcons`, {
@@ -126,7 +134,7 @@ export default function HowAreYouFeelingScreen({ navigation }) {
   return (
     <Background2 style={styles.container}>
       <View>
-        <Text style={styles.text}>Hi Sam!</Text>
+        <Text style={styles.text}>Hi {displayName}!</Text>
       </View>
       <View>
         <Text style={styles.text2}>How are you feeling today?</Text>

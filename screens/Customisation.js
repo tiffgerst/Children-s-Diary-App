@@ -2,15 +2,86 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, Image, View, Animated, Dimensions, Text, FlatList, TouchableOpacity } from 'react-native' 
 import theme from '../src/core/theme'
 import Background3 from '../components/Background3'
-import TextBox from '../components/TextBox'
+import TextInputMedium from '../components/TextInputMedium'
 import BackButton from '../components/BackButton'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
-
+import * as add from '../ip/config'
+import * as SecureStore from 'expo-secure-store'
+import axios from 'axios'
+import { showMessage, hideMessage } from 'react-native-flash-message'
 
 
 export default function Customisation({ navigation }) {
+    const [postData, setPostData] = useState()
+    const [entryText, setEntryText] = useState('')
+    const ip = add.ip
+    const [userID, setUserID] = useState(null)
+    const [avatarID, setAvatarID] = useState(null)
+    const [avatarURL, setAvatarURL] = useState(null)
     const [animation, setAnimation]=useState(new Animated.Value(0));
-    const {height} = Dimensions.get('window');
+    const {height} = Dimensions.get('window')
+
+
+    useEffect(() => {
+        const getData = async () => {
+          const userID = await SecureStore.getItemAsync('userID')
+          const apiResponse = await fetch(`http://${ip}:3000/appUser/getUser/` + userID)
+          const data = await apiResponse.json()
+          const display_name = data[0].displayname
+          const avatarID = data[0].avatarID
+          setUserID(userID)
+          setPostData(display_name)
+          setAvatarID(avatarID)
+          const URL = await fetch(`http://${ip}:3000/avatar/getAvatarURL/` + avatarID)
+          const avatarinfo = await URL.json()
+          const avatarURL = avatarinfo[0].avatarURL
+          setAvatarURL(avatarURL)
+        }
+        getData()
+    }, [])
+
+    const updateName = () => {
+        if (entryText !== ''){
+            axios
+              .patch(`http://${ip}:3000/appUser/displayname/` + userID, {
+                id: userID,
+                displayName: entryText,
+              })
+              .catch((error) => {
+                  console.log(error)
+              })
+            showMessage({
+            message: 'You have changed your display name. Please refresh the page to reflect the change.',
+            type: 'info',
+            duration: '3000',
+            floating: true,
+            backgroundColor: '#7AC9A1',
+            titleStyle: { fontWeight: 'bold', textAlign: 'center' },
+            animationDuration: '275',
+          })
+        }
+    }
+
+    const updateAvatar = (newID) => {
+        axios
+            .patch(`http://${ip}:3000/appUser/avatar/` + userID, {
+              id: userID,
+              avatarID: newID,
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+        showMessage({
+            message: 'You have changed your avatar. Please refresh the page to reflect the change.',
+            type: 'info',
+            duration: '3000',
+            floating: true,
+            backgroundColor: '#7AC9A1',
+            titleStyle: { fontWeight: 'bold', textAlign: 'center' },
+            animationDuration: '275',
+        })
+    }
+
 
     const color = animation.interpolate({
         inputRange:[0, 0.2, 1.8, 2],
@@ -38,7 +109,7 @@ export default function Customisation({ navigation }) {
             useNativeDriver:false
         }).start();
     };
-    const close=()=>{
+    const close = () => {
         Animated.timing(animation, {
             toValue:0,
             duration:500,
@@ -71,10 +142,24 @@ export default function Customisation({ navigation }) {
         
         <Text style={styles.title}>Customisation</Text>
         <Text style={styles.text2}>Display Name</Text>
-        <TextBox style={styles.textbox} label="Sam" />
+
+        <TextInputMedium
+        style={styles.textbox}
+        value={entryText.value}
+        onChangeText={(text) => setEntryText(text)}
+        label={postData}
+        />
+        <View>
+        <TouchableOpacity style={[styles.button, styles.position5]} onPress={() => updateName()}>
+            <Text style={styles.text3}>
+                Save
+            </Text>
+        </TouchableOpacity>
+        </View>
         <Image source={require('../assets/line.png')} style={styles.line} />
+
         <Text style={styles.text4}>Avatar</Text>
-        <Image source={require('../assets/squared_sam.png')} style={styles.image} />
+        <Image source={{ uri: avatarURL }} style={styles.image} />
 
         <View>
         <View>
@@ -91,52 +176,52 @@ export default function Customisation({ navigation }) {
         <Image source={require('../assets/grey1.png')} style={styles.grey1} />
         <View style={[styles.wrap, styles.center]}>
             <Text style={styles.text5}>Choose Your Avatar</Text>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(1)}}>
                     <Image source={require('../assets/avatars/avatars-01.jpg')} style={styles.avatar_01} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(2)}}>
                     <Image source={require('../assets/avatars/avatars-02.jpg')} style={styles.avatar_02} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(3)}}>
                     <Image source={require('../assets/avatars/avatars-03.jpg')} style={styles.avatar_03} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(4)}}>
                     <Image source={require('../assets/avatars/avatars-04.jpg')} style={styles.avatar_04} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(5)}}>
                     <Image source={require('../assets/avatars/avatars-05.jpg')} style={styles.avatar_05} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(6)}}>
                     <Image source={require('../assets/avatars/avatars-06.jpg')} style={styles.avatar_06} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(7)}}>
                     <Image source={require('../assets/avatars/avatars-07.jpg')} style={styles.avatar_07} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(8)}}>
                     <Image source={require('../assets/avatars/avatars-08.jpg')} style={styles.avatar_08} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(9)}}>
                     <Image source={require('../assets/avatars/avatars-09.jpg')} style={styles.avatar_09} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(10)}}>
                     <Image source={require('../assets/avatars/avatars-10.jpg')} style={styles.avatar_10} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(11)}}>
                     <Image source={require('../assets/avatars/avatars-11.jpg')} style={styles.avatar_11} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(12)}}>
                     <Image source={require('../assets/avatars/avatars-12.jpg')} style={styles.avatar_12} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(13)}}>
                     <Image source={require('../assets/avatars/avatars-13.jpg')} style={styles.avatar_13} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(14)}}>
                     <Image source={require('../assets/avatars/avatars-14.jpg')} style={styles.avatar_14} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(15)}}>
                     <Image source={require('../assets/avatars/avatars-15.jpg')} style={styles.avatar_15} />
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.close_button]} onPress={close}>
+                <TouchableOpacity style={[styles.close_button]} onPress={close} onPressIn={() => {updateAvatar(16)}}>
                     <Image source={require('../assets/avatars/avatars-16.jpg')} style={styles.avatar_16} />
                 </TouchableOpacity>
         </View>
@@ -190,7 +275,7 @@ const styles = StyleSheet.create({
         color: '#5A6174',
         left: 75,
         right: 0,
-        top: 50,
+        top: 65,
         bottom: 0,
         justifyContent:'center',
         alignItems: 'center',
@@ -212,6 +297,7 @@ const styles = StyleSheet.create({
         top: -240,
         bottom: 0,
         height: 40,
+        width: '60%',
     },
     line:{
         width: 350,
@@ -241,10 +327,11 @@ const styles = StyleSheet.create({
     }, 
     image: {
         position: 'absolute',
-        width: 150,
+        width: 120,
         height: 120,
         left: 20,
         top: 310,
+        borderRadius: 80,
     },
     grey1:{
         position: 'absolute',
@@ -531,6 +618,15 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         top: 150,
+        bottom: 0,
+        justifyContent:'center',
+        alignItems: 'center'
+    },
+    position5:{
+        position: 'absolute',
+        left: 82,
+        right: 0,
+        top: -290,
         bottom: 0,
         justifyContent:'center',
         alignItems: 'center'
