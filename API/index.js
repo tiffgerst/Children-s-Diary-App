@@ -5,6 +5,7 @@ import moodIconRoutes from './routes/moodIcons.js'
 import promptRoutes from './routes/prompts.js'
 import cors from 'cors'
 import passport from 'passport'
+import avatarRoutes from './routes/avatar.js'
 
 const app = express()
 app.use(express.json())
@@ -16,6 +17,7 @@ app.use('/appUser', usersRoutes)
 app.use('/post', postsRoutes)
 app.use('/moodIcons', moodIconRoutes)
 app.use('/prompts', promptRoutes)
+app.use('/avatar', avatarRoutes)
 
 app.get('/', (req, res) => {
   res.send('This is the home page!')
