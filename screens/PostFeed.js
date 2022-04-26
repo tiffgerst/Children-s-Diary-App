@@ -7,53 +7,87 @@ import {
   ImageBackground,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native'
 import BackButton from '../components/BackButton'
 import moment from 'moment'
 import TagButtonList from '../components/TagButtonList'
 import MoodIconList from '../components/MoodIconList'
 import * as add from '../ip/config'
+import axios from 'axios'
 
 export default function PostFeed({ route, navigation }) {
   const [backgroundURL, setBackgroundURL] = useState('')
   const [date, setDate] = useState('')
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+  const [uniqueID, setuniqueID] = useState('')
   let [tag, setTag] = useState('')
   const [imageURL, setImageURL] = useState('')
   let [emoji, setEmoji] = useState('')
   const { postID } = route.params
 
+  const ip = add.ip
+
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      const ip = add.ip
-      // get post data from api
-      const getData = async () => {
-        const apiResponse = await fetch(
-          `http://${ip}:3000/post/` + postID
-        )
-        const data = await apiResponse.json()
-        let backgroundURL = await data[0].backgroundURL
-        let date = await data[0].createDateTime
-        let title = await data[0].titleText
-        let content = await data[0].contentText
-        let tag = await data[0].tagNameAll.split(', ')
-        let imageURL = await data[0].imageURL
-        let emoji = await data[0].emojiUrlAll.split(', ')
-        setBackgroundURL(backgroundURL)
-        setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
-        setTitle(title)
-        setContent(content)
-        setTag(tag)
-        setImageURL(imageURL)
-        setEmoji(emoji)
-      }
-      getData()
-    }, [])
+    const unsubscribe = navigation.addListener(
+      'focus',
+      () => {
+        const ip = add.ip
+        // get post data from api
+        const getData = async () => {
+          const apiResponse = await fetch(`http://${ip}:3000/post/` + postID)
+          const data = await apiResponse.json()
+          let backgroundURL = await data[0].backgroundURL
+          let date = await data[0].createDateTime
+          let title = await data[0].titleText
+          let content = await data[0].contentText
+          let tag = await data[0].tagNameAll.split(', ')
+          let imageURL = await data[0].imageURL
+          let emoji = await data[0].emojiUrlAll.split(', ')
+          let id = await data[0].uniqueID
+          setBackgroundURL(backgroundURL)
+          setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
+          setTitle(title)
+          setContent(content)
+          setTag(tag)
+          setImageURL(imageURL)
+          setEmoji(emoji)
+          setuniqueID(id)
+        }
+        getData()
+      },
+      []
+    )
     // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
-  }, []);
- 
+    return unsubscribe
+  }, [])
+  const cancel = () => {
+    Alert.alert('Delete?', `Are you sure you want to delete this entry?`, [
+      {
+        text: 'Yes',
+        onPress: () => {
+          remove()
+          navigation.navigate('Home')
+        },
+      },
+      {
+        text: 'No',
+      },
+    ])
+  }
+
+  const remove = async () => {
+    axios
+      .post(`http://${ip}:3000/post/deletePost`, {
+        postID: postID,
+        uniqueID: uniqueID,
+      })
+
+      .catch((error) => {
+        console.log(error)
+      })
+  }
   if (tag[0] === '') {
     tag = ''
   }
@@ -75,13 +109,23 @@ export default function PostFeed({ route, navigation }) {
           />
           <TouchableOpacity
             style={styles.editButton}
-            onPress={() => navigation.navigate('EditEntry', { postID:postID, date:date, title:title, content:content, tag:tag, imageURL:imageURL, emoji:emoji })}
+            onPress={() =>
+              navigation.navigate('EditEntry', {
+                postID: postID,
+                date: date,
+                title: title,
+                content: content,
+                tag: tag,
+                imageURL: imageURL,
+                emoji: emoji,
+              })
+            }
           >
             <Text style={styles.buttonFont}>Edit</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.removeButton}
-            onPress={() => console.log('pressed')}
+            onPress={() => cancel()}
           >
             <Text style={styles.buttonFont}>Remove</Text>
           </TouchableOpacity>
@@ -100,15 +144,11 @@ export default function PostFeed({ route, navigation }) {
         <View style={styles.postContent}>
           <ScrollView>
             <Text style={styles.content}>{content}</Text>
-            {emoji?(
-              <MoodIconList data={emoji}/>
-            ) : (
-              <View/>
-            )}    
+            {emoji ? <MoodIconList data={emoji} /> : <View />}
             {imageURL ? (
               <Image style={styles.image} source={{ url: imageURL }} />
             ) : (
-              <View/>
+              <View />
             )}
           </ScrollView>
         </View>
