@@ -128,7 +128,6 @@ export const submitFeelingEntry = async (req, res) => {
       res.status(200).send({
         success: true,
       })
-      console.log(emojis)
     }
   } catch (err) {
     res.status(409).send({
@@ -146,8 +145,6 @@ export const newPost = async (req, res) => {
   const backgroundColor = post.background
   const id = post.unique_id_post
 
-  console.log(post)
-
   // Submits Post from 'TextEntry' screen
   try {
     await connect(config)
@@ -155,6 +152,8 @@ export const newPost = async (req, res) => {
       await query`SELECT backgroundID from background WHERE backgroundURL = ${backgroundColor}`
     const backID = back.recordset[0].backgroundID
     await query`INSERT INTO post (userID, createDateTime, titleText, contentText, privacy, backgroundColor, uniqueID, backgroundID) VALUES (${userID}, CURRENT_TIMESTAMP, ${titleText}, ${text}, ${privacy},${backgroundColor},${id},${backID})`
+    await query`INSERT INTO postDelete (userID, createDateTime, titleText, contentText, uniqueID) VALUES (${userID}, CURRENT_TIMESTAMP, ${titleText}, ${text}, ${id})`
+
     const pid = await query`Select postID from post WHERE uniqueID = ${id}`
 
     res.status(200).send({
@@ -199,6 +198,7 @@ export const image = async (req, res) => {
   try {
     await connect(config)
     await query`INSERT INTO postImageUploaded (imageURL, postLink) VALUES (${imageURL}, ${uniqueID})`
+    await query`INSERT INTO imageDelete (imageURL, postLink) VALUES (${imageURL}, ${uniqueID})`
 
     res.status(200).send({
       success: true,
@@ -210,36 +210,40 @@ export const image = async (req, res) => {
   }
 }
 
-// Updates new post to database
 export const updatePost = async (req, res) => {
-  const id = req.params.id
   const post = req.body
-  const backgroundColor = post.background
+  const titleText = post.tit
+  const text = post.note
   const privacy = post.privacy
-  const titleText = post.titleText.value
-  const contentText = post.contentText.value
+  const backgroundColor = post.background
+  const id = post.postID
 
+  // Submits Post from 'TextEntry' screen
   try {
     await connect(config)
-    if (titleText !== '') {
-      await query`UPDATE post SET 
-        createDateTime = CURRENT_TIMESTAMP
-        backgroundColor = ${backgroundColor}
-        privacy = ${privacy}
-        titleText = ${titleText}
-        contentText = ${contentText}
-        WHERE postID = ${id}`
-      res.status(200).send({
-        success: true,
-      })
-      console.log(titleText)
-    }
+    await query`DELETE from post_tag where postID = ${id}`
+    const back =
+      await query`SELECT backgroundID from background WHERE backgroundURL = ${backgroundColor}`
+    const backID = back.recordset[0].backgroundID
+    await query`UPDATE post SET 
+      createDateTime = CURRENT_TIMESTAMP,
+      backgroundColor = ${backgroundColor},
+      privacy = ${privacy},
+      titleText = ${titleText},
+      contentText = ${text},
+      backgroundID = ${backID}
+      WHERE postID = ${id}`
+
+    res.status(200).send({
+      success: true,
+    })
   } catch (err) {
     res.status(409).send({
       message: err.message,
     })
   }
 }
+
 export const addPost = async (req, res) => {
   const post = req.body
   const userID = post.userID
@@ -257,7 +261,6 @@ export const addPost = async (req, res) => {
       res.status(200).send({
         success: true,
       })
-      console.log(titleText)
     }
   } catch (err) {
     res.status(409).send({
@@ -272,8 +275,30 @@ export const addPost = async (req, res) => {
       res.status(200).send({
         success: true,
       })
-      console.log(titleText)
     }
+  } catch (err) {
+    res.status(409).send({
+      message: err.message,
+    })
+  }
+}
+export const deletePost = async (req, res) => {
+  const post = req.body
+  const postID = post.postID
+  const uniqueID = post.uniqueID
+
+  try {
+    await connect(config)
+
+    await query`DELETE FROM POST WHERE postID = ${postID}`
+    await query`DELETE FROM background WHERE postID = ${postID}`
+    await query`DELETE FROM post_tag WHERE postID = ${postID}`
+    await query`DELETE FROM postImageUploaded WHERE postLink = ${uniqueID}`
+    await query`DELETE FROM post_mood_icon WHERE postLink = ${uniqueID}`
+
+    res.status(200).send({
+      success: true,
+    })
   } catch (err) {
     res.status(409).send({
       message: err.message,

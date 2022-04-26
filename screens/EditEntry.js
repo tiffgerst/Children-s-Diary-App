@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  Alert,
 } from 'react-native'
 import BackButton from '../components/BackButton'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
@@ -15,9 +16,12 @@ import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
 import TagButtonList from '../components/TagButtonList'
 import MoodIconList from '../components/MoodIconList'
+import * as add from '../ip/config'
+import axios from 'axios'
 
 export default function EditEntry({ route, navigation }) {
-  const { date, title, content, tag, imageURL, emoji } = route.params
+  const { date, title, content, tag, imageURL, emoji, postID } = route.params
+  const ip = add.ip
 
   const dat = [
     '#FFA500',
@@ -42,7 +46,7 @@ export default function EditEntry({ route, navigation }) {
     'Travel',
   ]
   const a = []
-  const [pick, setpick] = useState(a)
+  const [pick, setpick] = useState(tag ? tag : a)
   const [modalVisible1, setModal1Visible] = useState('')
   const [modalVisible2, setModal2Visible] = useState('')
   const [modalVisible3, setModal3Visible] = useState('')
@@ -52,15 +56,11 @@ export default function EditEntry({ route, navigation }) {
   const [background, setbackground] = useState('#fff')
 
   const update = (a) => {
-    console.log(a)
     if (pick.indexOf(a) == 0 && pick.length == 1) {
-      console.log('hi')
       pick.shift()
     } else if (pick.indexOf(a) < 0) {
-      console.log('b')
       pick.push(a)
     } else {
-      console.log(pick.indexOf(a))
       pick.splice(pick.indexOf(a), 1)
     }
   }
@@ -86,6 +86,45 @@ export default function EditEntry({ route, navigation }) {
     emoji = ''
   }
 
+  const Edit = async () => {
+    console.log(titleText)
+    if (titleText == '' || contentText == '') {
+      Alert.alert('Unable to post', 'Post must have a title and body text', {
+        cancelable: true,
+        onDismiss: () =>
+          Alert.alert(
+            'This alert was dismissed by tapping outside of the alert dialog.'
+          ),
+      })
+    } else {
+      axios
+        .patch(`http://${ip}:3000/post/update`, {
+          note: contentText,
+          tit: titleText,
+          privacy: privacy,
+          background: background,
+          postID: postID,
+        })
+        .then(async () => {
+          //Link each selected emoji to the post created
+          pick.forEach((tag) =>
+            axios
+              .post(`http://${ip}:3000/post/tags`, {
+                tag: tag,
+                postID: postID,
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+          )
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      navigation.navigate('Home')
+    }
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
       <View style={styles.row}>
@@ -95,7 +134,9 @@ export default function EditEntry({ route, navigation }) {
         />
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {setModal1Visible(!modalVisible1)}}
+          onPress={() => {
+            setModal1Visible(!modalVisible1)
+          }}
         >
           <Text>
             <MaterialCommunityIcons name="palette" size={29} color="#5A6174" />
@@ -133,7 +174,7 @@ export default function EditEntry({ route, navigation }) {
             animationType="none"
             transparent={true}
             visible={modalVisible2}
-            onBackdropPress={() => setModal2Visible(!modalVisible2) & console.log(pick)}
+            onBackdropPress={() => setModal2Visible(!modalVisible2)}
           >
             <View style={styles.centeredView2}>
               <FlatList
@@ -177,7 +218,9 @@ export default function EditEntry({ route, navigation }) {
           >
             <View style={styles.centeredView3}>
               <TouchableOpacity
-                onPress={() => setprivacy(true) & setcheck1('√') & setcheck2('')}
+                onPress={() =>
+                  setprivacy(true) & setcheck1('√') & setcheck2('')
+                }
               >
                 <Text>Private, only for me {check1}</Text>
               </TouchableOpacity>
@@ -185,7 +228,9 @@ export default function EditEntry({ route, navigation }) {
                 ______________________
               </Text>
               <TouchableOpacity
-                onPress={() => setprivacy(false) & setcheck1('') & setcheck2('√')}
+                onPress={() =>
+                  setprivacy(false) & setcheck1('') & setcheck2('√')
+                }
               >
                 <Text>Share with my social worker {check2}</Text>
               </TouchableOpacity>
@@ -193,10 +238,7 @@ export default function EditEntry({ route, navigation }) {
             </View>
           </Modal>
         </View>
-        <TouchableOpacity
-          style={styles.post}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity style={styles.post} onPress={() => Edit()}>
           <Text
             style={{
               color: 'white',
@@ -212,19 +254,11 @@ export default function EditEntry({ route, navigation }) {
         </TouchableOpacity>
       </View>
       <View style={{ flex: 0.8, marginTop: -25 }}>
-        <TextInput
-          value={titleText}
-          onChangeText={(text) => setTitleText({ text })}
-          style={styles.title}
-        />
+        <TextInput onChangeText={setTitleText} style={styles.title}>
+          {titleText}
+        </TextInput>
         <Text style={styles.date}>{date}</Text>
-        {tag ? (
-          <View style={{ marginLeft: 10}}>
-            <TagButtonList data={tag} />
-          </View>
-        ) : (
-          <View/>
-        )}
+
         <View style={{ paddingLeft: 20 }}>
           <FlatList
             contentContainerStyle={{ marginLeft: -4 }}
@@ -239,20 +273,16 @@ export default function EditEntry({ route, navigation }) {
           />
           <TextInput
             value={contentText}
-            onChangeText={(text) => setContentText({ text })}
+            onChangeText={(text) => setContentText(text)}
             placeholder="Write here :)"
             style={styles.content}
             multiline={true}
           />
-          {emoji ? (
-            <MoodIconList data={emoji}/>
-          ) : (
-            <View/>
-          )}           
+          {emoji ? <MoodIconList data={emoji} /> : <View />}
           {imageURL ? (
             <Image style={styles.image} source={{ url: imageURL }} />
           ) : (
-            <View/>
+            <View />
           )}
         </View>
       </View>
@@ -384,9 +414,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
   },
-  grid: { 
-    alignItems: 'center', 
-    padding: 5 
+  grid: {
+    alignItems: 'center',
+    padding: 5,
   },
   button: {
     width: 46,

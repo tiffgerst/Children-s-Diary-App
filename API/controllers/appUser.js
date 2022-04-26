@@ -85,7 +85,7 @@ export const loginUser = async (req, res) => {
     await connect(config)
     const hash =
       await query`SELECT passwordHash, userID FROM appUser WHERE username = ${username}`
-    console.log(hash.rowsAffected)
+
     if (hash.rowsAffected == 0) {
       res.status(401).send({
         loginSuccess: false,
@@ -149,12 +149,10 @@ export const changePassword = async (req, res) => {
     })
   }
 }
-
 export const isLoggedIn = async (req, res) => {
   console.log('here')
   console.log(req.body)
 }
-
 // Finds a user by their email from the databse, for password reset functionality
 export const userEmail = async (req, res) => {
   const email = req.params.email
@@ -182,4 +180,3 @@ export const updateRewardPoints = async (req, res) => {
     res.status(409).send({ message: err.message })
   }
 }
-
