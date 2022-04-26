@@ -334,20 +334,9 @@ export default function ImageEntry({ route }) {
           value={titleText.value}
           onChangeText={(text) => setTitleText({ value: text })}
           placeholder="Title"
-          style={{
-            fontSize: 22,
-            paddingLeft: 20,
-            paddingBottom: 5,
-            fontWeight: 'bold',
-          }}
+          style={styles.title}
         />
-        <Text
-          style={{
-            fontSize: 14,
-            paddingBottom: 7,
-            paddingLeft: 20,
-          }}
-        >
+        <Text style={styles.date}>
           {getCurrentDate()}
         </Text>
         <View style={{ paddingLeft: 20 }}>
@@ -366,10 +355,7 @@ export default function ImageEntry({ route }) {
             value={contentText.value}
             onChangeText={(text) => setContentText({ value: text })}
             placeholder="Write here :)"
-            style={{
-              color: '#000',
-              fontSize: 14,
-            }}
+            style={styles.content}
             multiline={true}
           />
           {image && <Image source={{ uri: image }} style={styles.image} />}
@@ -526,6 +512,28 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     top: -8,
     left: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#5A6174',
+    padding: 5,
+    marginLeft: 19,
+    marginTop: 12,
+  },
+  date: {
+    fontSize: 15,
+    color: '#5A6174',
+    padding: 5,
+    marginLeft: 20,
+  },
+  content: {
+    fontSize: 15,
+    color: '#5A6174',
+    padding: 5,
+    lineHeight: 22,
+    marginLeft: 1,
+    marginTop: 10,
   },
   image: {
     width: 330,

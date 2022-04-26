@@ -10,6 +10,7 @@ import {
 } from 'react-native'
 import { theme } from '../src/core/theme'
 import TagButtonList from './TagButtonList'
+import MoodIconList from './MoodIconList'
 import moment from 'moment'
 
 function Item({
@@ -18,11 +19,15 @@ function Item({
   contentText,
   imageURL,
   tagNameAll,
+  emojiUrlAll,
   postID,
   navigation
 }) {
   if (tagNameAll[0]==='') {
     tagNameAll = ''
+  }
+  if (emojiUrlAll[0] === '') {
+    emojiUrlAll = ''
   }
 
   return (
@@ -41,6 +46,11 @@ function Item({
             data={tagNameAll}
           />
         ):(<View></View>)}
+        {emojiUrlAll?(
+          <MoodIconList
+            data={emojiUrlAll}
+          />
+        ):(<View></View>)}        
       </View>
     </TouchableOpacity>
   )
@@ -59,6 +69,7 @@ function SearchBarList({ searchPhrase, setClicked, data, navigation }) {
             contentText={item.contentText}
             imageURL={item.imageURL}
             tagNameAll={item.tagNameAll.split(', ')}
+            emojiUrlAll={item.emojiUrlAll.split(', ')}
             postID={item.postID}
             navigation={navigation}
           />
@@ -79,6 +90,7 @@ function SearchBarList({ searchPhrase, setClicked, data, navigation }) {
             contentText={item.contentText}
             imageURL={item.imageURL}
             tagNameAll={item.tagNameAll.split(', ')}
+            emojiUrlAll={item.emojiUrlAll.split(', ')}
             postID={item.postID}
             navigation={navigation}
           />
@@ -99,6 +111,7 @@ function SearchBarList({ searchPhrase, setClicked, data, navigation }) {
             contentText={item.contentText}
             imageURL={item.imageURL}
             tagNameAll={item.tagNameAll.split(', ')}
+            emojiUrlAll={item.emojiUrlAll.split(', ')}
             postID={item.postID}
             navigation={navigation}
           />
@@ -119,6 +132,7 @@ function SearchBarList({ searchPhrase, setClicked, data, navigation }) {
             contentText={item.contentText}
             imageURL={item.imageURL}
             tagNameAll={item.tagNameAll.split(', ')}
+            emojiUrlAll={item.emojiUrlAll.split(', ')}
             postID={item.postID}
             navigation={navigation}
           />
@@ -139,6 +153,7 @@ function SearchBarList({ searchPhrase, setClicked, data, navigation }) {
             contentText={item.contentText}
             imageURL={item.imageURL}
             tagNameAll={item.tagNameAll.split(', ')}
+            emojiUrlAll={item.emojiUrlAll.split(', ')}
             postID={item.postID}
             navigation={navigation}
           />

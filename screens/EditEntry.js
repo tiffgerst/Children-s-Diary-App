@@ -13,9 +13,11 @@ import BackButton from '../components/BackButton'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
+import TagButtonList from '../components/TagButtonList'
+import MoodIconList from '../components/MoodIconList'
 
 export default function EditEntry({ route, navigation }) {
-  const { date, title, content, tag, imageURL } = route.params
+  const { date, title, content, tag, imageURL, emoji } = route.params
 
   const dat = [
     '#FFA500',
@@ -79,6 +81,10 @@ export default function EditEntry({ route, navigation }) {
   )
   const [titleText, setTitleText] = useState(title)
   const [contentText, setContentText] = useState(content)
+
+  if (emoji[0] === '') {
+    emoji = ''
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
@@ -212,6 +218,13 @@ export default function EditEntry({ route, navigation }) {
           style={styles.title}
         />
         <Text style={styles.date}>{date}</Text>
+        {tag ? (
+          <View style={{ marginLeft: 10}}>
+            <TagButtonList data={tag} />
+          </View>
+        ) : (
+          <View/>
+        )}
         <View style={{ paddingLeft: 20 }}>
           <FlatList
             contentContainerStyle={{ marginLeft: -4 }}
@@ -231,10 +244,15 @@ export default function EditEntry({ route, navigation }) {
             style={styles.content}
             multiline={true}
           />
+          {emoji ? (
+            <MoodIconList data={emoji}/>
+          ) : (
+            <View/>
+          )}           
           {imageURL ? (
             <Image style={styles.image} source={{ url: imageURL }} />
           ) : (
-            <View />
+            <View/>
           )}
         </View>
       </View>
@@ -366,8 +384,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
   },
-  grid: { alignItems: 'center', padding: 5 },
-
+  grid: { 
+    alignItems: 'center', 
+    padding: 5 
+  },
   button: {
     width: 46,
     height: 46,

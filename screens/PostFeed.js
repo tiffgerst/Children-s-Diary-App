@@ -11,6 +11,7 @@ import {
 import BackButton from '../components/BackButton'
 import moment from 'moment'
 import TagButtonList from '../components/TagButtonList'
+import MoodIconList from '../components/MoodIconList'
 import * as add from '../ip/config'
 
 export default function PostFeed({ route, navigation }) {
@@ -20,11 +21,13 @@ export default function PostFeed({ route, navigation }) {
   const [content, setContent] = useState('')
   let [tag, setTag] = useState('')
   const [imageURL, setImageURL] = useState('')
+  let [emoji, setEmoji] = useState('')
   const { postID } = route.params
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       const ip = add.ip
+      // get post data from api
       const getData = async () => {
         const apiResponse = await fetch(
           `http://${ip}:3000/post/` + postID
@@ -36,45 +39,26 @@ export default function PostFeed({ route, navigation }) {
         let content = await data[0].contentText
         let tag = await data[0].tagNameAll.split(', ')
         let imageURL = await data[0].imageURL
+        let emoji = await data[0].emojiUrlAll.split(', ')
         setBackgroundURL(backgroundURL)
         setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
         setTitle(title)
         setContent(content)
         setTag(tag)
         setImageURL(imageURL)
+        setEmoji(emoji)
       }
       getData()
     }, [])
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, []);
-  
-  // // get post data from api
-  // useEffect(() => {
-  //   const ip = add.ip
-  //   const getData = async () => {
-  //     const apiResponse = await fetch(
-  //       `http://${ip}:3000/post/` + postID
-  //     )
-  //     const data = await apiResponse.json()
-  //     let backgroundURL = await data[0].backgroundURL
-  //     let date = await data[0].createDateTime
-  //     let title = await data[0].titleText
-  //     let content = await data[0].contentText
-  //     let tag = await data[0].tagNameAll.split(', ')
-  //     let imageURL = await data[0].imageURL
-  //     setBackgroundURL(backgroundURL)
-  //     setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
-  //     setTitle(title)
-  //     setContent(content)
-  //     setTag(tag)
-  //     setImageURL(imageURL)
-  //   }
-  //   getData()
-  // }, [])
-
+ 
   if (tag[0] === '') {
     tag = ''
+  }
+  if (emoji[0] === '') {
+    emoji = ''
   }
 
   return (
@@ -91,7 +75,7 @@ export default function PostFeed({ route, navigation }) {
           />
           <TouchableOpacity
             style={styles.editButton}
-            onPress={() => navigation.navigate('EditEntry', { postID:postID, date: date, title:title, content:content, tag:tag, imageURL:imageURL })}
+            onPress={() => navigation.navigate('EditEntry', { postID:postID, date:date, title:title, content:content, tag:tag, imageURL:imageURL, emoji:emoji })}
           >
             <Text style={styles.buttonFont}>Edit</Text>
           </TouchableOpacity>
@@ -116,10 +100,15 @@ export default function PostFeed({ route, navigation }) {
         <View style={styles.postContent}>
           <ScrollView>
             <Text style={styles.content}>{content}</Text>
+            {emoji?(
+              <MoodIconList data={emoji}/>
+            ) : (
+              <View/>
+            )}    
             {imageURL ? (
               <Image style={styles.image} source={{ url: imageURL }} />
             ) : (
-              <View />
+              <View/>
             )}
           </ScrollView>
         </View>

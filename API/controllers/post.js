@@ -18,7 +18,9 @@ export const searchPostByPostID = async (req, res) => {
         ISNULL(contentText, '') AS contentText, 
         ISNULL(tagNameAll, '') AS tagNameAll, 
         imageURL,
-        ISNULL(backgroundURL, '') AS backgroundURL
+        ISNULL(backgroundURL, '') AS backgroundURL,
+        ISNULL(emojiUrlAll, '') AS emojiUrlAll, 
+        uniqueID
       FROM post
       LEFT JOIN (
         SELECT post.postID, 
@@ -37,6 +39,18 @@ export const searchPostByPostID = async (req, res) => {
       ON post.uniqueID = image.postLink
       LEFT JOIN background
       ON post.backgroundID = background.backgroundID
+      LEFT JOIN (
+        SELECT moodIconLink, 
+          emojiUrlAll = (STUFF((SELECT ', '+ moodIconURL 
+            FROM (SELECT m.postLink, m.moodIconID, c.moodIconURL 
+              FROM post_mood_icon m 
+              LEFT JOIN mood_icon c 
+              ON m.moodIconID = c.moodIconID) AS moodIconStuff 
+            WHERE moodIconStuff.postLink = post.moodIconLink 
+            FOR xml path('')),1,2,''))
+        FROM post 
+      ) AS mood
+      ON post.moodIconLink = mood.moodIconLink
       WHERE post.postID = ${id} 
     `
     res.json(result.recordset).status(200)
@@ -61,6 +75,7 @@ export const searchPostByUserID = async (req, res) => {
         ISNULL(contentText, '') AS contentText, 
         ISNULL(tagNameAll, '') AS tagNameAll, 
         imageURL,
+        ISNULL(emojiUrlAll, '') AS emojiUrlAll, 
         uniqueID
       FROM post
       LEFT JOIN (
@@ -77,6 +92,18 @@ export const searchPostByUserID = async (req, res) => {
       ON post.postID = tag.postID
       LEFT JOIN postImageUploaded image
       ON post.uniqueID = image.postLink
+      LEFT JOIN (
+        SELECT moodIconLink, 
+          emojiUrlAll = (STUFF((SELECT ', '+ moodIconURL 
+            FROM (SELECT m.postLink, m.moodIconID, c.moodIconURL 
+              FROM post_mood_icon m 
+              LEFT JOIN mood_icon c 
+              ON m.moodIconID = c.moodIconID) AS moodIconStuff 
+            WHERE moodIconStuff.postLink = post.moodIconLink 
+            FOR xml path('')),1,2,''))
+        FROM post 
+      ) AS mood
+      ON post.moodIconLink = mood.moodIconLink
       WHERE userID = ${id}
     `
     res.json(result.recordset).status(200)
