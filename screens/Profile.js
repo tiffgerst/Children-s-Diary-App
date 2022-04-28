@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
+  Linking,
 } from 'react-native'
 import theme from '../src/core/theme'
 import Background3 from '../components/Background3'
@@ -26,6 +27,7 @@ export default function Profile({ navigation }) {
   const [userID, setUserID] = useState(null)
   const [postData, setPostData] = useState()
   const [isEnabled, setIsEnabled] = useState(true)
+
   const [avatarID, setAvatarID] = useState(null)
   const [avatarURL, setAvatarURL] = useState(null)
   const [stars, setStars] = useState(null)
@@ -39,6 +41,9 @@ export default function Profile({ navigation }) {
   const [modalVisible5, setModal5Visible] = useState('')
   const [animation, setAnimation]=useState(new Animated.Value(0))
   const {height} = Dimensions.get('window')
+
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState)
+
   const handleLogout = async () => {
     try {
       await SecureStore.deleteItemAsync('token')
@@ -48,21 +53,42 @@ export default function Profile({ navigation }) {
       console.log(error)
     }
   }
+  const email = async () => {
+    const userID = await SecureStore.getItemAsync('userID')
+    axios
+      .post(`http://${ip}:3000/appUser/email`, {
+        userID: userID,
+      })
+      .then(async (response) => {
+        const mail = response.data
+        console.log(mail)
+        Linking.openURL(`mailto:${mail}`)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
   useEffect(() => {
     const getData = async () => {
       const userID = await SecureStore.getItemAsync('userID')
-      const apiResponse = await fetch(`http://${ip}:3000/appUser/getUser/` + userID)
+      const apiResponse = await fetch(
+        `http://${ip}:3000/appUser/getUser/` + userID
+      )
       const data = await apiResponse.json()
       const display_name = data[0].displayname
       const avatarID = data[0].avatarID
       setUserID(userID)
       setPostData(display_name)
       setAvatarID(avatarID)
-      const URL = await fetch(`http://${ip}:3000/avatar/getAvatarURL/` + avatarID)
+      const URL = await fetch(
+        `http://${ip}:3000/avatar/getAvatarURL/` + avatarID
+      )
       const avatarinfo = await URL.json()
       const avatarURL = avatarinfo[0].avatarURL
       setAvatarURL(avatarURL)
-      const reward = await fetch(`http://${ip}:3000/appUser/reward/getReward/` + userID)
+      const reward = await fetch(
+        `http://${ip}:3000/appUser/reward/getReward/` + userID
+      )
       const rewardinfo = await reward.json()
       const stars = rewardinfo[0].reward
       setStars(stars)
@@ -78,6 +104,7 @@ export default function Profile({ navigation }) {
     }
     getData()
   }, [])
+
 
   const updateAchievement = (achievementStatus) => {
     setIsEnabled((previousState) => !previousState)
@@ -154,6 +181,13 @@ export default function Profile({ navigation }) {
       {/* <View>
       <View style={styles.wrap3}>
         <Text> 1 </Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Image
+            source={require('../assets/Star.png')}
+            style={styles.small_image}
+          />
+          <Text style={styles.text}> {stars} </Text>
+        </View>
       </View>
       </View> */}
 
@@ -276,11 +310,7 @@ export default function Profile({ navigation }) {
       >
         Customisation
       </Button2>
-      <Button2
-        style={styles.button}
-        mode="contained"
-        onPress={() => navigation.navigate('Message')}
-      >
+      <Button2 style={styles.button} mode="contained" onPress={() => email()}>
         Message my social worker
       </Button2>
       <Button2
@@ -365,14 +395,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
-  image_border:{
+  image_border: {
     borderRadius: 80,
   },
-  image_shadow:{
+  image_shadow: {
     shadowColor: '#4048BF',
     shadowOffset: {
       width: 5.4,
-      height: 5.4,},
+      height: 5.4,
+    },
     shadowOpacity: 0.74,
     shadowRadius: 20,
   },
@@ -385,7 +416,8 @@ const styles = StyleSheet.create({
     shadowColor: '#4048BF',
     shadowOffset: {
       width: 5.4,
-      height: 5.4,},
+      height: 5.4,
+    },
     shadowOpacity: 0.74,
     shadowRadius: 20,
   },
@@ -427,7 +459,7 @@ const styles = StyleSheet.create({
     color: '#5A6174',
     fontWeight: 'bold',
     fontSize: 18,
-    marginTop: 7
+    marginTop: 7,
   },
   text2: {
     color: '#5A6174',
@@ -449,14 +481,14 @@ const styles = StyleSheet.create({
     right: -130,
     marginVertical: -15,
   },
-  wrap:{
+  wrap: {
     width: 82,
     height: 36,
     margin: 0,
     borderRadius: 5,
     backgroundColor: '#EEEEEE',
     elevation: 10,
-    justifyContent:'center',
+    justifyContent: 'center',
     alignItems: 'center',
     marginTop:10,
     marginBottom:20
@@ -519,5 +551,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent:'center',
     alignItems: 'center'
+  },
+})
   },
 })

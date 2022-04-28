@@ -87,7 +87,6 @@ export default function EditEntry({ route, navigation }) {
   }
 
   const Edit = async () => {
-    console.log(titleText)
     if (titleText == '' || contentText == '') {
       Alert.alert('Unable to post', 'Post must have a title and body text', {
         cancelable: true,
