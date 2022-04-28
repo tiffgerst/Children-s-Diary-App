@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Modal from 'react-native-modal'
 import {
   StyleSheet,
@@ -11,6 +11,8 @@ import {
   Animated,
   Dimensions,
   Linking,
+  RefreshControl,
+  ScrollView,
 } from 'react-native'
 import theme from '../src/core/theme'
 import Background3 from '../components/Background3'
@@ -22,6 +24,10 @@ import * as SecureStore from 'expo-secure-store'
 import * as add from '../ip/config'
 import axios from 'axios'
 import { showMessage, hideMessage } from 'react-native-flash-message'
+
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout))
+}
 
 export default function Profile({ navigation }) {
   const [userID, setUserID] = useState(null)
@@ -43,6 +49,8 @@ export default function Profile({ navigation }) {
   const { height } = Dimensions.get('window')
 
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState)
+
+  const [refreshing, setRefreshing] = useState(false)
 
   const handleLogout = async () => {
     try {
@@ -68,43 +76,57 @@ export default function Profile({ navigation }) {
         console.log(error)
       })
   }
-  useEffect(() => {
-    const getData = async () => {
-      const userID = await SecureStore.getItemAsync('userID')
-      const apiResponse = await fetch(
-        `http://${ip}:3000/appUser/getUser/` + userID
-      )
-      const data = await apiResponse.json()
-      const display_name = data[0].displayname
-      const avatarID = data[0].avatarID
-      setUserID(userID)
-      setPostData(display_name)
-      setAvatarID(avatarID)
-      const URL = await fetch(
-        `http://${ip}:3000/avatar/getAvatarURL/` + avatarID
-      )
-      const avatarinfo = await URL.json()
-      const avatarURL = avatarinfo[0].avatarURL
-      setAvatarURL(avatarURL)
-      const reward = await fetch(
-        `http://${ip}:3000/appUser/reward/getReward/` + userID
-      )
-      const rewardinfo = await reward.json()
-      const stars = rewardinfo[0].reward
-      setStars(stars)
-      const getAchievement = await fetch(
-        `http://${ip}:3000/appUser/achievementOn/` + userID
-      )
-      const achievementinfo = await getAchievement.json()
-      const achievementStatus = achievementinfo[0].achievementOn
-      setAchievementStatus(achievementStatus)
-      if (achievementStatus == 0) {
-        setIsEnabled((previousState) => !previousState)
-        setModalVisibleAchievement((previousState) => !previousState)
-      }
-      console.log(achievementStatus)
+  const contact = async () => {
+    let phoneNumber = ''
+
+    if (Platform.OS === 'android') {
+      phoneNumber = 'tel:${0800 1111}'
+    } else {
+      phoneNumber = 'telprompt:${0800 1111}'
     }
+
+    Linking.openURL(phoneNumber)
+  }
+  const getData = async () => {
+    const userID = await SecureStore.getItemAsync('userID')
+    const apiResponse = await fetch(
+      `http://${ip}:3000/appUser/getUser/` + userID
+    )
+    const data = await apiResponse.json()
+    const display_name = data[0].displayname
+    const avatarID = data[0].avatarID
+    setUserID(userID)
+    setPostData(display_name)
+    setAvatarID(avatarID)
+    const URL = await fetch(`http://${ip}:3000/avatar/getAvatarURL/` + avatarID)
+    const avatarinfo = await URL.json()
+    const avatarURL = avatarinfo[0].avatarURL
+    setAvatarURL(avatarURL)
+    const reward = await fetch(
+      `http://${ip}:3000/appUser/reward/getReward/` + userID
+    )
+    const rewardinfo = await reward.json()
+    const stars = rewardinfo[0].reward
+    setStars(stars)
+    const getAchievement = await fetch(
+      `http://${ip}:3000/appUser/achievementOn/` + userID
+    )
+    const achievementinfo = await getAchievement.json()
+    const achievementStatus = achievementinfo[0].achievementOn
+    setAchievementStatus(achievementStatus)
+    // if (achievementStatus == 0) {
+    //   setIsEnabled((previousState) => !previousState)
+    //   setModalVisibleAchievement((previousState) => !previousState)
+    // }
+  }
+  useEffect(() => {
     getData()
+  }, [])
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    getData()
+    wait(2000).then(() => setRefreshing(false))
   }, [])
 
   const updateAchievement = (achievementStatus) => {
@@ -171,13 +193,20 @@ export default function Profile({ navigation }) {
 
   if (modalVisibleAchievement) {
     return (
-      <Background3 style={styles.background}>
-        <BackButton goBack={navigation.goBack} />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <Background3 style={styles.background}>
+          <BackButton goBack={navigation.goBack} />
 
-        <Image source={{ uri: avatarURL }} style={styles.image} />
-        <Text style={styles.title}>{postData}</Text>
+          <Image source={{ uri: avatarURL }} style={styles.image} />
+          <Text style={styles.title}>{postData}</Text>
 
-        {/* <View>
+          {/* <View>
       <View style={styles.wrap3}>
         <Text> 1 </Text>
         <View style={{ flexDirection: 'row' }}>
@@ -190,241 +219,260 @@ export default function Profile({ navigation }) {
       </View>
       </View> */}
 
-        <View style={styles.wrap}>
-          <View style={{ flexDirection: 'row' }}>
-            <Image
-              source={require('../assets/Star.png')}
-              style={styles.small_image}
+          <View style={styles.wrap}>
+            <View style={{ flexDirection: 'row' }}>
+              <Image
+                source={require('../assets/Star.png')}
+                style={styles.small_image}
+              />
+              <Text style={styles.text}> {stars} </Text>
+            </View>
+          </View>
+
+          <Text style={styles.text2}>Achievements</Text>
+
+          <View style={styles.container}>
+            <Switch
+              trackColor={{ false: '#FFFFFF', true: '#7AC9A1' }}
+              thumbColor={isEnabled ? '#FFFFFF' : '#FFFFFF'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={updateAchievement}
+              value={isEnabled}
             />
-            <Text style={styles.text}> {stars} </Text>
           </View>
-        </View>
 
-        <Text style={styles.text2}>Achievements</Text>
-
-        <View style={styles.container}>
-          <Switch
-            trackColor={{ false: '#FFFFFF', true: '#7AC9A1' }}
-            thumbColor={isEnabled ? '#FFFFFF' : '#FFFFFF'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={updateAchievement}
-            value={isEnabled}
-          />
-        </View>
-
-        <View>
-          <View style={{ flexDirection: 'row', position: 'relative', top: 20 }}>
-            <TouchableOpacity
-              onPress={() => {
-                setModal1Visible(!modalVisible1)
-              }}
+          <View>
+            <View
+              style={{ flexDirection: 'row', position: 'relative', top: 20 }}
             >
-              <Image
-                source={require('../assets/reward5.png')}
-                style={styles.image2}
-              />
-            </TouchableOpacity>
-
-            <View>
-              <Modal
-                animationType="none"
-                transparent={true}
-                visible={modalVisible1}
-                onBackdropPress={() => setModal1Visible(!modalVisible1)}
+              <TouchableOpacity
+                onPress={() => {
+                  setModal1Visible(!modalVisible1)
+                }}
               >
-                <View style={styles.wrap2}>
-                  <Text style={styles.text3}>
-                    {' '}
-                    Earn this achievement by getting 5 stars!{' '}
-                  </Text>
-                </View>
-              </Modal>
-            </View>
+                <Image
+                  source={require('../assets/reward5.png')}
+                  style={styles.image2}
+                />
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                setModal2Visible(!modalVisible2)
-              }}
-            >
-              <Image
-                source={require('../assets/reward4.png')}
-                style={styles.image2}
-              />
-            </TouchableOpacity>
+              <View>
+                <Modal
+                  animationType="none"
+                  transparent={true}
+                  visible={modalVisible1}
+                  onBackdropPress={() => setModal1Visible(!modalVisible1)}
+                >
+                  <View style={styles.wrap2}>
+                    <Text style={styles.text3}>
+                      {' '}
+                      Earn this achievement by getting 5 stars!{' '}
+                    </Text>
+                  </View>
+                </Modal>
+              </View>
 
-            <View>
-              <Modal
-                animationType="none"
-                transparent={true}
-                visible={modalVisible2}
-                onBackdropPress={() => setModal2Visible(!modalVisible2)}
+              <TouchableOpacity
+                onPress={() => {
+                  setModal2Visible(!modalVisible2)
+                }}
               >
-                <View style={[styles.wrap2, styles.achievement2]}>
-                  <Text style={styles.text3}>
-                    {' '}
-                    Earn this achievement by getting 20 stars!{' '}
-                  </Text>
-                </View>
-              </Modal>
-            </View>
+                <Image
+                  source={require('../assets/reward4.png')}
+                  style={styles.image2}
+                />
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                setModal3Visible(!modalVisible3)
-              }}
-            >
-              <Image
-                source={require('../assets/reward3.png')}
-                style={styles.image2}
-              />
-            </TouchableOpacity>
+              <View>
+                <Modal
+                  animationType="none"
+                  transparent={true}
+                  visible={modalVisible2}
+                  onBackdropPress={() => setModal2Visible(!modalVisible2)}
+                >
+                  <View style={[styles.wrap2, styles.achievement2]}>
+                    <Text style={styles.text3}>
+                      {' '}
+                      Earn this achievement by getting 20 stars!{' '}
+                    </Text>
+                  </View>
+                </Modal>
+              </View>
 
-            <View>
-              <Modal
-                animationType="none"
-                transparent={true}
-                visible={modalVisible3}
-                onBackdropPress={() => setModal3Visible(!modalVisible3)}
+              <TouchableOpacity
+                onPress={() => {
+                  setModal3Visible(!modalVisible3)
+                }}
               >
-                <View style={[styles.wrap2, styles.achievement3]}>
-                  <Text style={styles.text3}>
-                    {' '}
-                    Earn this achievement by getting 50 stars!{' '}
-                  </Text>
-                </View>
-              </Modal>
-            </View>
+                <Image
+                  source={require('../assets/reward3.png')}
+                  style={styles.image2}
+                />
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                setModal4Visible(!modalVisible4)
-              }}
-            >
-              <Image
-                source={require('../assets/reward2.png')}
-                style={styles.image2}
-              />
-            </TouchableOpacity>
+              <View>
+                <Modal
+                  animationType="none"
+                  transparent={true}
+                  visible={modalVisible3}
+                  onBackdropPress={() => setModal3Visible(!modalVisible3)}
+                >
+                  <View style={[styles.wrap2, styles.achievement3]}>
+                    <Text style={styles.text3}>
+                      {' '}
+                      Earn this achievement by getting 50 stars!{' '}
+                    </Text>
+                  </View>
+                </Modal>
+              </View>
 
-            <View>
-              <Modal
-                animationType="none"
-                transparent={true}
-                visible={modalVisible4}
-                onBackdropPress={() => setModal4Visible(!modalVisible4)}
+              <TouchableOpacity
+                onPress={() => {
+                  setModal4Visible(!modalVisible4)
+                }}
               >
-                <View style={[styles.wrap2, styles.achievement4]}>
-                  <Text style={styles.text3}>
-                    {' '}
-                    Earn this achievement by getting 100 stars!{' '}
-                  </Text>
-                </View>
-              </Modal>
-            </View>
+                <Image
+                  source={require('../assets/reward2.png')}
+                  style={styles.image2}
+                />
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => {
-                setModal5Visible(!modalVisible5)
-              }}
-            >
-              <Image
-                source={require('../assets/reward1.png')}
-                style={styles.image2}
-              />
-            </TouchableOpacity>
+              <View>
+                <Modal
+                  animationType="none"
+                  transparent={true}
+                  visible={modalVisible4}
+                  onBackdropPress={() => setModal4Visible(!modalVisible4)}
+                >
+                  <View style={[styles.wrap2, styles.achievement4]}>
+                    <Text style={styles.text3}>
+                      {' '}
+                      Earn this achievement by getting 100 stars!{' '}
+                    </Text>
+                  </View>
+                </Modal>
+              </View>
 
-            <View>
-              <Modal
-                animationType="none"
-                transparent={true}
-                visible={modalVisible5}
-                onBackdropPress={() => setModal5Visible(!modalVisible5)}
+              <TouchableOpacity
+                onPress={() => {
+                  setModal5Visible(!modalVisible5)
+                }}
               >
-                <View style={[styles.wrap2, styles.achievement5]}>
-                  <Text style={styles.text3}>
-                    {' '}
-                    Earn this achievement by getting 200 stars!{' '}
-                  </Text>
-                </View>
-              </Modal>
+                <Image
+                  source={require('../assets/reward1.png')}
+                  style={styles.image2}
+                />
+              </TouchableOpacity>
+
+              <View>
+                <Modal
+                  animationType="none"
+                  transparent={true}
+                  visible={modalVisible5}
+                  onBackdropPress={() => setModal5Visible(!modalVisible5)}
+                >
+                  <View style={[styles.wrap2, styles.achievement5]}>
+                    <Text style={styles.text3}>
+                      {' '}
+                      Earn this achievement by getting 200 stars!{' '}
+                    </Text>
+                  </View>
+                </Modal>
+              </View>
+              <View></View>
             </View>
-            <View></View>
           </View>
-        </View>
 
-        <Button2
-          style={styles.button}
-          mode="contained"
-          onPress={() => navigation.navigate('Customisation')}
-        >
-          Customisation
-        </Button2>
-        <Button2 style={styles.button} mode="contained" onPress={() => email()}>
-          Message my social worker
-        </Button2>
-        <Button2
-          style={styles.button}
-          mode="contained"
-          onPress={() => navigation.navigate('Contact')}
-        >
-          Contact Child Line
-        </Button2>
+          <Button2
+            style={styles.button}
+            mode="contained"
+            onPress={() => navigation.navigate('Customisation')}
+          >
+            Customisation
+          </Button2>
+          <Button2
+            style={styles.button}
+            mode="contained"
+            onPress={() => email()}
+          >
+            Message my social worker
+          </Button2>
+          <Button2
+            style={styles.button}
+            mode="contained"
+            onPress={() => contact()}
+          >
+            Contact Child Line
+          </Button2>
 
-        <Button2
-          style={styles.button_logout}
-          mode="contained"
-          onPress={() => handleLogout()}
-        >
-          <Text style={styles.text}>Logout</Text>
-        </Button2>
-      </Background3>
+          <Button2
+            style={styles.button_logout}
+            mode="contained"
+            onPress={() => handleLogout()}
+          >
+            <Text style={styles.text}>Logout</Text>
+          </Button2>
+        </Background3>
+      </ScrollView>
     )
   } else {
     return (
-      <Background3 style={styles.background}>
-        <BackButton goBack={navigation.goBack} />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <Background3 style={styles.background}>
+          <BackButton goBack={navigation.goBack} />
 
-        <Image source={{ uri: avatarURL }} style={styles.image} />
-        <Text style={styles.title}>{postData}</Text>
+          <Image source={{ uri: avatarURL }} style={styles.image} />
+          <Text style={styles.title}>{postData}</Text>
 
-        <Text style={styles.text2}>Achievements</Text>
+          <Text style={styles.text2}>Achievements</Text>
 
-        <View style={styles.container}>
-          <Switch
-            trackColor={{ false: '#FFFFFF', true: '#7AC9A1' }}
-            thumbColor={isEnabled ? '#FFFFFF' : '#FFFFFF'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={updateAchievement}
-            value={isEnabled}
-          />
-        </View>
+          <View style={styles.container}>
+            <Switch
+              trackColor={{ false: '#FFFFFF', true: '#7AC9A1' }}
+              thumbColor={isEnabled ? '#FFFFFF' : '#FFFFFF'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={updateAchievement}
+              value={isEnabled}
+            />
+          </View>
 
-        <Button2
-          style={styles.button}
-          mode="contained"
-          onPress={() => navigation.navigate('Customisation')}
-        >
-          Customisation
-        </Button2>
-        <Button2 style={styles.button} mode="contained" onPress={() => email()}>
-          Message my social worker
-        </Button2>
-        <Button2
-          style={styles.button}
-          mode="contained"
-          onPress={() => navigation.navigate('Contact')}
-        >
-          Contact Child Line
-        </Button2>
+          <Button2
+            style={styles.button}
+            mode="contained"
+            onPress={() => navigation.navigate('Customisation')}
+          >
+            Customisation
+          </Button2>
+          <Button2
+            style={styles.button}
+            mode="contained"
+            onPress={() => email()}
+          >
+            Message my social worker
+          </Button2>
+          <Button2
+            style={styles.button}
+            mode="contained"
+            onPress={() => contact()}
+          >
+            Contact Child Line
+          </Button2>
 
-        <Button2
-          style={styles.button_logout}
-          mode="contained"
-          onPress={() => handleLogout()}
-        >
-          <Text style={styles.text}>Logout</Text>
-        </Button2>
-      </Background3>
+          <Button2
+            style={styles.button_logout}
+            mode="contained"
+            onPress={() => handleLogout()}
+          >
+            <Text style={styles.text}>Logout</Text>
+          </Button2>
+        </Background3>
+      </ScrollView>
     )
   }
 }
@@ -435,9 +483,9 @@ const styles = StyleSheet.create({
     width: '90%',
     height: '90%',
     // backgroundColor: theme.colors.tint,
-    alignSelf: 'center',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    // alignSelf: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'flex-start',
   },
   image_border: {
     borderRadius: 80,
