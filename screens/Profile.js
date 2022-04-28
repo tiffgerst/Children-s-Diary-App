@@ -6,20 +6,14 @@ import {
   View,
   Switch,
   Text,
-  FlatList,
   TouchableOpacity,
-  Animated,
-  Dimensions,
   Linking,
   RefreshControl,
   ScrollView,
 } from 'react-native'
-import theme from '../src/core/theme'
 import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
 import Button2 from '../components/Button2'
-import Button from '../components/Button'
-import SearchBarList from '../components/SearchBarList'
 import * as SecureStore from 'expo-secure-store'
 import * as add from '../ip/config'
 import axios from 'axios'
@@ -33,25 +27,22 @@ export default function Profile({ navigation }) {
   const [userID, setUserID] = useState(null)
   const [postData, setPostData] = useState()
   const [isEnabled, setIsEnabled] = useState(null)
-
   const [avatarID, setAvatarID] = useState(null)
   const [avatarURL, setAvatarURL] = useState(null)
   const [stars, setStars] = useState(null)
   const [achievementStatus, setAchievementStatus] = useState(null)
   const ip = add.ip
+
   const [modalVisibleAchievement, setModalVisibleAchievement] = useState(null)
   const [modalVisible1, setModal1Visible] = useState('')
   const [modalVisible2, setModal2Visible] = useState('')
   const [modalVisible3, setModal3Visible] = useState('')
   const [modalVisible4, setModal4Visible] = useState('')
   const [modalVisible5, setModal5Visible] = useState('')
-  const [animation, setAnimation] = useState(new Animated.Value(0))
-  const { height } = Dimensions.get('window')
-
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState)
 
   const [refreshing, setRefreshing] = useState(false)
 
+  // Deal with loggout
   const handleLogout = async () => {
     try {
       await SecureStore.deleteItemAsync('token')
@@ -61,6 +52,8 @@ export default function Profile({ navigation }) {
       console.log(error)
     }
   }
+
+  // Set email 
   const email = async () => {
     const userID = await SecureStore.getItemAsync('userID')
     axios
@@ -76,6 +69,8 @@ export default function Profile({ navigation }) {
         console.log(error)
       })
   }
+
+  // Deal child line
   const contact = async () => {
     let phoneNumber = ''
 
@@ -87,6 +82,8 @@ export default function Profile({ navigation }) {
 
     Linking.openURL(phoneNumber)
   }
+
+  // Get information including display name, avatarID, avatar URL, number of stars and whether the user turned on achievements from database
   const getData = async () => {
     const userID = await SecureStore.getItemAsync('userID')
     const apiResponse = await fetch(
@@ -126,12 +123,14 @@ export default function Profile({ navigation }) {
     getData()
   }, [])
 
+  // Refresh the page
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     getData()
     wait(2000).then(() => setRefreshing(false))
   }, [])
 
+  // Enable/Disable showing stars and achievements
   const updateAchievement = (achievementStatus) => {
     setIsEnabled((previousState) => !previousState)
     setModalVisibleAchievement((previousState) => !previousState)
@@ -154,46 +153,8 @@ export default function Profile({ navigation }) {
       animationDuration: '275',
     })
   }
-  const openModal = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-    extrapolate: 'clamp',
-  })
-  const saveModal = animation.interpolate({
-    inputRange: [1, 2],
-    outputRange: [0, -height],
-    extrapolate: 'clamp',
-  })
-  const modalTrigger = () => {
-    Animated.timing(animation, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: false,
-    }).start()
-  }
-  const close = () => {
-    Animated.timing(animation, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: false,
-    }).start()
-  }
-  const open = {
-    transform: [{ scale: openModal }, { translateY: saveModal }],
-  }
-  const color = animation.interpolate({
-    inputRange: [0, 0.2, 1.8, 2],
-    outputRange: [
-      'rgba(225, 255, 255, 0.0)',
-      'rgba(45, 57, 82, 0.5)',
-      'rgba(45, 57, 82, 0.8)',
-      'rgba(225, 255, 255, 0.0)',
-    ],
-  })
-  const background = {
-    backgroundColor: color,
-  }
 
+  // render the page with stars and achievements if the user enables them
   if (modalVisibleAchievement) {
     return (
       <ScrollView
@@ -208,19 +169,6 @@ export default function Profile({ navigation }) {
 
           <Image source={{ uri: avatarURL }} style={styles.image} />
           <Text style={styles.title}>{postData}</Text>
-
-          {/* <View>
-      <View style={styles.wrap3}>
-        <Text> 1 </Text>
-        <View style={{ flexDirection: 'row' }}>
-          <Image
-            source={require('../assets/Star.png')}
-            style={styles.small_image}
-          />
-          <Text style={styles.text}> {stars} </Text>
-        </View>
-      </View>
-      </View> */}
 
           <View style={styles.wrap}>
             <View style={{ flexDirection: 'row' }}>
@@ -418,7 +366,9 @@ export default function Profile({ navigation }) {
         </Background3>
       </ScrollView>
     )
-  } else {
+  } 
+  // render the page without stars and achievements if the user disables them
+  else {
     return (
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -618,34 +568,5 @@ const styles = StyleSheet.create({
   },
   achievement5: {
     left: 170,
-  },
-  white1: {
-    position: 'absolute',
-    width: 100,
-    height: 50,
-    left: 120,
-    top: 350,
-    zIndex: 10,
-  },
-  wrap3: {
-    position: 'absolute',
-    width: 100,
-    height: 50,
-    left: -50,
-    top: 0,
-    zIndex: 100,
-    backgroundColor: '#eb1515',
-    elevation: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  background2: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 })
