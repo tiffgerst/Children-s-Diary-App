@@ -11,6 +11,8 @@ import {
   updateRewardPoints,
   updateDisplayName,
   getStars,
+  getAchievementStatus,
+  updateAchievementStatus,
 } from '../controllers/appUser.js'
 import passport from 'passport'
 import '../config/passport.js'
@@ -25,6 +27,8 @@ router.get(
 )
 router.patch('/avatar/:id', updateAvatar)
 router.get('/reward/getReward/:id', getStars)
+router.get('/achievementOn/:id', getAchievementStatus)
+router.patch('/achievementOn/update/:id', updateAchievementStatus)
 router.post('/register', registerUser)
 router.delete('/:id', deleteUser)
 router.post('/login', loginUser)
