@@ -164,11 +164,7 @@ function SearchBarList({ searchPhrase, setClicked, data, navigation }) {
 
   return (
     <SafeAreaView>
-      <View
-        onStartShouldSetResponder={() => {
-          setClicked(false)
-        }}
-      >
+      <View>
         <FlatList
           contentContainerStyle={styles.grid}
           data={data}
