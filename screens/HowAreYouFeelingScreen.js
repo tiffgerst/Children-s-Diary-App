@@ -17,7 +17,6 @@ import TextInputMedium from '../components/TextInputMedium'
 import Background2 from '../components/Background2'
 import { theme } from '../src/core/theme'
 import SkipButton from '../components/SkipButton'
-import * as add from '../ip/config'
 
 export default function HowAreYouFeelingScreen({ navigation }) {
   const [entryText, setEntryText] = useState('')
@@ -25,7 +24,6 @@ export default function HowAreYouFeelingScreen({ navigation }) {
   const [emojis, setEmojis] = useState(null)
   const [selectedEmojis, setSelectedEmojis] = useState([])
   const [userID, setUserID] = useState(null)
-  const ip = add.ip
 
   // Obtain user ID from SecureStore
   useEffect(() => {
@@ -36,14 +34,16 @@ export default function HowAreYouFeelingScreen({ navigation }) {
       )
       console.log(userID)
       const userID = await SecureStore.getItemAsync('userID')
-      const apiResponse = await fetch(`http://${ip}:3000/appUser/getUser/` + userID)
+      const apiResponse = await fetch(
+        `https://mirradiaryapp.azurewebsites.net/appUser/getUser/` + userID
+      )
       const userinfo = await apiResponse.json()
       const display_name = userinfo[0].displayname
       setdisplayName(display_name)
 
       // GET default mood icon emojis
       axios
-        .get(`http://${ip}:3000/moodIcons/getMoodIcons`, {
+        .get(`https://mirradiaryapp.azurewebsites.net/moodIcons/getMoodIcons`, {
           userID,
         })
         .then(async (response) => {
@@ -63,7 +63,7 @@ export default function HowAreYouFeelingScreen({ navigation }) {
     if (selectedEmojis.length !== 0 && entryText !== '') {
       // Sumbit new Post to the databse with users written input text
       axios
-        .post(`http://${ip}:3000/post/feelingEntry`, {
+        .post(`https://mirradiaryapp.azurewebsites.net/post/feelingEntry`, {
           userID,
           entryText,
           unique_id_post,
@@ -72,9 +72,13 @@ export default function HowAreYouFeelingScreen({ navigation }) {
         .then(async () => {
           axios
             // If post successfully created, add reward points to the users count
-            .patch(`http://${ip}:3000/appUser/reward/` + userID, {
-              userID,
-            })
+            .patch(
+              `https://mirradiaryapp.azurewebsites.net/appUser/reward/` +
+                userID,
+              {
+                userID,
+              }
+            )
             .catch((error) => {
               console.log(error)
             })
@@ -82,10 +86,13 @@ export default function HowAreYouFeelingScreen({ navigation }) {
           // Link each selected emoji to the post created
           selectedEmojis.forEach((moodIconID) =>
             axios
-              .post(`http://${ip}:3000/moodIcons/postLink`, {
-                moodIconID,
-                unique_id_post,
-              })
+              .post(
+                `https://mirradiaryapp.azurewebsites.net/moodIcons/postLink`,
+                {
+                  moodIconID,
+                  unique_id_post,
+                }
+              )
               .catch((error) => {
                 console.log(error)
               })

@@ -10,14 +10,13 @@ import {
   FlatList,
   Alert,
 } from 'react-native'
-import BackButton from '../components/BackButton'
+import axios from 'axios'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
+import BackButton from '../components/BackButton'
 import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
 import TagButtonList from '../components/TagButtonList'
 import MoodIconList from '../components/MoodIconList'
-import * as add from '../ip/config'
-import axios from 'axios'
 
 export default function EditEntry({ route, navigation }) {
   const {
@@ -31,7 +30,6 @@ export default function EditEntry({ route, navigation }) {
     backgroundColor,
     priv,
   } = route.params
-  const ip = add.ip
 
   const dat = [
     '#FFA500',
@@ -103,7 +101,7 @@ export default function EditEntry({ route, navigation }) {
       })
     } else {
       axios
-        .patch(`http://${ip}:3000/post/update`, {
+        .patch(`https://mirradiaryapp.azurewebsites.net/post/update`, {
           note: contentText,
           tit: titleText,
           privacy: privacy,
@@ -114,7 +112,7 @@ export default function EditEntry({ route, navigation }) {
           //Link each selected emoji to the post created
           pick.forEach((tag) =>
             axios
-              .post(`http://${ip}:3000/post/tags`, {
+              .post(`https://mirradiaryapp.azurewebsites.net/post/tags`, {
                 tag: tag,
                 postID: postID,
               })

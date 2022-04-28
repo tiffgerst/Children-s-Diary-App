@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Provider } from 'react-native-paper'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import FlashMessage from "react-native-flash-message";
+import FlashMessage from 'react-native-flash-message'
 import { theme } from './src/core/theme'
 import {
   StartScreen,
@@ -15,7 +15,6 @@ import {
   ImageEntry,
   Customisation,
   Profile,
-  //Record,
   PostFeed,
   EditEntry,
   ResetPassLinkSent,
@@ -47,7 +46,6 @@ export default function App({ navigation }) {
           <Stack.Screen name="ImageEntry" component={ImageEntry} />
           <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="Customisation" component={Customisation} />
-          {/*<Stack.Screen name="Record" component={Record} />*/}
           <Stack.Screen name="PostFeed" component={PostFeed} />
           <Stack.Screen name="EditEntry" component={EditEntry} />
           <Stack.Screen

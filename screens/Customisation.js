@@ -11,15 +11,13 @@ import {
   RefreshControl,
   ScrollView,
 } from 'react-native'
-import theme from '../src/core/theme'
+import { showMessage, hideMessage } from 'react-native-flash-message'
+import axios from 'axios'
+import * as SecureStore from 'expo-secure-store'
+import { getStatusBarHeight } from 'react-native-status-bar-height'
 import Background3 from '../components/Background3'
 import TextInputMedium from '../components/TextInputMedium'
 import BackButton from '../components/BackButton'
-import { getStatusBarHeight } from 'react-native-status-bar-height'
-import * as add from '../ip/config'
-import * as SecureStore from 'expo-secure-store'
-import axios from 'axios'
-import { showMessage, hideMessage } from 'react-native-flash-message'
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout))
@@ -28,7 +26,6 @@ const wait = (timeout) => {
 export default function Customisation({ navigation }) {
   const [postData, setPostData] = useState()
   const [entryText, setEntryText] = useState('')
-  const ip = add.ip
   const [userID, setUserID] = useState(null)
   const [avatarID, setAvatarID] = useState(null)
   const [avatarURL, setAvatarURL] = useState(null)
@@ -40,7 +37,7 @@ export default function Customisation({ navigation }) {
   const getData = async () => {
     const userID = await SecureStore.getItemAsync('userID')
     const apiResponse = await fetch(
-      `http://${ip}:3000/appUser/getUser/` + userID
+      `https://mirradiaryapp.azurewebsites.net/appUser/getUser/` + userID
     )
     const data = await apiResponse.json()
     const display_name = data[0].displayname
@@ -48,7 +45,9 @@ export default function Customisation({ navigation }) {
     setUserID(userID)
     setPostData(display_name)
     setAvatarID(avatarID)
-    const URL = await fetch(`http://${ip}:3000/avatar/getAvatarURL/` + avatarID)
+    const URL = await fetch(
+      `https://mirradiaryapp.azurewebsites.net/avatar/getAvatarURL/` + avatarID
+    )
     const avatarinfo = await URL.json()
     const avatarURL = avatarinfo[0].avatarURL
     setAvatarURL(avatarURL)
@@ -67,10 +66,14 @@ export default function Customisation({ navigation }) {
   const updateName = () => {
     if (entryText !== '') {
       axios
-        .patch(`http://${ip}:3000/appUser/displayname/` + userID, {
-          id: userID,
-          displayName: entryText,
-        })
+        .patch(
+          `https://mirradiaryapp.azurewebsites.net/appUser/displayname/` +
+            userID,
+          {
+            id: userID,
+            displayName: entryText,
+          }
+        )
         .catch((error) => {
           console.log(error)
         })
@@ -89,10 +92,13 @@ export default function Customisation({ navigation }) {
 
   const updateAvatar = (newID) => {
     axios
-      .patch(`http://${ip}:3000/appUser/avatar/` + userID, {
-        id: userID,
-        avatarID: newID,
-      })
+      .patch(
+        `https://mirradiaryapp.azurewebsites.net/appUser/avatar/` + userID,
+        {
+          id: userID,
+          avatarID: newID,
+        }
+      )
       .catch((error) => {
         console.log(error)
       })

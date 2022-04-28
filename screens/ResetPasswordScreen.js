@@ -6,19 +6,17 @@ import TextInput from '../components/TextInput'
 import Background from '../components/Background'
 import { emailValidator } from '../helpers/emailValidator'
 import BackButton from '../components/BackButton'
-import * as add from '../ip/config'
 
 export default function ResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
 
   const onSubmitPressed = () => {
-    const ip = add.ip
     const emailError = emailValidator(email.value)
     if (emailError) {
       setEmail({ ...email, error: emailError })
     } else {
       axios
-        .get(`http://${ip}:3000/appUser/getEmail/` + email.value, {
+        .get(`https://mirradiaryapp.azurewebsites.net/appUser/getEmail/` + email.value, {
           email: email.value,
         })
         .then(async (response) => {

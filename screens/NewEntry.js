@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import BackButton from '../components/BackButton'
-import Button from '../components/Button'
+import { StyleSheet, Text, View } from 'react-native'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
-import axios from 'axios'
+import BackButton from '../components/BackButton'
+import Button from '../components/Button'
 import api from '../connections/api'
-
-//import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function NewEntry({ navigation }) {
   const [prompt1, setprompt1] = useState()
