@@ -7,6 +7,7 @@ import {
   loginUser,
   changePassword,
   isLoggedIn,
+  emailSocialWorker,
   userEmail,
   updateRewardPoints,
   updateDisplayName,
@@ -35,6 +36,7 @@ router.post('/login', loginUser)
 router.patch('/change', changePassword)
 router.patch('/reward/:id', updateRewardPoints)
 router.patch('/displayname/:id', updateDisplayName)
+router.post('/email', emailSocialWorker)
 router.post(
   '/isLoggedIn',
   passport.authenticate('jwt', { session: false }),

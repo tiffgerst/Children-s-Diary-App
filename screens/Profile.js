@@ -39,8 +39,8 @@ export default function Profile({ navigation }) {
   const [modalVisible3, setModal3Visible] = useState('')
   const [modalVisible4, setModal4Visible] = useState('')
   const [modalVisible5, setModal5Visible] = useState('')
-  const [animation, setAnimation]=useState(new Animated.Value(0))
-  const {height} = Dimensions.get('window')
+  const [animation, setAnimation] = useState(new Animated.Value(0))
+  const { height } = Dimensions.get('window')
 
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState)
 
@@ -92,11 +92,13 @@ export default function Profile({ navigation }) {
       const rewardinfo = await reward.json()
       const stars = rewardinfo[0].reward
       setStars(stars)
-      const getAchievement = await fetch(`http://${ip}:3000/appUser/achievementOn/` + userID)
+      const getAchievement = await fetch(
+        `http://${ip}:3000/appUser/achievementOn/` + userID
+      )
       const achievementinfo = await getAchievement.json()
       const achievementStatus = achievementinfo[0].achievementOn
       setAchievementStatus(achievementStatus)
-      if (achievementStatus == 0){
+      if (achievementStatus == 0) {
         setIsEnabled((previousState) => !previousState)
         setModalVisibleAchievement((previousState) => !previousState)
       }
@@ -105,80 +107,77 @@ export default function Profile({ navigation }) {
     getData()
   }, [])
 
-
   const updateAchievement = (achievementStatus) => {
     setIsEnabled((previousState) => !previousState)
     setModalVisibleAchievement((previousState) => !previousState)
     axios
-        .patch(`http://${ip}:3000/appUser/achievementOn/update/` + userID, {
-          id: userID,
-          choice: achievementStatus,
-        })
-        .catch((error) => {
-            console.log(error)
-        })
+      .patch(`http://${ip}:3000/appUser/achievementOn/update/` + userID, {
+        id: userID,
+        choice: achievementStatus,
+      })
+      .catch((error) => {
+        console.log(error)
+      })
     showMessage({
-        message: 'You have changed your achievement setting. Please refresh the page to reflect the change.',
-        type: 'info',
-        duration: '3000',
-        floating: true,
-        backgroundColor: '#7AC9A1',
-        titleStyle: { fontWeight: 'bold', textAlign: 'center' },
-        animationDuration: '275',
+      message:
+        'You have changed your achievement setting. You may need to refresh the page to reflect the change.',
+      type: 'info',
+      duration: '3000',
+      floating: true,
+      backgroundColor: '#7AC9A1',
+      titleStyle: { fontWeight: 'bold', textAlign: 'center' },
+      animationDuration: '275',
     })
   }
   const openModal = animation.interpolate({
-    inputRange:[0, 1],
-    outputRange:[0, 1],
+    inputRange: [0, 1],
+    outputRange: [0, 1],
     extrapolate: 'clamp',
-  });
+  })
   const saveModal = animation.interpolate({
-    inputRange:[1, 2],
-    outputRange:[0, -height],
+    inputRange: [1, 2],
+    outputRange: [0, -height],
     extrapolate: 'clamp',
-  });
-  const modalTrigger = () =>{
+  })
+  const modalTrigger = () => {
     Animated.timing(animation, {
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-    }).start();
-  };
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: false,
+    }).start()
+  }
   const close = () => {
     Animated.timing(animation, {
-        toValue:0,
-        duration:500,
-        useNativeDriver:false
-    }).start();
-  };
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: false,
+    }).start()
+  }
   const open = {
-    transform:[
-        {scale:openModal},
-        {translateY:saveModal}
-    ]
-  };
+    transform: [{ scale: openModal }, { translateY: saveModal }],
+  }
   const color = animation.interpolate({
-    inputRange:[0, 0.2, 1.8, 2],
-    outputRange:[
-        'rgba(225, 255, 255, 0.0)',
-        'rgba(45, 57, 82, 0.5)',
-        'rgba(45, 57, 82, 0.8)',
-        'rgba(225, 255, 255, 0.0)',
-    ]
+    inputRange: [0, 0.2, 1.8, 2],
+    outputRange: [
+      'rgba(225, 255, 255, 0.0)',
+      'rgba(45, 57, 82, 0.5)',
+      'rgba(45, 57, 82, 0.8)',
+      'rgba(225, 255, 255, 0.0)',
+    ],
   })
   const background = {
-    backgroundColor:color
+    backgroundColor: color,
   }
 
   if (modalVisibleAchievement) {
-  return (
-    <Background3 style={styles.background}>
-      <BackButton goBack={navigation.goBack}/>
-      
-      <Image source={{uri: avatarURL}} style={styles.image}/>
-      <Text style={styles.title}>{postData}</Text>
+    return (
+      <Background3 style={styles.background}>
+        <BackButton goBack={navigation.goBack} />
 
-      {/* <View>
+        <Image source={{ uri: avatarURL }} style={styles.image} />
+        <Text style={styles.title}>{postData}</Text>
+
+        {/* <View>
       <View style={styles.wrap3}>
         <Text> 1 </Text>
         <View style={{ flexDirection: 'row' }}>
@@ -191,156 +190,18 @@ export default function Profile({ navigation }) {
       </View>
       </View> */}
 
-
         <View style={styles.wrap}>
           <View style={{ flexDirection: 'row' }}>
-            <Image source={require('../assets/Star.png')} style={styles.small_image}/>
+            <Image
+              source={require('../assets/Star.png')}
+              style={styles.small_image}
+            />
             <Text style={styles.text}> {stars} </Text>
           </View>
         </View>
 
-      <Text style={styles.text2}>Achievements</Text>
-
-      <View style={styles.container}>
-        <Switch
-          trackColor={{ false: '#FFFFFF', true: '#7AC9A1' }}
-          thumbColor={isEnabled ? '#FFFFFF' : '#FFFFFF'}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={updateAchievement}
-          value={isEnabled}
-        />
-      </View>
-
-      <View>
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity onPress={() => {setModal1Visible(!modalVisible1)}}>
-          <Image source={require('../assets/reward5.png')} style={styles.image2}/>
-        </TouchableOpacity>
-
-        <View>
-          <Modal
-            animationType="none"
-            transparent={true}
-            visible={modalVisible1}
-            onBackdropPress={() => setModal1Visible(!modalVisible1)}
-          >
-            <View style={styles.wrap2}>
-              <Text style={styles.text3}> Earn this achievement by getting 5 stars! </Text>
-            </View>
-          </Modal>
-        </View>
-
-        <TouchableOpacity onPress={() => {setModal2Visible(!modalVisible2)}}>
-          <Image source={require('../assets/reward4.png')} style={styles.image2}/>
-        </TouchableOpacity>
-
-        <View>
-          <Modal
-            animationType="none"
-            transparent={true}
-            visible={modalVisible2}
-            onBackdropPress={() => setModal2Visible(!modalVisible2)}
-          >
-            <View style={[styles.wrap2, styles.achievement2]}>
-              <Text style={styles.text3}> Earn this achievement by getting 20 stars! </Text>
-            </View>
-          </Modal>
-        </View>
-
-        <TouchableOpacity onPress={() => {setModal3Visible(!modalVisible3)}}>
-          <Image source={require('../assets/reward3.png')} style={styles.image2}/>
-        </TouchableOpacity>
-
-        <View>
-          <Modal
-            animationType="none"
-            transparent={true}
-            visible={modalVisible3}
-            onBackdropPress={() => setModal3Visible(!modalVisible3)}
-          >
-            <View style={[styles.wrap2, styles.achievement3]}>
-              <Text style={styles.text3}> Earn this achievement by getting 50 stars! </Text>
-            </View>
-          </Modal>
-        </View>
-
-        <TouchableOpacity onPress={() => {setModal4Visible(!modalVisible4)}}>
-          <Image source={require('../assets/reward2.png')} style={styles.image2}/>
-        </TouchableOpacity>
-
-        <View>
-          <Modal
-            animationType="none"
-            transparent={true}
-            visible={modalVisible4}
-            onBackdropPress={() => setModal4Visible(!modalVisible4)}
-          >
-            <View style={[styles.wrap2, styles.achievement4]}>
-              <Text style={styles.text3}> Earn this achievement by getting 100 stars! </Text>
-            </View>
-          </Modal>
-        </View>
-
-        <TouchableOpacity onPress={() => {setModal5Visible(!modalVisible5)}}>
-          <Image source={require('../assets/reward1.png')} style={styles.image2}/>
-        </TouchableOpacity>
-
-        <View>
-          <Modal
-            animationType="none"
-            transparent={true}
-            visible={modalVisible5}
-            onBackdropPress={() => setModal5Visible(!modalVisible5)}
-          >
-            <View style={[styles.wrap2, styles.achievement5]}>
-              <Text style={styles.text3}> Earn this achievement by getting 200 stars! </Text>
-            </View>
-          </Modal>
-        </View>
-      <View>
-      
-      </View>
-      </View>
-      </View>
-
-      <Button2
-        style={styles.button}
-        mode="contained"
-        onPress={() => navigation.navigate('Customisation')}
-      >
-        Customisation
-      </Button2>
-      <Button2 style={styles.button} mode="contained" onPress={() => email()}>
-        Message my social worker
-      </Button2>
-      <Button2
-        style={styles.button}
-        mode="contained"
-        onPress={() => navigation.navigate('Contact')}
-      >
-        Contact Child Line
-      </Button2>
-
-      <Button2
-        style={styles.button_logout}
-        mode="contained"
-        onPress={() => handleLogout()}
-      >
-        <Text style={styles.text}>Logout</Text>
-      </Button2>
-    </Background3>
-  )
-  }
-  else {
-    return (
-      <Background3 style={styles.background}>
-        <BackButton goBack={navigation.goBack}/>
-        
-        <Image source={{uri: avatarURL}} style={styles.image}/>
-        <Text style={styles.title}>{postData}</Text>
-  
         <Text style={styles.text2}>Achievements</Text>
-  
+
         <View style={styles.container}>
           <Switch
             trackColor={{ false: '#FFFFFF', true: '#7AC9A1' }}
@@ -350,7 +211,147 @@ export default function Profile({ navigation }) {
             value={isEnabled}
           />
         </View>
-  
+
+        <View>
+          <View style={{ flexDirection: 'row', position: 'relative', top: 20 }}>
+            <TouchableOpacity
+              onPress={() => {
+                setModal1Visible(!modalVisible1)
+              }}
+            >
+              <Image
+                source={require('../assets/reward5.png')}
+                style={styles.image2}
+              />
+            </TouchableOpacity>
+
+            <View>
+              <Modal
+                animationType="none"
+                transparent={true}
+                visible={modalVisible1}
+                onBackdropPress={() => setModal1Visible(!modalVisible1)}
+              >
+                <View style={styles.wrap2}>
+                  <Text style={styles.text3}>
+                    {' '}
+                    Earn this achievement by getting 5 stars!{' '}
+                  </Text>
+                </View>
+              </Modal>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => {
+                setModal2Visible(!modalVisible2)
+              }}
+            >
+              <Image
+                source={require('../assets/reward4.png')}
+                style={styles.image2}
+              />
+            </TouchableOpacity>
+
+            <View>
+              <Modal
+                animationType="none"
+                transparent={true}
+                visible={modalVisible2}
+                onBackdropPress={() => setModal2Visible(!modalVisible2)}
+              >
+                <View style={[styles.wrap2, styles.achievement2]}>
+                  <Text style={styles.text3}>
+                    {' '}
+                    Earn this achievement by getting 20 stars!{' '}
+                  </Text>
+                </View>
+              </Modal>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => {
+                setModal3Visible(!modalVisible3)
+              }}
+            >
+              <Image
+                source={require('../assets/reward3.png')}
+                style={styles.image2}
+              />
+            </TouchableOpacity>
+
+            <View>
+              <Modal
+                animationType="none"
+                transparent={true}
+                visible={modalVisible3}
+                onBackdropPress={() => setModal3Visible(!modalVisible3)}
+              >
+                <View style={[styles.wrap2, styles.achievement3]}>
+                  <Text style={styles.text3}>
+                    {' '}
+                    Earn this achievement by getting 50 stars!{' '}
+                  </Text>
+                </View>
+              </Modal>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => {
+                setModal4Visible(!modalVisible4)
+              }}
+            >
+              <Image
+                source={require('../assets/reward2.png')}
+                style={styles.image2}
+              />
+            </TouchableOpacity>
+
+            <View>
+              <Modal
+                animationType="none"
+                transparent={true}
+                visible={modalVisible4}
+                onBackdropPress={() => setModal4Visible(!modalVisible4)}
+              >
+                <View style={[styles.wrap2, styles.achievement4]}>
+                  <Text style={styles.text3}>
+                    {' '}
+                    Earn this achievement by getting 100 stars!{' '}
+                  </Text>
+                </View>
+              </Modal>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => {
+                setModal5Visible(!modalVisible5)
+              }}
+            >
+              <Image
+                source={require('../assets/reward1.png')}
+                style={styles.image2}
+              />
+            </TouchableOpacity>
+
+            <View>
+              <Modal
+                animationType="none"
+                transparent={true}
+                visible={modalVisible5}
+                onBackdropPress={() => setModal5Visible(!modalVisible5)}
+              >
+                <View style={[styles.wrap2, styles.achievement5]}>
+                  <Text style={styles.text3}>
+                    {' '}
+                    Earn this achievement by getting 200 stars!{' '}
+                  </Text>
+                </View>
+              </Modal>
+            </View>
+            <View></View>
+          </View>
+        </View>
+
         <Button2
           style={styles.button}
           mode="contained"
@@ -358,11 +359,7 @@ export default function Profile({ navigation }) {
         >
           Customisation
         </Button2>
-        <Button2
-          style={styles.button}
-          mode="contained"
-          onPress={() => navigation.navigate('Message')}
-        >
+        <Button2 style={styles.button} mode="contained" onPress={() => email()}>
           Message my social worker
         </Button2>
         <Button2
@@ -372,7 +369,54 @@ export default function Profile({ navigation }) {
         >
           Contact Child Line
         </Button2>
-  
+
+        <Button2
+          style={styles.button_logout}
+          mode="contained"
+          onPress={() => handleLogout()}
+        >
+          <Text style={styles.text}>Logout</Text>
+        </Button2>
+      </Background3>
+    )
+  } else {
+    return (
+      <Background3 style={styles.background}>
+        <BackButton goBack={navigation.goBack} />
+
+        <Image source={{ uri: avatarURL }} style={styles.image} />
+        <Text style={styles.title}>{postData}</Text>
+
+        <Text style={styles.text2}>Achievements</Text>
+
+        <View style={styles.container}>
+          <Switch
+            trackColor={{ false: '#FFFFFF', true: '#7AC9A1' }}
+            thumbColor={isEnabled ? '#FFFFFF' : '#FFFFFF'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={updateAchievement}
+            value={isEnabled}
+          />
+        </View>
+
+        <Button2
+          style={styles.button}
+          mode="contained"
+          onPress={() => navigation.navigate('Customisation')}
+        >
+          Customisation
+        </Button2>
+        <Button2 style={styles.button} mode="contained" onPress={() => email()}>
+          Message my social worker
+        </Button2>
+        <Button2
+          style={styles.button}
+          mode="contained"
+          onPress={() => navigation.navigate('Contact')}
+        >
+          Contact Child Line
+        </Button2>
+
         <Button2
           style={styles.button_logout}
           mode="contained"
@@ -428,7 +472,7 @@ const styles = StyleSheet.create({
     width: 61,
     height: 62,
     top: -20,
-    marginLeft: 5
+    marginLeft: 5,
   },
   small_image: {
     marginTop: 10,
@@ -490,40 +534,41 @@ const styles = StyleSheet.create({
     elevation: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop:10,
-    marginBottom:20
+    marginTop: 10,
+    marginBottom: 20,
   },
-  wrap2:{
+  wrap2: {
     width: 180,
     height: 90,
     borderRadius: 5,
     backgroundColor: '#FFFFFF',
     elevation: 10,
-    justifyContent:'center',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop:10,
-    marginBottom:20,
+    marginTop: 10,
+    marginBottom: 20,
     top: 150,
     shadowColor: '#8f8d8d',
     shadowOffset: {
       width: 8,
-      height: 8,},
+      height: 8,
+    },
     shadowOpacity: 0.74,
     shadowRadius: 180,
   },
-  achievement2:{
-    left: 30
+  achievement2: {
+    left: 30,
   },
-  achievement3:{
-    left: 90
+  achievement3: {
+    left: 90,
   },
-  achievement4:{
-    left: 140
+  achievement4: {
+    left: 140,
   },
-  achievement5:{
-    left: 170
+  achievement5: {
+    left: 170,
   },
-  white1:{
+  white1: {
     position: 'absolute',
     width: 100,
     height: 50,
@@ -531,7 +576,7 @@ const styles = StyleSheet.create({
     top: 350,
     zIndex: 10,
   },
-  wrap3:{
+  wrap3: {
     position: 'absolute',
     width: 100,
     height: 50,
@@ -540,18 +585,16 @@ const styles = StyleSheet.create({
     zIndex: 100,
     backgroundColor: '#eb1515',
     elevation: 10,
-    justifyContent:'center',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  background2:{
+  background2: {
     position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    justifyContent:'center',
-    alignItems: 'center'
-  },
-})
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })

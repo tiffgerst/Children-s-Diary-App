@@ -18,6 +18,22 @@ export const singleUser = async (req, res) => {
   }
 }
 
+export const emailSocialWorker = async (req, res) => {
+  const id = req.body.userID
+  console.log(id)
+  try {
+    await connect(config)
+    const result =
+      await query`SELECT socialWorkerID FROM appUser WHERE UserID = ${id}`
+    const sw = result.recordset[0].socialWorkerID
+    const final =
+      await query`SELECT socialWorkerEmail FROM social_worker WHERE socialWorkerID = ${sw}`
+    res.json(final.recordset[0].socialWorkerEmail).status(200)
+  } catch (err) {
+    res.status(409).send({ message: err.message })
+  }
+}
+
 // Gets the number of reward stars from the database
 export const getStars = async (req, res) => {
   const id = req.params.id
@@ -37,7 +53,8 @@ export const getAchievementStatus = async (req, res) => {
 
   try {
     await connect(config)
-    const result = await query`SELECT achievementOn FROM appUser WHERE UserID = ${id}`
+    const result =
+      await query`SELECT achievementOn FROM appUser WHERE UserID = ${id}`
     res.json(result.recordset).status(200)
   } catch (err) {
     res.status(409).send({ message: err.message })
@@ -51,17 +68,16 @@ export const updateAchievementStatus = async (req, res) => {
   console.log(id)
   console.log(choice)
   try {
-    if (choice){
+    if (choice) {
       await connect(config)
       const result =
         await query`UPDATE appUser SET achievementOn = 1 WHERE UserID = ${id}`
-        res.send(`User:${id} has changed their avatar to 0.`).status(200)
-    }
-    else {
+      res.send(`User:${id} has changed their avatar to 0.`).status(200)
+    } else {
       await connect(config)
       const result =
         await query`UPDATE appUser SET achievementOn = 0 WHERE UserID = ${id}`
-        res.send(`User:${id} has changed their avatar to 1.`).status(200)
+      res.send(`User:${id} has changed their avatar to 1.`).status(200)
     }
   } catch (err) {
     res.status(409).send({ message: err.message })
