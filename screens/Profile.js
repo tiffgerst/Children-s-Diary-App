@@ -23,6 +23,8 @@ export default function Profile({ navigation }) {
   const [userID, setUserID] = useState(null)
   const [postData, setPostData] = useState()
   const [isEnabled, setIsEnabled] = useState(true)
+  const [avatarID, setAvatarID] = useState(true)
+  const [avatarURL, setAvatarURL] = useState(true)
   const ip = add.ip
 
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState)
