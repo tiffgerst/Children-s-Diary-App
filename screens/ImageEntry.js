@@ -246,10 +246,10 @@ export default function ImageEntry({ route, navigation }) {
       const imageRef = ref(storage, new Date().toISOString())
       const img = await fetch(result.uri)
       const bytes = await img.blob()
-      const uploaded = await uploadBytes(imageRef, bytes)
-      await getDownloadURL(imageRef).then((x) => {
-        setImageURL(x);
-        console.log(x);
+      await uploadBytes(imageRef, bytes)
+      await getDownloadURL(imageRef).then((url) => {
+        setImageURL(url);
+        console.log(url);
       });
     }
   };
