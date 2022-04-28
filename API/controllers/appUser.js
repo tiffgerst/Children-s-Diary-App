@@ -18,6 +18,7 @@ export const singleUser = async (req, res) => {
   }
 }
 
+// Gets the number of reward stars from the database
 export const getStars = async (req, res) => {
   const id = req.params.id
 
@@ -25,6 +26,43 @@ export const getStars = async (req, res) => {
     await connect(config)
     const result = await query`SELECT reward FROM appUser WHERE UserID = ${id}`
     res.json(result.recordset).status(200)
+  } catch (err) {
+    res.status(409).send({ message: err.message })
+  }
+}
+
+// Gets whether the user enables the achievements from the database
+export const getAchievementStatus = async (req, res) => {
+  const id = req.params.id
+
+  try {
+    await connect(config)
+    const result = await query`SELECT achievementOn FROM appUser WHERE UserID = ${id}`
+    res.json(result.recordset).status(200)
+  } catch (err) {
+    res.status(409).send({ message: err.message })
+  }
+}
+
+// Updates user's choice of whether enables achievement or not
+export const updateAchievementStatus = async (req, res) => {
+  const id = req.params.id
+  const choice = req.body.choice
+  console.log(id)
+  console.log(choice)
+  try {
+    if (choice){
+      await connect(config)
+      const result =
+        await query`UPDATE appUser SET achievementOn = 1 WHERE UserID = ${id}`
+        res.send(`User:${id} has changed their avatar to 0.`).status(200)
+    }
+    else {
+      await connect(config)
+      const result =
+        await query`UPDATE appUser SET achievementOn = 0 WHERE UserID = ${id}`
+        res.send(`User:${id} has changed their avatar to 1.`).status(200)
+    }
   } catch (err) {
     res.status(409).send({ message: err.message })
   }
@@ -89,6 +127,7 @@ export const deleteUser = async (req, res) => {
   }
 }
 
+// Handles user login
 export const loginUser = async (req, res) => {
   const user = req.body
   const username = user.username
@@ -135,6 +174,7 @@ export const loginUser = async (req, res) => {
   }
 }
 
+// Change the password of the user
 export const changePassword = async (req, res) => {
   const user = req.body
   const username = user.username
@@ -166,6 +206,7 @@ export const isLoggedIn = async (req, res) => {
   console.log('here')
   console.log(req.body)
 }
+
 // Finds a user by their email from the databse, for password reset functionality
 export const userEmail = async (req, res) => {
   const email = req.params.email
@@ -194,7 +235,7 @@ export const updateRewardPoints = async (req, res) => {
   }
 }
 
-// Update the display name of the user
+// Updates the display name of the user
 export const updateDisplayName = async (req, res) => {
   const id = req.params.id
   const displayName = req.body.displayName

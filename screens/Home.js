@@ -13,6 +13,8 @@ import * as add from '../ip/config'
 //import { isLoggedIn } from '../helpers/isLoggedIn'
 
 export default function Home({ navigation }) {
+  const [avatarID, setAvatarID] = useState(null)
+  const [avatarURL, setAvatarURL] = useState(null)
   const [searchPhrase, setSearchPhrase] = useState('')
   const [clicked, setClicked] = useState(false)
   const [postData, setPostData] = useState('')
@@ -43,7 +45,15 @@ export default function Home({ navigation }) {
         const data = await apiResponse.json()
         const sorted = data.sort((a, b) => b.postID - a.postID)
         setPostData(sorted)
-        console.log(postData)
+        const appUserResponse = await fetch(`http://${ip}:3000/appUser/getUser/` + userID)
+        const appUserdata = await appUserResponse.json()
+        const avatarID = appUserdata[0].avatarID
+        setAvatarID(avatarID)
+        const URL = await fetch(`http://${ip}:3000/avatar/getAvatarURL/` + avatarID)
+        const avatarinfo = await URL.json()
+        const avatarURL = avatarinfo[0].avatarURL
+        setAvatarURL(avatarURL)
+        //console.log(postData)
       }
       getData()
       console.log(postData)
@@ -67,8 +77,9 @@ export default function Home({ navigation }) {
         onPress={() => navigation.navigate('Profile')}
         style={styles.profile}
       >
-        <Image source={require('../assets/profile_button.png')} />
+        <Image source={{uri: avatarURL}} style={styles.profile_image}/>
       </TouchableOpacity>
+      <Image source={{uri: avatarURL}} style={styles.profile1}/>
       {!clicked}
       <SearchBar
         searchPhrase={searchPhrase}
@@ -123,5 +134,10 @@ const styles = StyleSheet.create({
   scroll: {
     top: 62 + getStatusBarHeight(),
     minWidth: '125%',
+  },
+  profile_image: {
+    width: 33,
+    height: 34,
+    borderRadius: 20
   },
 })
