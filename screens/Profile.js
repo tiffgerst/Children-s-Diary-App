@@ -32,14 +32,14 @@ const wait = (timeout) => {
 export default function Profile({ navigation }) {
   const [userID, setUserID] = useState(null)
   const [postData, setPostData] = useState()
-  const [isEnabled, setIsEnabled] = useState(true)
+  const [isEnabled, setIsEnabled] = useState(null)
 
   const [avatarID, setAvatarID] = useState(null)
   const [avatarURL, setAvatarURL] = useState(null)
   const [stars, setStars] = useState(null)
   const [achievementStatus, setAchievementStatus] = useState(null)
   const ip = add.ip
-  const [modalVisibleAchievement, setModalVisibleAchievement] = useState(true)
+  const [modalVisibleAchievement, setModalVisibleAchievement] = useState(null)
   const [modalVisible1, setModal1Visible] = useState('')
   const [modalVisible2, setModal2Visible] = useState('')
   const [modalVisible3, setModal3Visible] = useState('')
@@ -114,10 +114,13 @@ export default function Profile({ navigation }) {
     const achievementinfo = await getAchievement.json()
     const achievementStatus = achievementinfo[0].achievementOn
     setAchievementStatus(achievementStatus)
-    // if (achievementStatus == 0) {
-    //   setIsEnabled((previousState) => !previousState)
-    //   setModalVisibleAchievement((previousState) => !previousState)
-    // }
+    if (achievementStatus == 0) {
+      setIsEnabled(false)
+      setModalVisibleAchievement(false)
+    } else {
+      setIsEnabled(true)
+      setModalVisibleAchievement(true)
+    }
   }
   useEffect(() => {
     getData()

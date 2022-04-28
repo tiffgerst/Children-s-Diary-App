@@ -18,8 +18,9 @@ export const searchPostByPostID = async (req, res) => {
         ISNULL(contentText, '') AS contentText, 
         ISNULL(tagNameAll, '') AS tagNameAll, 
         imageURL,
-        ISNULL(backgroundURL, '') AS backgroundURL,
+        ISNULL(backgroundColor, '#fff') AS backgroundColor,
         ISNULL(emojiUrlAll, '') AS emojiUrlAll, 
+        privacy,
         uniqueID
       FROM post
       LEFT JOIN (
@@ -37,8 +38,6 @@ export const searchPostByPostID = async (req, res) => {
       ON post.postID = tag.postID
       LEFT JOIN postImageUploaded image
       ON post.uniqueID = image.postLink
-      LEFT JOIN background
-      ON post.backgroundID = background.backgroundID
       LEFT JOIN (
         SELECT moodIconLink, 
           emojiUrlAll = (STUFF((SELECT ', '+ moodIconURL 
@@ -76,7 +75,8 @@ export const searchPostByUserID = async (req, res) => {
         ISNULL(tagNameAll, '') AS tagNameAll, 
         imageURL,
         ISNULL(emojiUrlAll, '') AS emojiUrlAll, 
-        uniqueID
+        uniqueID,
+        privacy
       FROM post
       LEFT JOIN (
         SELECT post.postID, 

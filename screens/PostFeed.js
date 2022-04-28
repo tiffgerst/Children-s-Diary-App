@@ -17,11 +17,12 @@ import * as add from '../ip/config'
 import axios from 'axios'
 
 export default function PostFeed({ route, navigation }) {
-  const [backgroundURL, setBackgroundURL] = useState('')
+  const [backgroundColor, setBackgroundColor] = useState('')
   const [date, setDate] = useState('')
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [uniqueID, setuniqueID] = useState('')
+  const [priv, setprivacy] = useState('')
   let [tag, setTag] = useState('')
   const [imageURL, setImageURL] = useState('')
   let [emoji, setEmoji] = useState('')
@@ -38,7 +39,7 @@ export default function PostFeed({ route, navigation }) {
         const getData = async () => {
           const apiResponse = await fetch(`http://${ip}:3000/post/` + postID)
           const data = await apiResponse.json()
-          let backgroundURL = await data[0].backgroundURL
+          let backgroundColor = await data[0].backgroundColor
           let date = await data[0].createDateTime
           let title = await data[0].titleText
           let content = await data[0].contentText
@@ -46,7 +47,8 @@ export default function PostFeed({ route, navigation }) {
           let imageURL = await data[0].imageURL
           let emoji = await data[0].emojiUrlAll.split(', ')
           let id = await data[0].uniqueID
-          setBackgroundURL(backgroundURL)
+          let privacy = await data[0].privacy
+          setBackgroundColor(backgroundColor)
           setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
           setTitle(title)
           setContent(content)
@@ -54,6 +56,11 @@ export default function PostFeed({ route, navigation }) {
           setImageURL(imageURL)
           setEmoji(emoji)
           setuniqueID(id)
+          if (privacy == 0) {
+            setprivacy(false)
+          } else {
+            setprivacy(true)
+          }
         }
         getData()
       },
@@ -96,12 +103,8 @@ export default function PostFeed({ route, navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={{ url: backgroundURL }}
-        resizeMode="cover"
-        style={styles.backgroundImage}
-      >
+    <View style={(styles.container, { backgroundColor: backgroundColor })}>
+      <ImageBackground resizeMode="cover" style={styles.backgroundImage}>
         <View style={styles.row}>
           <BackButton
             goBack={navigation.goBack}
@@ -118,6 +121,8 @@ export default function PostFeed({ route, navigation }) {
                 tag: tag,
                 imageURL: imageURL,
                 emoji: emoji,
+                backgroundColor: backgroundColor,
+                priv: priv,
               })
             }
           >
@@ -159,7 +164,6 @@ export default function PostFeed({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     justifyContent: 'flex-start',
   },
   backgroundImage: {

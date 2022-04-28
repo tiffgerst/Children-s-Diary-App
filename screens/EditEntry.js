@@ -20,7 +20,17 @@ import * as add from '../ip/config'
 import axios from 'axios'
 
 export default function EditEntry({ route, navigation }) {
-  const { date, title, content, tag, imageURL, emoji, postID } = route.params
+  const {
+    date,
+    title,
+    content,
+    tag,
+    imageURL,
+    emoji,
+    postID,
+    backgroundColor,
+    priv,
+  } = route.params
   const ip = add.ip
 
   const dat = [
@@ -50,10 +60,10 @@ export default function EditEntry({ route, navigation }) {
   const [modalVisible1, setModal1Visible] = useState('')
   const [modalVisible2, setModal2Visible] = useState('')
   const [modalVisible3, setModal3Visible] = useState('')
-  const [privacy, setprivacy] = useState(true)
-  const [check2, setcheck2] = useState('')
-  const [check1, setcheck1] = useState('√')
-  const [background, setbackground] = useState('#fff')
+  const [privacy, setprivacy] = useState(priv)
+  const [check2, setcheck2] = useState(!priv ? '√' : '')
+  const [check1, setcheck1] = useState(priv ? '√' : '')
+  const [background, setbackground] = useState(backgroundColor)
 
   const update = (a) => {
     if (pick.indexOf(a) == 0 && pick.length == 1) {
@@ -90,10 +100,6 @@ export default function EditEntry({ route, navigation }) {
     if (titleText == '' || contentText == '') {
       Alert.alert('Unable to post', 'Post must have a title and body text', {
         cancelable: true,
-        onDismiss: () =>
-          Alert.alert(
-            'This alert was dismissed by tapping outside of the alert dialog.'
-          ),
       })
     } else {
       axios
