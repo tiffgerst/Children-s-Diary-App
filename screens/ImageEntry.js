@@ -22,7 +22,6 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import BackButton from '../components/BackButton'
 import Tag from '../components/Tag'
 import BackgroundButton from '../components/backcolor'
-import firebaseConfig from '../API/config/firebaseConfig.js'
 
 // Connect to Firebase
 initializeApp(firebaseConfig);
