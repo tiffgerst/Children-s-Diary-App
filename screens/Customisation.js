@@ -11,6 +11,7 @@ import {
   RefreshControl,
   ScrollView,
 } from 'react-native'
+
 import { showMessage, hideMessage } from 'react-native-flash-message'
 import axios from 'axios'
 import * as SecureStore from 'expo-secure-store'
@@ -34,6 +35,7 @@ export default function Customisation({ navigation }) {
 
   const [refreshing, setRefreshing] = useState(false)
 
+  // Get information including display name, avatarID, and avatar URL from databse
   const getData = async () => {
     const userID = await SecureStore.getItemAsync('userID')
     const apiResponse = await fetch(
@@ -57,12 +59,14 @@ export default function Customisation({ navigation }) {
     getData()
   }, [])
 
+  // Refresh the page
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     getData()
     wait(2000).then(() => setRefreshing(false))
   }, [])
 
+  // Update the display name of the user in the database
   const updateName = () => {
     if (entryText !== '') {
       axios
@@ -90,6 +94,7 @@ export default function Customisation({ navigation }) {
     }
   }
 
+  // Update the avatarID of the user in the database
   const updateAvatar = (newID) => {
     axios
       .patch(
@@ -113,7 +118,8 @@ export default function Customisation({ navigation }) {
       animationDuration: '275',
     })
   }
-
+  
+  // Animation functions
   const color = animation.interpolate({
     inputRange: [0, 0.2, 1.8, 2],
     outputRange: [

@@ -12,19 +12,20 @@ import {
 } from 'react-native'
 import axios from 'axios'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
 import * as SecureStore from 'expo-secure-store'
 import * as ImagePicker from 'expo-image-picker'
 import { v4 as uuid } from 'uuid'
 import { showMessage, hideMessage } from 'react-native-flash-message'
 import { initializeApp } from 'firebase/app'
+import firebaseConfig from '../API/config/firebaseConfig.js'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import BackButton from '../components/BackButton'
 import Tag from '../components/Tag'
 import BackgroundButton from '../components/backcolor'
 import firebaseConfig from '../API/config/firebaseConfig.js'
 
-initializeApp(firebaseConfig)
+// Connect to Firebase
+initializeApp(firebaseConfig);
 
 export default function ImageEntry({ route, navigation }) {
   React.useEffect(() => {
@@ -171,6 +172,7 @@ export default function ImageEntry({ route, navigation }) {
           ),
       })
     } else {
+      // Sumbit new Post to the databse
       axios
         .post(`https://mirradiaryapp.azurewebsites.net/post/newPost`, {
           userID,
@@ -233,14 +235,15 @@ export default function ImageEntry({ route, navigation }) {
   const [image, setImage] = useState(null)
   const [imageURL, setImageURL] = useState()
   const pickImage = async () => {
-    // Launch the image library
+    // Launch image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-    })
-    console.log(result)
+    });
+    console.log(result);
+    // Upload selected image to Firebase Storage 
     if (!result.cancelled) {
       setImage(result.uri)
       const storage = getStorage()

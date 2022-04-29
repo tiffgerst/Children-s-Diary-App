@@ -15,7 +15,6 @@ import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 import BackButton from '../components/BackButton'
 import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
-import TagButtonList from '../components/TagButtonList'
 import MoodIconList from '../components/MoodIconList'
 
 export default function EditEntry({ route, navigation }) {
@@ -100,6 +99,7 @@ export default function EditEntry({ route, navigation }) {
         cancelable: true,
       })
     } else {
+      // Update Post to the databse
       axios
         .patch(`https://mirradiaryapp.azurewebsites.net/post/update`, {
           note: contentText,
@@ -109,7 +109,7 @@ export default function EditEntry({ route, navigation }) {
           postID: postID,
         })
         .then(async () => {
-          //Link each selected emoji to the post created
+          //Link each selected tag to the post created
           pick.forEach((tag) =>
             axios
               .post(`https://mirradiaryapp.azurewebsites.net/post/tags`, {

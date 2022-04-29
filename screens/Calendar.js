@@ -13,6 +13,8 @@ export default function CalendarScreen({ navigation }) {
   const [selectedDate, setSelectedDate] = useState('')
   const [postData, setPostData] = useState([])
 
+
+  // get post data from api
   useEffect(() => {
     const getData = async () => {
       const userID = await SecureStore.getItemAsync('userID')
