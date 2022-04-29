@@ -2,25 +2,24 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { Calendar } from 'react-native-calendars'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
+import * as SecureStore from 'expo-secure-store'
+import moment from 'moment'
 import { theme } from '../src/core/theme'
 import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
 import SearchBarList from '../components/SearchBarList'
-import moment from 'moment'
-import * as SecureStore from 'expo-secure-store'
-import * as add from '../ip/config'
 
 export default function CalendarScreen({ navigation }) {
   const [selectedDate, setSelectedDate] = useState('')
   const [postData, setPostData] = useState([])
 
+
   // get post data from api
   useEffect(() => {
-    const ip = add.ip
     const getData = async () => {
       const userID = await SecureStore.getItemAsync('userID')
       const apiResponse = await fetch(
-        `http://${ip}:3000/post/all/` + userID
+        `https://mirradiaryapp.azurewebsites.net/post/all/` + userID
       )
       const data = await apiResponse.json()
       const sorted = data.sort((a, b) => b.postID - a.postID)

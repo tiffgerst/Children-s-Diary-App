@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Modal from 'react-native-modal'
 import {
   StyleSheet,
@@ -20,11 +20,8 @@ import TagButtonList from '../components/TagButtonList'
 import 'react-native-get-random-values'
 import { v4 as uuid } from 'uuid'
 import { showMessage, hideMessage } from 'react-native-flash-message'
-import TextInputMedium from '../components/TextInputMedium'
-import * as add from '../ip/config'
 
 export default function TextEntry({ route, navigation }) {
-  const ip = add.ip
   const dat = [
     '#FFA500',
     '#ffe6ff',
@@ -148,7 +145,7 @@ export default function TextEntry({ route, navigation }) {
       })
     } else {
       axios
-        .post(`http://${ip}:3000/post/newPost`, {
+        .post(`https://mirradiaryapp.azurewebsites.net/post/newPost`, {
           userID: userID,
           note: note,
           unique_id_post: unique_id_post,
@@ -160,7 +157,10 @@ export default function TextEntry({ route, navigation }) {
           const postID = response.data.postID
           axios
             // If post successfully created, add reward points to the users count
-            .patch(`http://${ip}:3000/appUser/reward/` + userID, {
+            .patch(
+              `https://mirradiaryapp.azurewebsites.net/appUser/reward/` +
+                userID,
+              {
               userID: userID,
             })
             .catch((error) => {
@@ -171,7 +171,7 @@ export default function TextEntry({ route, navigation }) {
           //Link each selected emoji to the post created
           pick.forEach((tag) =>
             axios
-              .post(`http://${ip}:3000/post/tags`, {
+              .post(`https://mirradiaryapp.azurewebsites.net/post/tags`, {
                 tag: tag,
                 postID: postID,
               })

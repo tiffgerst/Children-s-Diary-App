@@ -9,12 +9,11 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native'
-import BackButton from '../components/BackButton'
+import axios from 'axios'
 import moment from 'moment'
+import BackButton from '../components/BackButton'
 import TagButtonList from '../components/TagButtonList'
 import MoodIconList from '../components/MoodIconList'
-import * as add from '../ip/config'
-import axios from 'axios'
 
 export default function PostFeed({ route, navigation }) {
   const [backgroundColor, setBackgroundColor] = useState('')
@@ -28,26 +27,24 @@ export default function PostFeed({ route, navigation }) {
   let [emoji, setEmoji] = useState('')
   const { postID } = route.params
 
-  const ip = add.ip
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener(
       'focus',
       () => {
-        const ip = add.ip
         // get post data from api
         const getData = async () => {
-          const apiResponse = await fetch(`http://${ip}:3000/post/` + postID)
+          const apiResponse = await fetch(`https://mirradiaryapp.azurewebsites.net/post/` + postID)
           const data = await apiResponse.json()
-          let backgroundColor = await data[0].backgroundColor
-          let date = await data[0].createDateTime
-          let title = await data[0].titleText
-          let content = await data[0].contentText
-          let tag = await data[0].tagNameAll.split(', ')
-          let imageURL = await data[0].imageURL
-          let emoji = await data[0].emojiUrlAll.split(', ')
-          let id = await data[0].uniqueID
-          let privacy = await data[0].privacy
+          const backgroundColor = await data[0].backgroundColor
+          const date = await data[0].createDateTime
+          const title = await data[0].titleText
+          const content = await data[0].contentText
+          const tag = await data[0].tagNameAll.split(', ')
+          const imageURL = await data[0].imageURL
+          const emoji = await data[0].emojiUrlAll.split(', ')
+          const id = await data[0].uniqueID
+          const privacy = await data[0].privacy
           setBackgroundColor(backgroundColor)
           setDate(moment(date).format('ddd, DD MMM YYYY HH:MM'))
           setTitle(title)
@@ -86,9 +83,9 @@ export default function PostFeed({ route, navigation }) {
 
   const remove = async () => {
     axios
-      .post(`http://${ip}:3000/post/deletePost`, {
-        postID: postID,
-        uniqueID: uniqueID,
+      .post(`https://mirradiaryapp.azurewebsites.net/post/deletePost`, {
+        postID,
+        uniqueID,
       })
 
       .catch((error) => {
@@ -103,7 +100,7 @@ export default function PostFeed({ route, navigation }) {
   }
 
   return (
-    <View style={(styles.container, { backgroundColor: backgroundColor })}>
+    <View style={(styles.container, { backgroundColor })}>
       <ImageBackground resizeMode="cover" style={styles.backgroundImage}>
         <View style={styles.row}>
           <BackButton
@@ -114,15 +111,15 @@ export default function PostFeed({ route, navigation }) {
             style={styles.editButton}
             onPress={() =>
               navigation.navigate('EditEntry', {
-                postID: postID,
-                date: date,
-                title: title,
-                content: content,
-                tag: tag,
-                imageURL: imageURL,
-                emoji: emoji,
-                backgroundColor: backgroundColor,
-                priv: priv,
+                postID,
+                date,
+                title,
+                content,
+                tag,
+                imageURL,
+                emoji,
+                backgroundColor,
+                priv,
               })
             }
           >

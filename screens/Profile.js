@@ -11,13 +11,13 @@ import {
   RefreshControl,
   ScrollView,
 } from 'react-native'
+
+import { showMessage, hideMessage } from 'react-native-flash-message'
+import axios from 'axios'
+import * as SecureStore from 'expo-secure-store'
 import Background3 from '../components/Background3'
 import BackButton from '../components/BackButton'
 import Button2 from '../components/Button2'
-import * as SecureStore from 'expo-secure-store'
-import * as add from '../ip/config'
-import axios from 'axios'
-import { showMessage, hideMessage } from 'react-native-flash-message'
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout))
@@ -31,8 +31,6 @@ export default function Profile({ navigation }) {
   const [avatarURL, setAvatarURL] = useState(null)
   const [stars, setStars] = useState(null)
   const [achievementStatus, setAchievementStatus] = useState(null)
-  const ip = add.ip
-
   const [modalVisibleAchievement, setModalVisibleAchievement] = useState(null)
   const [modalVisible1, setModal1Visible] = useState('')
   const [modalVisible2, setModal2Visible] = useState('')
@@ -57,12 +55,11 @@ export default function Profile({ navigation }) {
   const email = async () => {
     const userID = await SecureStore.getItemAsync('userID')
     axios
-      .post(`http://${ip}:3000/appUser/email`, {
-        userID: userID,
+      .post(`https://mirradiaryapp.azurewebsites.net/appUser/email`, {
+        userID,
       })
       .then(async (response) => {
         const mail = response.data
-        console.log(mail)
         Linking.openURL(`mailto:${mail}`)
       })
       .catch((error) => {
@@ -87,7 +84,7 @@ export default function Profile({ navigation }) {
   const getData = async () => {
     const userID = await SecureStore.getItemAsync('userID')
     const apiResponse = await fetch(
-      `http://${ip}:3000/appUser/getUser/` + userID
+      `https://mirradiaryapp.azurewebsites.net/appUser/getUser/` + userID
     )
     const data = await apiResponse.json()
     const display_name = data[0].displayname
@@ -95,18 +92,18 @@ export default function Profile({ navigation }) {
     setUserID(userID)
     setPostData(display_name)
     setAvatarID(avatarID)
-    const URL = await fetch(`http://${ip}:3000/avatar/getAvatarURL/` + avatarID)
+    const URL = await fetch(`https://mirradiaryapp.azurewebsites.net/avatar/getAvatarURL/` + avatarID)
     const avatarinfo = await URL.json()
     const avatarURL = avatarinfo[0].avatarURL
     setAvatarURL(avatarURL)
     const reward = await fetch(
-      `http://${ip}:3000/appUser/reward/getReward/` + userID
+      `https://mirradiaryapp.azurewebsites.net/appUser/reward/getReward/` + userID
     )
     const rewardinfo = await reward.json()
     const stars = rewardinfo[0].reward
     setStars(stars)
     const getAchievement = await fetch(
-      `http://${ip}:3000/appUser/achievementOn/` + userID
+      `https://mirradiaryapp.azurewebsites.net/appUser/achievementOn/` + userID
     )
     const achievementinfo = await getAchievement.json()
     const achievementStatus = achievementinfo[0].achievementOn
@@ -135,10 +132,14 @@ export default function Profile({ navigation }) {
     setIsEnabled((previousState) => !previousState)
     setModalVisibleAchievement((previousState) => !previousState)
     axios
-      .patch(`http://${ip}:3000/appUser/achievementOn/update/` + userID, {
-        id: userID,
-        choice: achievementStatus,
-      })
+      .patch(
+        `https://mirradiaryapp.azurewebsites.net/appUser/achievementOn/update/` +
+          userID,
+        {
+          id: userID,
+          choice: achievementStatus,
+        }
+      )
       .catch((error) => {
         console.log(error)
       })

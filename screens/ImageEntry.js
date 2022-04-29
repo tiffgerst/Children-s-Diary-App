@@ -11,18 +11,18 @@ import {
   Alert,
 } from 'react-native'
 import axios from 'axios'
-import BackButton from '../components/BackButton'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 import * as SecureStore from 'expo-secure-store'
-import BackgroundButton from '../components/backcolor'
-import Tag from '../components/Tag'
 import * as ImagePicker from 'expo-image-picker'
 import { v4 as uuid } from 'uuid'
-import { showMessage } from 'react-native-flash-message'
+import { showMessage, hideMessage } from 'react-native-flash-message'
+import { initializeApp } from 'firebase/app'
 import firebaseConfig from '../API/config/firebaseConfig.js'
-import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import * as add from '../ip/config'
+import BackButton from '../components/BackButton'
+import Tag from '../components/Tag'
+import BackgroundButton from '../components/backcolor'
+import firebaseConfig from '../API/config/firebaseConfig.js'
 
 // Connect to Firebase
 initializeApp(firebaseConfig);
@@ -31,10 +31,10 @@ export default function ImageEntry({ route, navigation }) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       pickImage()
-    });
+    })
     // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
-  }, []);
+    return unsubscribe
+  }, [])
 
   // Get user ID from SecureStore
   const [userID, setUserID] = useState(null)
@@ -158,7 +158,6 @@ export default function ImageEntry({ route, navigation }) {
       navigation.navigate('NewEntry')
     }
   }
-  const ip = add.ip
   const onSubmitPost = async () => {
     const unique_id = uuid()
     const unique_id_post = unique_id.slice(0, 8)
@@ -175,30 +174,34 @@ export default function ImageEntry({ route, navigation }) {
     } else {
       // Sumbit new Post to the databse
       axios
-        .post(`http://${ip}:3000/post/newPost`, {
-          userID: userID,
-          note: note,
-          unique_id_post: unique_id_post,
-          tit: tit,
-          privacy: privacy,
-          background: background,
+        .post(`https://mirradiaryapp.azurewebsites.net/post/newPost`, {
+          userID,
+          note,
+          unique_id_post,
+          tit,
+          privacy,
+          background,
         })
         .then(async (response) => {
           const postID = response.data.postID
           axios
             // If post successfully created, add reward points to the users count
-            .patch(`http://${ip}:3000/appUser/reward/` + userID, {
-              userID: userID,
-            })
+            .patch(
+              `https://mirradiaryapp.azurewebsites.net/appUser/reward/` +
+                userID,
+              {
+                userID: userID,
+              }
+            )
             .catch((error) => {
               console.log(error.message)
               console.log('reward')
             })
 
-          //Link each selected tag to the post created
+          // Link each selected tag to the post created
           pick.forEach((tag) =>
             axios
-              .post(`http://${ip}:3000/post/tags`, {
+              .post(`https://mirradiaryapp.azurewebsites.net/post/tags`, {
                 tag: tag,
                 postID: postID,
               })
@@ -207,11 +210,10 @@ export default function ImageEntry({ route, navigation }) {
                 console.log('tags')
               })
           )
-          //Link selected image to the post created
-          axios
-          .post(`http://${ip}:3000/post/image`, {
+          // Link selected image to the post created
+          axios.post(`https://mirradiaryapp.azurewebsites.net/post/image`, {
             unique_id_post: unique_id_post,
-            imageURL: imageURL
+            imageURL: imageURL,
           })
 
           navigation.navigate('Home')
@@ -243,26 +245,23 @@ export default function ImageEntry({ route, navigation }) {
     console.log(result);
     // Upload selected image to Firebase Storage 
     if (!result.cancelled) {
-      setImage(result.uri);
+      setImage(result.uri)
       const storage = getStorage()
       const imageRef = ref(storage, new Date().toISOString())
       const img = await fetch(result.uri)
       const bytes = await img.blob()
       await uploadBytes(imageRef, bytes)
       await getDownloadURL(imageRef).then((url) => {
-        setImageURL(url);
-        console.log(url);
-      });
+        setImageURL(url)
+        console.log(url)
+      })
     }
-  };
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
       <View style={styles.row}>
-        <BackButton
-          goBack={cancel}
-          style={{ position: 'relative' }}
-        />
+        <BackButton goBack={cancel} style={{ position: 'relative' }} />
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
@@ -398,9 +397,7 @@ export default function ImageEntry({ route, navigation }) {
         >
           {title}
         </TextInput>
-        <Text style={styles.date}>
-          {getCurrentDate()}
-        </Text>
+        <Text style={styles.date}>{getCurrentDate()}</Text>
         <View style={{ paddingLeft: 20 }}>
           <FlatList
             contentContainerStyle={{ marginLeft: -4 }}
