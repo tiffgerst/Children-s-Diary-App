@@ -14,7 +14,6 @@ import BackButton from '../components/BackButton'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
 import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
-import TagButtonList from '../components/TagButtonList'
 import MoodIconList from '../components/MoodIconList'
 import * as add from '../ip/config'
 import axios from 'axios'
@@ -102,6 +101,7 @@ export default function EditEntry({ route, navigation }) {
         cancelable: true,
       })
     } else {
+      // Update Post to the databse
       axios
         .patch(`http://${ip}:3000/post/update`, {
           note: contentText,
@@ -111,7 +111,7 @@ export default function EditEntry({ route, navigation }) {
           postID: postID,
         })
         .then(async () => {
-          //Link each selected emoji to the post created
+          //Link each selected tag to the post created
           pick.forEach((tag) =>
             axios
               .post(`http://${ip}:3000/post/tags`, {

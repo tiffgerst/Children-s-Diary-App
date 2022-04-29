@@ -13,18 +13,18 @@ import {
 import axios from 'axios'
 import BackButton from '../components/BackButton'
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
 import * as SecureStore from 'expo-secure-store'
 import BackgroundButton from '../components/backcolor'
 import Tag from '../components/Tag'
 import * as ImagePicker from 'expo-image-picker'
 import { v4 as uuid } from 'uuid'
-import { showMessage, hideMessage } from 'react-native-flash-message'
+import { showMessage } from 'react-native-flash-message'
 import firebaseConfig from '../API/config/firebaseConfig.js'
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import * as add from '../ip/config'
 
+// Connect to Firebase
 initializeApp(firebaseConfig);
 
 export default function ImageEntry({ route, navigation }) {
@@ -173,6 +173,7 @@ export default function ImageEntry({ route, navigation }) {
           ),
       })
     } else {
+      // Sumbit new Post to the databse
       axios
         .post(`http://${ip}:3000/post/newPost`, {
           userID: userID,
@@ -232,7 +233,7 @@ export default function ImageEntry({ route, navigation }) {
   const [image, setImage] = useState(null)
   const [imageURL, setImageURL] = useState()
   const pickImage = async () => {
-    // Launch the image library
+    // Launch image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -240,6 +241,7 @@ export default function ImageEntry({ route, navigation }) {
       quality: 1,
     });
     console.log(result);
+    // Upload selected image to Firebase Storage 
     if (!result.cancelled) {
       setImage(result.uri);
       const storage = getStorage()
