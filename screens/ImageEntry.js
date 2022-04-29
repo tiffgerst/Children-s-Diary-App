@@ -24,7 +24,7 @@ import Tag from '../components/Tag'
 import BackgroundButton from '../components/backcolor'
 
 // Connect to Firebase
-initializeApp(firebaseConfig);
+initializeApp(firebaseConfig)
 
 export default function ImageEntry({ route, navigation }) {
   React.useEffect(() => {
@@ -109,15 +109,11 @@ export default function ImageEntry({ route, navigation }) {
     return day + ', ' + num + ' ' + name + ' ' + year + ' ' + hour + ':' + min
   }
   const update = (a) => {
-    console.log(a)
     if (pick.indexOf(a) == 0 && pick.length == 1) {
-      console.log('hi')
       pick.shift()
     } else if (pick.indexOf(a) < 0) {
-      console.log('b')
       pick.push(a)
     } else {
-      console.log(pick.indexOf(a))
       pick.splice(pick.indexOf(a), 1)
     }
   }
@@ -194,7 +190,6 @@ export default function ImageEntry({ route, navigation }) {
             )
             .catch((error) => {
               console.log(error.message)
-              console.log('reward')
             })
 
           // Link each selected tag to the post created
@@ -206,7 +201,6 @@ export default function ImageEntry({ route, navigation }) {
               })
               .catch((error) => {
                 console.log(error)
-                console.log('tags')
               })
           )
           // Link selected image to the post created
@@ -240,9 +234,9 @@ export default function ImageEntry({ route, navigation }) {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-    });
-    console.log(result);
-    // Upload selected image to Firebase Storage 
+    })
+
+    // Upload selected image to Firebase Storage
     if (!result.cancelled) {
       setImage(result.uri)
       const storage = getStorage()
@@ -252,7 +246,6 @@ export default function ImageEntry({ route, navigation }) {
       await uploadBytes(imageRef, bytes)
       await getDownloadURL(imageRef).then((url) => {
         setImageURL(url)
-        console.log(url)
       })
     }
   }

@@ -21,21 +21,27 @@ export default function Home({ navigation }) {
       // get post data from api
       const getData = async () => {
         const userID = await SecureStore.getItemAsync('userID')
-        const apiResponse = await fetch(`https://mirradiaryapp.azurewebsites.net/post/all/${userID}`)
+        const apiResponse = await fetch(
+          `https://mirradiaryapp.azurewebsites.net/post/all/${userID}`
+        )
         const data = await apiResponse.json()
         const sorted = data.sort((a, b) => b.postID - a.postID)
         setPostData(sorted)
-        const appUserResponse = await fetch(`https://mirradiaryapp.azurewebsites.net/appUser/getUser/` + userID)
+        const appUserResponse = await fetch(
+          `https://mirradiaryapp.azurewebsites.net/appUser/getUser/` + userID
+        )
         const appUserdata = await appUserResponse.json()
         const avatarID = appUserdata[0].avatarID
         setAvatarID(avatarID)
-        const URL = await fetch(`https://mirradiaryapp.azurewebsites.net/avatar/getAvatarURL/` + avatarID)
+        const URL = await fetch(
+          `https://mirradiaryapp.azurewebsites.net/avatar/getAvatarURL/` +
+            avatarID
+        )
         const avatarinfo = await URL.json()
         const avatarURL = avatarinfo[0].avatarURL
         setAvatarURL(avatarURL)
       }
       getData()
-      console.log(postData)
     })
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe
@@ -56,9 +62,9 @@ export default function Home({ navigation }) {
         onPress={() => navigation.navigate('Profile')}
         style={styles.profile}
       >
-        <Image source={{uri: avatarURL}} style={styles.profile_image}/>
+        <Image source={{ uri: avatarURL }} style={styles.profile_image} />
       </TouchableOpacity>
-      <Image source={{uri: avatarURL}} style={styles.profile1}/>
+      <Image source={{ uri: avatarURL }} style={styles.profile1} />
       {!clicked}
       <SearchBar
         searchPhrase={searchPhrase}
@@ -117,6 +123,6 @@ const styles = StyleSheet.create({
   profile_image: {
     width: 33,
     height: 34,
-    borderRadius: 20
+    borderRadius: 20,
   },
 })

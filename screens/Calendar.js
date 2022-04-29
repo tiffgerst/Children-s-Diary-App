@@ -13,7 +13,6 @@ export default function CalendarScreen({ navigation }) {
   const [selectedDate, setSelectedDate] = useState('')
   const [postData, setPostData] = useState([])
 
-
   // get post data from api
   useEffect(() => {
     const getData = async () => {
@@ -78,7 +77,6 @@ export default function CalendarScreen({ navigation }) {
           textDayHeaderFontSize: 15,
         }}
         onDayPress={(day) => {
-          console.log('selected day', day)
           setSelectedDate(day.dateString)
         }}
         markingType={'custom'}

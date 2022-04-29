@@ -110,7 +110,7 @@ export default function TextEntry({ route, navigation }) {
     />
   )
   const cancel = () => {
-    if (note !== '') {
+    if (tit !== '' || note !== '') {
       Alert.alert(
         'Unposted notes will be lost',
         `Are you sure you want to leave this entry? It will be deleted.`,
@@ -161,11 +161,11 @@ export default function TextEntry({ route, navigation }) {
               `https://mirradiaryapp.azurewebsites.net/appUser/reward/` +
                 userID,
               {
-              userID: userID,
-            })
+                userID: userID,
+              }
+            )
             .catch((error) => {
               console.log(error.message)
-              console.log('reward')
             })
 
           //Link each selected emoji to the post created
@@ -177,7 +177,6 @@ export default function TextEntry({ route, navigation }) {
               })
               .catch((error) => {
                 console.log(error)
-                console.log('tags')
               })
           )
 

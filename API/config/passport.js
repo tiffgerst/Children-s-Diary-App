@@ -13,11 +13,10 @@ const diarypassport = passport.use(
     },
     async function (jwt_payload, done) {
       try {
-        console.log(jwt_payload)
         await connect(config)
         const user =
           await query`SELECT userID, username FROM appUser WHERE username = ${jwt_payload.username}`
-        console.log(user.recordset)
+
         if (user.recordset.length == 1) {
           return done(null, user.recordset[0])
         } else {

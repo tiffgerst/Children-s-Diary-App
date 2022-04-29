@@ -32,7 +32,7 @@ export default function HowAreYouFeelingScreen({ navigation }) {
       const secureStoreID = await SecureStore.getItemAsync('userID').then(
         (id) => setUserID(id)
       )
-      console.log(userID)
+
       const userID = await SecureStore.getItemAsync('userID')
       const apiResponse = await fetch(
         `https://mirradiaryapp.azurewebsites.net/appUser/getUser/` + userID

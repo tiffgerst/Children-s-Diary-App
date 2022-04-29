@@ -17,12 +17,9 @@ export async function isLoggedIn() {
         })
         .catch((error) => {
           login = false
-          console.log(error)
-          console.log('hi')
         })
     }
   } catch (err) {
     console.log(err)
-    console.log('hello')
   }
 }

@@ -20,7 +20,7 @@ export const singleUser = async (req, res) => {
 
 export const emailSocialWorker = async (req, res) => {
   const id = req.body.userID
-  console.log(id)
+
   try {
     await connect(config)
     const result =
@@ -65,8 +65,7 @@ export const getAchievementStatus = async (req, res) => {
 export const updateAchievementStatus = async (req, res) => {
   const id = req.params.id
   const choice = req.body.choice
-  console.log(id)
-  console.log(choice)
+
   try {
     if (choice) {
       await connect(config)
@@ -88,8 +87,7 @@ export const updateAchievementStatus = async (req, res) => {
 export const updateAvatar = async (req, res) => {
   const id = req.params.id
   const avatar = req.body.avatarID
-  console.log(id)
-  console.log(avatar)
+
   try {
     await connect(config)
     const result =
@@ -219,7 +217,6 @@ export const changePassword = async (req, res) => {
   }
 }
 export const isLoggedIn = async (req, res) => {
-  console.log('here')
   console.log(req.body)
 }
 
@@ -263,7 +260,6 @@ export const updateDisplayName = async (req, res) => {
       res.status(200).send({
         success: true,
       })
-      console.log(displayName)
     }
   } catch (err) {
     res.status(409).send({

@@ -46,19 +46,5 @@ router.post(
     const username = user.username
   }
 )
-// router.post(
-//   '/isLoggedIn',
-//   passport.authenticate('jwt', { session: false }),
-//   (req, res) => {
-//     const user = req.user
-//     const userID = user.userID
-//     const username = user.username
-
-//     res.status(200).send({
-//       userID: userID,
-//       username: username,
-//     })
-//   }
-// )
 
 export default router
